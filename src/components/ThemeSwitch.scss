@@ -1,0 +1,13 @@
+.ThemeSwitch {
+    button {
+        border: none;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg.IconSun {
+            width: 32px;
+            height: 32px;
+        }
+    }
+}
