@@ -11,4 +11,4 @@ class HomeComponent extends React.Component {
             </div>
         );
     }
-}   
+}
