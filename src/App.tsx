@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import '@/assets/reset.css'
-import '@/assets/variables.css'
-import './App.css'
+import '@/App.css'
+import { ThemeContext, Theme } from '@/components/context/ThemeContext'
+import { GlobalStyles } from '@/Theme'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [theme, setTheme] = useState(Theme.Light);
 
   return (
-    <div className="App">
-       <Navbar></Navbar>
-    </div>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <GlobalStyles />
+      <div className="App">
+        <Navbar />
+      </div>
+    </ThemeContext.Provider>
   )
 }
 
