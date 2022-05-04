@@ -5,7 +5,7 @@ function NavbarItems() {
 	const NavbarItems = styled.ul` {
 		display: flex;
 		align-items: center;
-		gap: 15px;
+		gap: 20px;
 		li svg {
 			fill: var(--color-text);
 			width: 28px;
