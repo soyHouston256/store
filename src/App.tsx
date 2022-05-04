@@ -4,6 +4,7 @@ import '@/assets/reset.css'
 import '@/App.css'
 import { ThemeContext, Theme } from '@/components/context/ThemeContext'
 import { GlobalStyles } from '@/Theme'
+import Hero from '@/components/Hero'
 
 function App() {
   const [theme, setTheme] = useState(Theme.Light);
@@ -13,6 +14,7 @@ function App() {
       <GlobalStyles />
       <div className="App">
         <Navbar />
+        <Hero />
       </div>
     </ThemeContext.Provider>
   )
