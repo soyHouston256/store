@@ -17,6 +17,7 @@ export const GlobalStyles = createGlobalStyle`
     --screen-desktop: 1024px;
     --font-size-title: 28px;
     --font-size-text: 16px;
+    --font-size-price: 18px;
     --button-height: 40px;
     --button-radius: 25px;
     --radius: 16px;

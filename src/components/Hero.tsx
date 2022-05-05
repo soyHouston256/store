@@ -51,7 +51,6 @@ function Hero () {
 			}
 		}
 	`
-
 	const Button = styled.button`
 		border: none;
 		background: linear-gradient(to right, #FF5959, #FFEAA0, #FBC7CD, #654DFF);
