@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import CardBgImage from "@/assets/images/img/node.png"
+import LikeButton from "@/components/LikeButton.tsx"
 
 function Card () {
 
@@ -7,8 +8,6 @@ function Card () {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		width: 300px;
-		margin: 0 auto;
 		background-color: var(--color-neutral);
 		border-radius: var(--radius);
 		box-shadow: var(--shadow);
@@ -27,6 +26,8 @@ function Card () {
 			width:80%;
 			height: 80%;
 			img{
+				padding-top: 1rem;
+				object-fit: contain;
 				width:100%;
 				height: 100%;
 				max-width: 100%;
@@ -42,7 +43,7 @@ function Card () {
 	const CardInfo = styled.section`
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
+		padding: 2rem;
 		h2 {
 			font-size: var(--font-size-text);
 			font-weight: 700;
@@ -63,10 +64,10 @@ function Card () {
 					<img src={CardBgImage} />
 				</div>
 			</CardImage>
-			{<CardInfo>
+			<CardInfo>
 				<h2>POLO NODE.JS</h2>
 				<span>S/ 30.00</span>
-			</CardInfo>}
+			</CardInfo>
 		</CardWrapper>
 	)
 }

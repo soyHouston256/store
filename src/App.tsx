@@ -5,7 +5,7 @@ import '@/App.css'
 import { ThemeContext, Theme } from '@/components/context/ThemeContext'
 import { GlobalStyles } from '@/Theme'
 import Hero from '@/components/Hero'
-import Card from '@/components/Card'
+import Products from '@/components/Products'
 
 function App() {
   const [theme, setTheme] = useState(Theme.Light);
@@ -16,7 +16,7 @@ function App() {
       <div className="App">
         <Navbar/>
         <Hero/>
-        <Card/>
+        <Products/>
       </div>
     </ThemeContext.Provider>
   )
