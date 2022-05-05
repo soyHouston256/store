@@ -5,11 +5,13 @@ const themes: any = {
     background: '#FCF7F4',
     neutral: '#FFF',
     color: '#000',
+    accent: '#FF6565'
   },
   Dark: {
     background: '#000',
     neutral: '#141414',
     color: '#fff',
+    accent: '#FF6565'
   }
 }
 export const GlobalStyles = createGlobalStyle`
@@ -23,11 +25,13 @@ export const GlobalStyles = createGlobalStyle`
     --radius: 16px;
     --shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
     --color-background: ${themes.Light.background};
+    --color-accent: ${themes.Light.accent};
     --color-neutral: ${themes.Light.neutral};
     --color-text: ${themes.Light.color};
   }
   .dark-theme {
     --color-background: ${themes.Dark.background};
+    --color-accent: ${themes.Dark.accent};
     --color-neutral: ${themes.Dark.neutral};
     --color-text: ${themes.Dark.color};
   }

@@ -6,10 +6,11 @@ function Products () {
 
     const ProductsGrid = styled.section`
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-gap: 25px;
         width: var(--screen-desktop);
 		margin: 0 auto;
+        margin-top: 40px;
     `
 
     return(
