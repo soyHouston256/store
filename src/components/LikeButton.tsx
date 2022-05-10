@@ -1,9 +1,9 @@
 import { useState } from "react"
 import styled from "styled-components"
 import Lottie from 'react-lottie-player'
-import lottieJson from '@/assets/animations/like'
+import lottieJson from '@/assets/animations/like.json'
 
-function LikeButton () {
+function LikeButton (): JSX.Element {
     const [liked, setLiked] = useState(false)
     const handleClick = () => { 
         setLiked(!liked)

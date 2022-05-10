@@ -52,7 +52,7 @@ function Card () {
 			padding-bottom: 5px;
 		}
 		span {
-			font-size: var--font-size-price);
+			font-size: var(--font-size-price);
 			font-weight: 700;
 			color: var(--color-text);
 		}
