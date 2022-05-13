@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
+import SearchBox from '@/components/SearchBox'
 import '@/assets/reset.css'
 import '@/App.css'
 import { ThemeContext, Theme } from '@/components/context/ThemeContext'
@@ -16,6 +17,7 @@ function App() {
       <div className="App">
         <Navbar/>
         <Hero/>
+        <SearchBox />
         <Products/>
       </div>
     </ThemeContext.Provider>

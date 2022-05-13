@@ -18,6 +18,7 @@ const ButtonTheme = styled(motion.div)`
 
 function ThemeSwitch () {
   const { theme, setTheme } = useContext(ThemeContext)
+  const [isOpen, setIsOpen] = useState(false);
 
   const audio = new Audio(clickSound)
 
@@ -26,12 +27,11 @@ function ThemeSwitch () {
     audio.play()
   };
 
+  // FIXME: refactor this to use useEffect
   const toggleTheme = () => {
     if (theme === Theme.Light) setTheme(Theme.Dark)
     else setTheme(Theme.Light)
   }
-
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     playClickSound()
