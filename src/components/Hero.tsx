@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import HeroBgImage from "@/assets/images/hero/hero.png"
 
-function Hero () {
+function Hero(): JSX.Element {
 
 	const HeroWrapper = styled.section`
 		display: flex;

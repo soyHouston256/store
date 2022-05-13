@@ -2,12 +2,22 @@ import { useState } from "react"
 import styled from "styled-components"
 import Lottie from 'react-lottie-player'
 import lottieJson from '@/assets/animations/like.json'
+import likeSound from '@/assets/like.mp3'
 
 function LikeButton (): JSX.Element {
     const [liked, setLiked] = useState(false)
     const handleClick = () => { 
         setLiked(!liked)
+        if (!liked) playLikeSound()
     }
+
+    const audio = new Audio(likeSound)
+
+	const playLikeSound = () => {
+		audio.playbackRate = 2
+        audio.volume = .5
+		audio.play()
+	};
 
     const LikeWrapper = styled.button`
         background-color: transparent;

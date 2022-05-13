@@ -2,7 +2,7 @@ import styled from "styled-components"
 import CardBgImage from "@/assets/images/img/node.png"
 import LikeButton from "@/components/LikeButton"
 
-function Card () {
+function Card(): JSX.Element {
 
 	const CardWrapper = styled.section`
 		display: flex;

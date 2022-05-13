@@ -14,7 +14,7 @@ const ButtonTheme = styled(motion.div)`
     width: 32px;
     height: 32px;
     cursor: pointer;
-  }`
+  `
 
 function ThemeSwitch () {
   const { theme, setTheme } = useContext(ThemeContext)
@@ -22,7 +22,7 @@ function ThemeSwitch () {
   const audio = new Audio(clickSound)
 
   const playClickSound = () => {
-    audio.playbackRate = 2
+    audio.playbackRate = 1.5
     audio.play()
   };
 
