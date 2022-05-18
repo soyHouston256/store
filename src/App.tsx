@@ -10,7 +10,6 @@ import Products from '@/components/Products'
 
 function App() {
   const [theme, setTheme] = useState(Theme.Light);
-
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <GlobalStyles />

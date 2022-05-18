@@ -1,8 +1,9 @@
 import styled from "styled-components"
-import CardBgImage from "@/assets/images/img/node.png"
 import LikeButton from "@/components/LikeButton"
+import Product from "../models/product";
 
-function Card(): JSX.Element {
+//function Card(product:Product): JSX.Element {
+function Card({name, price, url}:Product): JSX.Element {
 
 	const CardWrapper = styled.section`
 		display: flex;
@@ -63,12 +64,12 @@ function Card(): JSX.Element {
 			<LikeButton />
 			<CardImage>
 				<div>
-					<img src={CardBgImage} />
+					<img src={url} />
 				</div>
 			</CardImage>
 			<CardInfo>
-				<p>Polo Node.js</p>
-				<span>S/ 30.00</span>
+				<p>{name}</p>
+				<span>S/ {price}</span>
 			</CardInfo>
 		</CardWrapper>
 	)

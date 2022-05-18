@@ -1,10 +1,20 @@
 import Card from '@/components/Card';
-import styled from "styled-components"
+import { useEffect, useState } from 'react';
+import styled from "styled-components";
+import { getItems } from '../aplications/api'
+import Product from "../models/product";
 
 function Products(): JSX.Element {
-    // TODO: get products from firebase
-    const productsList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    const [productsList, setProductsList] = useState<Product[]>([]);
+    console.log(productsList);
+    useEffect(()=> {
+        getProducts();
+    },[onchange])
 
+    const getProducts = async() => {
+        const products = await getItems();
+        setProductsList(products);
+    }
     const ProductsGrid = styled.section`
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -16,7 +26,7 @@ function Products(): JSX.Element {
 
     return(
         <ProductsGrid>
-            { productsList.map((p) => <Card/>)}
+            { productsList.map(({name, price, url}) => <Card name={name} price={price} url={url}/>)}
         </ProductsGrid>
     )
 }
