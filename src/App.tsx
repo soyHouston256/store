@@ -7,6 +7,7 @@ import { ThemeContext, Theme } from '@/components/context/ThemeContext'
 import { GlobalStyles } from '@/Theme'
 import Hero from '@/components/Hero'
 import Products from '@/components/Products'
+import ProductView from '@/components/product/ProductView'
 
 function App() {
   const [theme, setTheme] = useState(Theme.Light);
@@ -17,7 +18,8 @@ function App() {
         <Navbar/>
         <Hero/>
         <SearchBox />
-        <Products/>
+        {/* <Products/> */}
+        <ProductView/>
       </div>
     </ThemeContext.Provider>
   )

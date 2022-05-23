@@ -7,9 +7,6 @@ import Product from '@/models/product';
 const collectionName = 'products';
 const itemsCollection = collection(db, collectionName);
 
-
-
-// READ
 export const getItems= async ():Promise<Product[]>  => {
     const {docs} = await getDocs(query(itemsCollection));
     return docs.map(doc => doc.data().products)[0];
