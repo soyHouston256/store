@@ -18,8 +18,8 @@ function App() {
         <Navbar/>
         <Hero/>
         <SearchBox />
-        {/* <Products/> */}
-        <ProductView/>
+        <Products/>
+        {/* <ProductView/> */}
       </div>
     </ThemeContext.Provider>
   )
