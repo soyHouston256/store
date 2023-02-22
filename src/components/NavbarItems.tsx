@@ -1,18 +1,18 @@
 import ThemeSwitch from '@/components/ThemeSwitch'
 import styled from 'styled-components';
 
-function NavbarItems(): JSX.Element {
-	const NavbarItemsWrapper = styled.ul`
-		display: flex;
-		align-items: center;
-		gap: 20px;
-		li svg {
-			fill: var(--color-text);
-			width: 28px;
-			height: 28px;
-		}
-	`
+const NavbarItemsWrapper = styled.ul`
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	li svg {
+		fill: var(--color-text);
+		width: 28px;
+		height: 28px;
+	}
+`
 
+function NavbarItems(): JSX.Element {
 	return (
 		<NavbarItemsWrapper>
 			<li>

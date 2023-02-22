@@ -4,6 +4,29 @@ import Lottie from 'react-lottie-player'
 import lottieJson from '@/assets/animations/like.json'
 import likeSound from '@/assets/like.mp3'
 
+const LikeWrapper = styled.button`
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    & > svg {
+        width: 24px;
+        height: 24px;
+        fill: var(--color-text);
+        opacity: .2;
+        &.icon_liked {
+            fill: var(--color-accent);
+            opacity: 1;
+        }
+    }
+    .icon_sparkle {
+        position: absolute;
+        right: -14px;
+        top: -20px;
+    }
+`
+
 function LikeButton (): JSX.Element {
     const [liked, setLiked] = useState(false)
     const handleClick = () => { 
@@ -19,28 +42,6 @@ function LikeButton (): JSX.Element {
 		audio.play()
 	};
 
-    const LikeWrapper = styled.button`
-        background-color: transparent;
-        border: none;
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        & > svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--color-text);
-            opacity: .2;
-            &.icon_liked {
-                fill: var(--color-accent);
-                opacity: 1;
-            }
-        }
-        .icon_sparkle {
-            position: absolute;
-            right: -14px;
-            top: -20px;
-        }
-    `
 
     return (
         <LikeWrapper onClick={handleClick}>

@@ -1,92 +1,91 @@
 import styled from "styled-components"
 import HeroBgImage from "@/assets/images/hero/hero.png"
 
-function Hero(): JSX.Element {
-
-	const HeroWrapper = styled.section`
-		display: flex;
-		width: var(--screen-desktop);
-		margin: 0 auto;
-		background-color: var(--color-neutral);
-		border-radius: var(--radius);
-		box-shadow: var(--shadow);
-		height: 240px;
-	`
-	const HeroInfo = styled.section`
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		background-color: var(--color-neutral);
-		border-radius: var(--radius);
-		box-shadow: var(--shadow);
-		padding: 3rem;
-		h1 {
-			font-size: var(--font-size-title);
-			font-weight: 700;
-			color: var(--color-text);
-			margin-bottom: .7rem;
-		}
-		p {
-			font-size: var(--font-size-text);
-			opacity: .5;
-			color: var(--color-text);
-			margin-bottom: 2rem;
-		}
-	`
-	const HeroImage = styled.section`
-		flex: 1;
-		display: flex;
-		justify-content: center;
-		overflow: hidden;
-		div {
-			position: relative;
-			margin-top: 30px;
-			img{
-				width: 400px;
-				image-rendering: -moz-crisp-edges;
-				image-rendering: -o-crisp-edges;
-				image-rendering: -webkit-optimize-contrast;
-				image-rendering: crisp-edges;
-				-ms-interpolation-mode: nearest-neighbor;
-			}
-		}
-	`
-	const Button = styled.button`
-		border: none;
-		background: linear-gradient(to right, #FF5959, #FFEAA0, #FBC7CD, #654DFF);
-		border-radius: var(--button-radius);
-		height: var(--button-height);
+const HeroWrapper = styled.section`
+	display: flex;
+	width: var(--screen-desktop);
+	margin: 0 auto;
+	background-color: var(--color-neutral);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+	height: 240px;
+`
+const HeroInfo = styled.section`
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	background-color: var(--color-neutral);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+	padding: 3rem;
+	h1 {
+		font-size: var(--font-size-title);
+		font-weight: 700;
+		color: var(--color-text);
+		margin-bottom: .7rem;
+	}
+	p {
+		font-size: var(--font-size-text);
+		opacity: .5;
+		color: var(--color-text);
+		margin-bottom: 2rem;
+	}
+`
+const HeroImage = styled.section`
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+	div {
 		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: fit-content;
-		padding: 0 25px;
-		&:before {
-			content: "";
-			position: absolute;
-			border-radius: var(--button-radius);
-			inset: 2px;
-			width: calc(100% - 4px);
-			height: calc(100% - 4px);
-			background-color: var(--color-neutral);
+		margin-top: 30px;
+		img{
+			width: 400px;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -o-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: crisp-edges;
+			-ms-interpolation-mode: nearest-neighbor;
 		}
-		svg {
-			width: 24px;
-			height: 24px;
-			fill: var(--color-text);
-			position: relative;
-			margin-right: 10px;
-		}
-		span {
-			position: relative;
-			color: var(--color-text);
-			font-weight: 500;
-			font-size: var(--font-size-text);
-			letter-spacing: .03rem;
-		}
-	`
+	}
+`
+const Button = styled.button`
+	border: none;
+	background: linear-gradient(to right, #FF5959, #FFEAA0, #FBC7CD, #654DFF);
+	border-radius: var(--button-radius);
+	height: var(--button-height);
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+	padding: 0 25px;
+	&:before {
+		content: "";
+		position: absolute;
+		border-radius: var(--button-radius);
+		inset: 2px;
+		width: calc(100% - 4px);
+		height: calc(100% - 4px);
+		background-color: var(--color-neutral);
+	}
+	svg {
+		width: 24px;
+		height: 24px;
+		fill: var(--color-text);
+		position: relative;
+		margin-right: 10px;
+	}
+	span {
+		position: relative;
+		color: var(--color-text);
+		font-weight: 500;
+		font-size: var(--font-size-text);
+		letter-spacing: .03rem;
+	}
+`
 
+function Hero(): JSX.Element {
 	return (
 		<HeroWrapper>
 			<HeroInfo>

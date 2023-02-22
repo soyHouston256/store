@@ -16,7 +16,7 @@ const ButtonTheme = styled(motion.div)`
     cursor: pointer;
   `
 
-function ThemeSwitch () {
+function ThemeSwitch(): JSX.Element {
   const { theme, setTheme } = useContext(ThemeContext)
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,10 +27,10 @@ function ThemeSwitch () {
     audio.play()
   };
 
-  // FIXME: refactor this to use useEffect
-  const toggleTheme = () => {
+  const toggleTheme = (isOpen: any) => {
     if (theme === Theme.Light) setTheme(Theme.Dark)
     else setTheme(Theme.Light)
+    setIsOpen(isOpen)
   }
 
   useEffect(() => {
@@ -45,7 +45,7 @@ function ThemeSwitch () {
           layout
           data-isopen={isOpen}
           className="parent"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => toggleTheme(!isOpen)}
         >
         <motion.div layout className="child" />
         <motion.div layout className="tip" />
