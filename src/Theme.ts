@@ -9,7 +9,9 @@ const themes: any = {
     colorInvert: '#fff',
     accent: '#FF6565',
     accentLight: '#FCF7F4',
-    surface: '#FFF'
+    surface: '#FFF',
+    surfaceLight: '#FFF',
+    border: 'rgba(0,0,0,.05)'
   },
   Dark: {
     background: '#000',
@@ -17,9 +19,11 @@ const themes: any = {
     neutralLight: '#1f1f1f',
     color: '#fff',
     colorInvert: '#000',
-    accent: '#e27a7a',
+    accent: '#f78a76',
     accentLight: '#181818',
-    surface: '#1f1f1f'
+    surface: '#2a2a2a',
+    surfaceLight: '#1f1f1f',
+    border: 'rgba(255,255,255,.02)'
   }
 }
 export const GlobalStyles = createGlobalStyle`
@@ -41,6 +45,8 @@ export const GlobalStyles = createGlobalStyle`
     --color-text: ${themes.Light.color};
     --color-text-invert: ${themes.Light.colorInvert};
     --color-surface: ${themes.Light.surface};
+    --color-surface-light: ${themes.Light.surfaceLight};
+    --color-border: ${themes.Light.border};
   }
   .dark-theme {
     --color-background: ${themes.Dark.background};
@@ -51,5 +57,7 @@ export const GlobalStyles = createGlobalStyle`
     --color-text: ${themes.Dark.color};
     --color-text-invert: ${themes.Dark.colorInvert};
     --color-surface: ${themes.Dark.surface};
+    --color-surface-light: ${themes.Dark.surfaceLight};
+    --color-border: ${themes.Dark.border};
   }
 `;
