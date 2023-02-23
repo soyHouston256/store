@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useRoutes } from "react-router-dom";
 import styled from "styled-components"
 import CardBgImage from "@/assets/images/img/node.png"
 import LikeButton from "./LikeButton";
+import useProductsById from "@/hooks/useProductById";
 
 const ProductModal = styled.div`
     position: fixed;
@@ -25,7 +26,7 @@ const ModalOverlay = styled.div`
 const ProductModalBody = styled.div`
     background-color: var(--color-neutral);
     width: var(--screen-desktop);
-    /* min-height: calc(100vh - 100px); */
+    min-height: 550px;
     border-radius: 16px;
     position: absolute;
     top: 50%;
@@ -35,23 +36,31 @@ const ProductModalBody = styled.div`
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-auto-rows: min-content;
-    grid-gap: 30px;
-    .product_image {
-        image-rendering: -moz-crisp-edges;
-        image-rendering: -o-crisp-edges;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-        -ms-interpolation-mode: nearest-neighbor;
-        max-width: 400px;
-        width: 400px;
+    /* grid-auto-rows: min-content; */
+    grid-gap: 50px;
+    /* align-content: center; */
+    .product_image_wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .product_image {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -o-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor;
+            max-width: 400px;
+            width: 400px;
+        }
     }
     .product_detail {
         background-color: var(--color-accent-light);
         padding: 25px;
+        box-sizing: border-box;
         border-radius: 16px;
         display: flex;
         flex-direction: column;
+        height: 100%;
         .product_detail_wrapper {
             flex: 1;
             .title {
@@ -154,19 +163,24 @@ const Button = styled.button`
 
 function Product(): JSX.Element {
     const navigate = useNavigate();
+    const { id } = useParams()
+    const { product } = useProductsById(id!)
    
     return (
         <ProductModal>
             <ProductModalWrapper>
                 <ModalOverlay onClick={() => navigate(-1)} />
-                <ProductModalBody>
-                    <img className="product_image" src={CardBgImage} />
+                { product &&
+                <ProductModalBody >
+                    <div className="product_image_wrapper">
+                        <img className="product_image" src={product.image} />
+                    </div>
                     <div className="product_detail">
                         <div className="product_detail_wrapper">
                             <div className="title">
                                 <div className="title_wrapper">
-                                    <h1>Polo Node.js</h1>
-                                    <h2>S/ 60.00</h2>
+                                    <h1>{ product.name }</h1>
+                                    <h2>S/ {product.price}</h2>
                                 </div>
                                 <LikeButton />
                             </div>
@@ -196,6 +210,7 @@ function Product(): JSX.Element {
                         </Button>
                     </div>
                 </ProductModalBody>
+                }
             </ProductModalWrapper>
         </ProductModal>
     )

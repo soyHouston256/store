@@ -19,7 +19,7 @@ function App() {
       <div className="App">
         <Routes location={background || location}>
           <Route path="/" element={<Home />}>
-            <Route path="modal" element={<Product />} />
+            <Route path="/product/:id" element={<Product />} />
           </Route>
         </Routes>
         {background && (

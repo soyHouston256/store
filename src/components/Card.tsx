@@ -2,6 +2,7 @@ import styled from "styled-components"
 import CardBgImage from "@/assets/images/img/node.png"
 import LikeButton from "@/components/LikeButton"
 import { useNavigate } from "react-router-dom";
+import { ProductType } from "@/types/ProductType";
 
 const CardWrapper = styled.section`
 	display: flex;
@@ -58,24 +59,24 @@ const CardInfo = styled.section`
 	}
 `
 
-function Card(): JSX.Element {
+function Card({ product }: {product: ProductType}): JSX.Element {
     const navigate = useNavigate();
 
-	const goToProduct = () => {
-		navigate('modal')
+	const goToProduct = (id: string) => {
+		navigate(`product/${id}`)
 	}
 
 	return (
 		<CardWrapper >
 			<LikeButton />
-			<CardImage onClick={goToProduct}>
+			<CardImage onClick={() => goToProduct(product.id!)}>
 				<div>
-					<img src={CardBgImage} />
+					<img src={product.image} />
 				</div>
 			</CardImage>
 			<CardInfo>
-				<p>Polo Node.js</p>
-				<span>S/ 30.00</span>
+				<p>{ product .name}</p>
+				<span>S/ {product.price}</span>
 			</CardInfo>
 		</CardWrapper>
 	)

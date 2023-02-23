@@ -1,4 +1,5 @@
 import Card from '@/components/Card';
+import useProductsList from '@/hooks/useProductsList';
 import styled from "styled-components"
 
 const ProductsGrid = styled.section`
@@ -12,11 +13,11 @@ const ProductsGrid = styled.section`
 
 function Products(): JSX.Element {
     // TODO: get products from firebase
-    const productsList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    const { products } = useProductsList()
 
     return(
         <ProductsGrid>
-            { productsList.map((p) => <Card key={p} />)}
+            { products.map((product) => <Card key={product.id} product={product} />)}
         </ProductsGrid>
     )
 }
