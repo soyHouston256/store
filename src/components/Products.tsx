@@ -12,7 +12,6 @@ const ProductsGrid = styled.section`
 `
 
 function Products(): JSX.Element {
-    // TODO: get products from firebase
     const { products } = useProductsList()
 
     return(

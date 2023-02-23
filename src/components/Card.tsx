@@ -1,5 +1,4 @@
 import styled from "styled-components"
-import CardBgImage from "@/assets/images/img/node.png"
 import LikeButton from "@/components/LikeButton"
 import { useNavigate } from "react-router-dom";
 import { ProductType } from "@/types/ProductType";
