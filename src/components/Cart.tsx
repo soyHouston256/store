@@ -95,12 +95,12 @@ const Button = styled.button`
     }
 `
 
-function Cart(): JSX.Element {
+function Cart({ innerRef }: { innerRef: any }): JSX.Element {
     const { list: products } = useSelector(
         (state: RootState) => state.products
     )
     return (
-        <CartWrapper>
+        <CartWrapper ref={innerRef}>
             <div className="tip"></div>
             {products.length > 0 && 
                 <div>
