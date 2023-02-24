@@ -2,9 +2,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components"
 import LikeButton from "./LikeButton";
 import useProductsById from "@/hooks/useProductById";
-import { ProductType } from "@/types/ProductType";
-import React, { Dispatch } from "react";
-import { addProduct } from "@/store/actionCreators";
+import { ProductCartActionType, ProductCartType } from "@/types/ProductType";
+import { Dispatch, useCallback, useState } from "react";
+import { add } from "@/store/slices/products";
 import { useDispatch } from "react-redux";
 
 const ProductModal = styled.div`
@@ -156,6 +156,7 @@ const ProductModalBody = styled.div`
                             background-color: var(--color-surface);
                             color: var(--color-text);
                             cursor: pointer;
+                            user-select: none;
                         }
                     }
                 }
@@ -192,24 +193,31 @@ const Button = styled.button`
     }
 `
 
-function Product({  }): JSX.Element {
+function Product({ }): JSX.Element {
+    const [quantity, setQuantity] = useState(1)
     const navigate = useNavigate();
     const { id } = useParams()
     const { product } = useProductsById(id!)
+    const dispatch: Dispatch<any> = useDispatch()
+    const addProduct = useCallback(
+        (product: ProductCartType) => dispatch(add({ type: ProductCartActionType.SUM, product})),
+        [dispatch]
+    )
 
     const goBack = () => {
         navigate(-1)
     }
 
-    const dispatch: Dispatch<any> = useDispatch()
-    const saveProduct = React.useCallback(
-        (product: ProductType) => dispatch(addProduct(product)),
-        [dispatch]
-    )
-
     const addToCart = () => {
-        saveProduct(product!)
+        addProduct({...product!, quantity})
         goBack()
+    }
+
+    const increment = () => {
+        setQuantity(quantity + 1)
+    }
+    const decrement = () => {
+        setQuantity(quantity - 1)
     }
 
     return (
@@ -252,9 +260,9 @@ function Product({  }): JSX.Element {
                             <section className="quantity">
                                 <strong>Cantidad</strong>
                                 <div className="quantity_wrapper">
-                                    <span>-</span>
-                                    <p>1</p>
-                                    <span>+</span>
+                                    <span onClick={decrement}>-</span>
+                                    <p>{quantity}</p>
+                                    <span onClick={increment}>+</span>
                                 </div>
                             </section>
                         </div>

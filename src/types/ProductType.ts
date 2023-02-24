@@ -4,3 +4,13 @@ export interface ProductType {
     price?: number;
     image?: string;
 }
+
+export interface ProductCartType extends ProductType{
+    quantity?: number
+}
+
+export enum ProductCartActionType {
+    ADD,
+    SUM,
+    REMOVE
+}

@@ -1,4 +1,7 @@
-import { ProductType } from "@/types/ProductType"
+import { add, remove } from "@/store/slices/products"
+import { ProductCartActionType, ProductCartType, ProductType } from "@/types/ProductType"
+import { Dispatch, useCallback } from "react"
+import { useDispatch } from "react-redux"
 import styled from "styled-components"
 
 const ProductCartWrapper = styled.li`
@@ -56,12 +59,28 @@ const ProductCartWrapper = styled.li`
                 background-color: var(--color-surface);
                 color: var(--color-text);
                 cursor: pointer;
+                user-select: none;
             }
         }
     }
 `
 
-function ProductCart({ product }: {product: ProductType}): JSX.Element {
+function ProductCart({ product }: {product: ProductCartType}): JSX.Element {
+    const dispatch: Dispatch<any> = useDispatch()
+    const addProduct = useCallback(
+        (product: ProductType) => dispatch(add({ type: ProductCartActionType.ADD, product})),
+        [dispatch]
+    )
+    const removeProduct = useCallback(
+        (product: ProductType) => dispatch(remove({ type: ProductCartActionType.REMOVE, product})),
+        [dispatch]
+    )
+    const addToCart = () => {
+        addProduct(product!)
+    }
+    const removeFromCart = () => {
+        removeProduct(product!)
+    }
 
     return (
         <ProductCartWrapper>
@@ -72,12 +91,11 @@ function ProductCart({ product }: {product: ProductType}): JSX.Element {
                     <b>S/ {product.price}</b>
                 </div>
                 <div className="product_cart_quantity">
-                    <span>-</span>
-                    <p>1</p>
-                    <span>+</span>
+                    <span onClick={ removeFromCart }> { product.quantity! > 1 ? '-' : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="M216 48h-36V36a28.1 28.1 0 0 0-28-28h-48a28.1 28.1 0 0 0-28 28v12H40a12 12 0 0 0 0 24h4v136a20.1 20.1 0 0 0 20 20h128a20.1 20.1 0 0 0 20-20V72h4a12 12 0 0 0 0-24ZM100 36a4 4 0 0 1 4-4h48a4 4 0 0 1 4 4v12h-56Zm88 168H68V72h120Zm-72-100v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Zm48 0v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Z"/></svg> } </span>
+                    <p>{product.quantity}</p>
+                    <span onClick={addToCart}>+</span>
                 </div>
             </div>
-            
         </ProductCartWrapper>
     )
 }

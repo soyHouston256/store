@@ -1,12 +1,10 @@
-import { ProductType } from "./types/ProductType"
+import { ProductCartActionType, ProductCartType } from "./types/ProductType"
 
-type ProductState = {
-    products: ProductType[]
+type ProductCartState = {
+    list: ProductCartType[]
 }
 
-type ProductAction = {
-    type: string
-    product: ProductType
+type ProductCartAction = {
+    type: ProductCartActionType
+    product: ProductCartType
 }
-
-type DispatchType = (args: ProductAction) => ProductAction

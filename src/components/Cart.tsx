@@ -1,5 +1,4 @@
-import { ProductState } from "@/type"
-import { ProductType } from "@/types/ProductType"
+import { RootState } from "@/store"
 import { useSelector, shallowEqual } from "react-redux"
 import styled from "styled-components"
 import ProductCart from "./ProductCart"
@@ -97,9 +96,8 @@ const Button = styled.button`
 `
 
 function Cart(): JSX.Element {
-    const products: readonly ProductType[] = useSelector(
-        (state: ProductState) => state.products,
-        shallowEqual
+    const { list: products } = useSelector(
+        (state: RootState) => state.products
     )
     return (
         <CartWrapper>

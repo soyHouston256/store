@@ -15,5 +15,5 @@ export const getProducts = async () => {
 
 export const getProduct = async (id: string) => {
     const docSnap = await getDoc(doc(db, "products", id));
-    return docSnap.data()
+    return {id: docSnap.id, ...docSnap.data()}
 }

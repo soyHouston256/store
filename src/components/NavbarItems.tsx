@@ -1,7 +1,8 @@
 import ThemeSwitch from '@/components/ThemeSwitch'
+import { RootState } from '@/store';
 import { ProductState } from '@/type';
 import { ProductType } from '@/types/ProductType';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { shallowEqual } from 'react-redux';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -41,9 +42,8 @@ const NavbarItemsWrapper = styled.ul`
 
 function NavbarItems(): JSX.Element {
 	const [isOpen, setIsOpen] = useState(false)
-	const products: readonly ProductType[] = useSelector(
-		(state: ProductState) => state.products,
-		shallowEqual
+	const { list: products } = useSelector(
+		(state: RootState) => state.products
 	)
 	return (
 		<NavbarItemsWrapper>
