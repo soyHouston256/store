@@ -3,10 +3,14 @@ export interface ProductType {
     name?: string;
     price?: number;
     image?: string;
+    colors?: string[];
+    sizes?: string[];
 }
 
 export interface ProductCartType extends ProductType{
-    quantity?: number
+    quantity?: number;
+    size?: string;
+    color?: string;
 }
 
 export enum ProductCartActionType {

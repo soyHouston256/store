@@ -3,7 +3,7 @@ import styled from "styled-components"
 import LikeButton from "./LikeButton";
 import useProductsById from "@/hooks/useProductById";
 import { ProductCartActionType, ProductCartType } from "@/types/ProductType";
-import { Dispatch, useCallback, useState } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 import { add } from "@/store/slices/products";
 import { useDispatch } from "react-redux";
 
@@ -107,9 +107,26 @@ const ProductModalBody = styled.div`
                         margin-left: -2px;
                         span {
                             border-radius: 50%;
-                            width: 24px;
-                            height: 24px;
-                            background-color: gold;
+                            width: 28px;
+                            height: 28px;
+                            border: 1px solid var(--color-border);
+                            box-sizing: border-box;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            svg {
+                                display: none;
+                                filter: invert(1) brightness(2) grayscale(1);
+                            }
+                            &:hover {
+                                border-color: var(--color-border-dark);
+                            }
+                            &.selected {
+                                svg {
+                                    display: block;
+                                }
+                            }
                         }
                     }
                 }
@@ -130,6 +147,13 @@ const ProductModalBody = styled.div`
                             background-color: var(--color-surface);
                             color: var(--color-text);
                             cursor: pointer;
+                            box-sizing: border-box;
+                            &:hover {
+                                border-color: var(--color-border-dark);
+                            }
+                            &.selected {
+                                border-color: var(--color-accent);
+                            }
                         }
                     }
                 }
@@ -157,6 +181,9 @@ const ProductModalBody = styled.div`
                             color: var(--color-text);
                             cursor: pointer;
                             user-select: none;
+                            &:hover {
+                                border-color: var(--color-border-dark);
+                            }
                         }
                     }
                 }
@@ -193,8 +220,10 @@ const Button = styled.button`
     }
 `
 
-function Product({ }): JSX.Element {
+function Product(): JSX.Element {
     const [quantity, setQuantity] = useState(1)
+    const [color, setColor] = useState<string>()
+    const [size, setSize] = useState<string>()
     const navigate = useNavigate();
     const { id } = useParams()
     const { product } = useProductsById(id!)
@@ -204,12 +233,18 @@ function Product({ }): JSX.Element {
         [dispatch]
     )
 
+    useEffect(() => {
+        setColor(product?.colors![0])
+   }, [product])
+
     const goBack = () => {
         navigate(-1)
     }
 
     const addToCart = () => {
-        addProduct({...product!, quantity})
+        delete product?.sizes
+        delete product?.colors
+        addProduct({...product!, quantity, size, color})
         goBack()
     }
 
@@ -223,7 +258,7 @@ function Product({ }): JSX.Element {
     return (
         <ProductModal>
             <ProductModalWrapper>
-                <ModalOverlay onClick={() => goBack} />
+                <ModalOverlay onClick={goBack} />
                 { product &&
                 <ProductModalBody >
                     <div className="product_image_wrapper">
@@ -241,20 +276,17 @@ function Product({ }): JSX.Element {
                             <section className="colors">
                                 <strong>colores</strong>
                                 <div className="colors_wrapper">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
+                                    {product.colors!.map(c =>
+                                        <span className={c === color ? 'selected' : ''} onClick={() => setColor(c)} style={{ backgroundColor: c }} key={c}>
+                                            <svg style={{ color: c }} width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="M104 196a12.2 12.2 0 0 1-8.5-3.5l-56-56a12 12 0 0 1 17-17L104 167L207.5 63.5a12 12 0 0 1 17 17l-112 112a12.2 12.2 0 0 1-8.5 3.5Z" /></svg>
+                                        </span>
+                                    )}
                                 </div>
                             </section>
                             <section className="sizes">
                                 <strong>tallas</strong>
                                 <div className="sizes_wrapper">
-                                    <span>XS</span>
-                                    <span>S</span>
-                                    <span>M</span>
-                                    <span>L</span>
-                                    <span>XL</span>
+                                   { product.sizes!.map(s => <span className={s === size ? 'selected' : ''} onClick={() => setSize(s)} key={s}>{ s }</span>) }
                                 </div>
                             </section>
                             <section className="quantity">

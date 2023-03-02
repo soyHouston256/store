@@ -1,7 +1,7 @@
 import ThemeSwitch from '@/components/ThemeSwitch'
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { RootState } from '@/store';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Cart from './Cart';
@@ -33,6 +33,9 @@ const NavbarItemsWrapper = styled.ul`
 				display: flex;
 				align-items: center;
 				justify-content: center;
+			}
+			svg {
+				cursor: pointer;
 			}
 		}
 	}

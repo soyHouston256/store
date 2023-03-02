@@ -1,5 +1,6 @@
 import Logo from '@/components/Logo'
 import NavbarItems from '@/components/NavbarItems'
+import { Link } from 'react-router-dom';
 import styled from 'styled-components'
 
 const NavbarWrapper = styled.nav`
@@ -12,10 +13,11 @@ const NavbarWrapper = styled.nav`
 `
 
 function Navbar(): JSX.Element {
-	
 	return (
 		<NavbarWrapper>
-			<Logo />
+			<Link to='/'>
+				<Logo />
+			</Link>
 			<NavbarItems />
 		</NavbarWrapper>
 	)

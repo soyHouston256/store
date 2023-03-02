@@ -8,10 +8,13 @@ const themes: any = {
     color: '#000',
     colorInvert: '#fff',
     accent: '#FF6565',
+    warning: '#f5d46c',
+    warningLight: '#fffaea',
     accentLight: '#FCF7F4',
     surface: '#FFF',
     surfaceLight: '#FFF',
-    border: 'rgba(0,0,0,.05)'
+    border: 'rgba(0,0,0,.05)',
+    borderDark: 'rgba(0,0,0,.08)'
   },
   Dark: {
     background: '#000',
@@ -19,11 +22,14 @@ const themes: any = {
     neutralLight: '#1f1f1f',
     color: '#fff',
     colorInvert: '#000',
+    warning: '#ddbe60',
+    warningLight: '#1c1b18',
     accent: '#f78a76',
     accentLight: '#181818',
     surface: '#2a2a2a',
     surfaceLight: '#1f1f1f',
-    border: 'rgba(255,255,255,.02)'
+    border: 'rgba(255,255,255,.02)',
+    borderDark: 'rgba(255,255,255,.06)'
   }
 }
 export const GlobalStyles = createGlobalStyle`
@@ -47,6 +53,9 @@ export const GlobalStyles = createGlobalStyle`
     --color-surface: ${themes.Light.surface};
     --color-surface-light: ${themes.Light.surfaceLight};
     --color-border: ${themes.Light.border};
+    --color-border-dark: ${themes.Light.borderDark};
+    --color-warning: ${themes.Light.warning};
+    --color-warning-light: ${themes.Light.warningLight};
   }
   .dark-theme {
     --color-background: ${themes.Dark.background};
@@ -59,5 +68,8 @@ export const GlobalStyles = createGlobalStyle`
     --color-surface: ${themes.Dark.surface};
     --color-surface-light: ${themes.Dark.surfaceLight};
     --color-border: ${themes.Dark.border};
+    --color-border-dark: ${themes.Dark.borderDark};
+        --color-warning: ${themes.Dark.warning};
+    --color-warning-light: ${themes.Dark.warningLight};
   }
 `;

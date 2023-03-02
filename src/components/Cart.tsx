@@ -1,5 +1,6 @@
 import { RootState } from "@/store"
 import { useSelector, shallowEqual } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import ProductCart from "./ProductCart"
 
@@ -96,9 +97,13 @@ const Button = styled.button`
 `
 
 function Cart({ innerRef }: { innerRef: any }): JSX.Element {
+    const navigate = useNavigate();
     const { list: products } = useSelector(
         (state: RootState) => state.products
     )
+    const goToOrder = () => {
+        navigate('/cart')
+    }
     return (
         <CartWrapper ref={innerRef}>
             <div className="tip"></div>
@@ -106,12 +111,12 @@ function Cart({ innerRef }: { innerRef: any }): JSX.Element {
                 <div>
                     <h1>Carrito</h1>
                     <ul>
-                        {products.map((product) => <ProductCart product={product} key={product.id} />)}
+                        {products.map((product) => <ProductCart compact={true} product={product} key={product.id} />)}
                     </ul>
                     <div className="go_to_cart">
-                        <Button>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16Zm0 160H40V56h176v144ZM176 88a48 48 0 0 1-96 0a8 8 0 0 1 16 0a32 32 0 0 0 64 0a8 8 0 0 1 16 0Z" /></svg>
-                            <span> Hacer pedido </span>
+                        <Button onClick={goToOrder}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path d="M220 52v152a16 16 0 0 1-16 16h-68.4a8 8 0 0 1 0-16H204V52H52v91.3a8 8 0 0 1-16 0V52a16 16 0 0 1 16-16h152a16 16 0 0 1 16 16Zm-86.3 94.3a8.1 8.1 0 0 0-11.4 0L64 204.7l-26.3-26.4a8.1 8.1 0 0 0-11.4 11.4l32 32a8.2 8.2 0 0 0 11.4 0l64-64a8.1 8.1 0 0 0 0-11.4Z" /></svg>
+                            <span> Verificar pedido </span>
                         </Button>
                     </div>
                 </div>
