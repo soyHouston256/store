@@ -22,14 +22,14 @@ const CartListWrapper = styled.div`
 `
 
 function CartList(): JSX.Element {
-    const { list: products } = useSelector(
+    const { productsCart } = useSelector(
         (state: RootState) => state.products
     )
     return (
         <CartListWrapper>
             <h1>Carrito</h1>
             <ul>
-                {products.map((product) => <ProductCart compact={false} product={product} key={product.id} />)}
+                {productsCart.map((product) => <ProductCart compact={false} product={product} key={product.id} />)}
             </ul>
         </CartListWrapper>
     )

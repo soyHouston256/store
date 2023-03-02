@@ -128,7 +128,7 @@ const DeliveryCard = styled.div`
 
 function CartOrder(): JSX.Element {
     const dispatch: Dispatch<any> = useDispatch()
-    const { list: products } = useSelector(
+    const { productsCart } = useSelector(
         (state: RootState) => state.products
     )
     const { user, total } = useSelector(
@@ -140,19 +140,19 @@ function CartOrder(): JSX.Element {
     )
 
     useEffect(() => {
-        const totalCart = products.reduce(
+        const totalCart = productsCart.reduce(
             (sum, product: ProductCartType) => sum + product.quantity! * product.price!,
             0
         )
         setTotal(totalCart)
-    }, [products])
+    }, [productsCart])
 
     const registerOrder = async () => {
         try {
             const order: OrderType = {
                 id: ID(),
                 user,
-                products,
+                products: productsCart,
                 total
             }
             await useOrderCreate(order)

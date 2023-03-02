@@ -1,5 +1,10 @@
 import Card from '@/components/Card';
 import useProductsList from '@/hooks/useProductsList';
+import { RootState } from '@/store';
+import { all } from '@/store/slices/products';
+import { Dispatch, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from "styled-components"
 
 const ProductsGrid = styled.section`
@@ -12,7 +17,9 @@ const ProductsGrid = styled.section`
 `
 
 function Products(): JSX.Element {
-    const { products } = useProductsList()
+    const { products } = useSelector(
+        (state: RootState) => state.products
+    )
 
     return(
         <ProductsGrid>

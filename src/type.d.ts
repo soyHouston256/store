@@ -1,4 +1,4 @@
-import { ProductCartActionType, ProductCartType } from "./types/ProductType"
+import { ProductCartActionType, ProductCartType, ProductType } from "./types/ProductType"
 import { UserType } from "./types/UserType"
 
 type OrdersState = {
@@ -6,13 +6,18 @@ type OrdersState = {
     total: number
 }
 
-type ProductsCartState = {
-    list: ProductCartType[]
+type ProductsState = {
+    productsCart: ProductCartType[],
+    products: ProductType[]
 }
 
 type ProductCartAction = {
     type: ProductCartActionType
     product: ProductCartType
+}
+
+type ProductsAction = {
+    products: ProductCartType[]
 }
 
 type OrderAction = {
