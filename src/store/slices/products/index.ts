@@ -1,4 +1,3 @@
-import useProductsList from '@/hooks/useProductsList';
 import { ProductCartAction, ProductsAction, ProductsState } from '@/type';
 import { ProductCartActionType, ProductCartType } from '@/types/ProductType';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'

@@ -57,7 +57,6 @@ const Button = styled.button`
     justify-content: center;
     width: 100%;
     padding: 0 25px;
-    margin-left: -2px;
     svg {
         width: 24px;
         height: 24px;
@@ -82,6 +81,7 @@ const StickerCard = styled.div`
     width: 100%;
     border-radius: 4px;
     border: 1px solid var(--color-border);
+    margin-bottom: 4px;
     svg {
         fill: var(--color-warning)
     }
@@ -108,6 +108,7 @@ const DeliveryCard = styled.div`
     width: 100%;
     border-radius: 4px;
     border: 1px solid var(--color-border);
+    margin-top: 4px;
     svg {
         fill: var(--color-accent)
     }

@@ -6,12 +6,13 @@ import { ThemeContext, Theme } from '@/components/context/ThemeContext'
 import { GlobalStyles } from '@/Theme'
 import Home from '@/views/Home'
 import Product from '@/components/Product'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Cart from '@/views/Cart'
 import { useDispatch } from 'react-redux'
 import { addAllProducts } from './store/slices/products'
 import useProductsList from './hooks/useProductsList'
 import { ProductType } from './types/ProductType'
+import store from './store'
 
 function App() {
   const [theme, setTheme] = useState(Theme.Light);
@@ -28,6 +29,8 @@ function App() {
     setProducts(products)
   }, [products])
 
+  const isCartNotEmpty = () => store.getState().products.productsCart.length 
+  
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <GlobalStyles />
@@ -36,12 +39,12 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="/product/:id" element={<Product />} />
           </Route>
-          <Route path="/cart" element={<Cart />}>
+          <Route path="/cart" element={isCartNotEmpty()? <Cart /> : <Navigate to='/' />}>
           </Route>
         </Routes>
         {background && (
           <Routes>
-            <Route path="modal" element={<Product />} />
+            <Route path="/product/:id" element={<Product />} />
           </Routes>
         )}
       </div>
