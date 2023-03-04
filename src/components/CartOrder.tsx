@@ -4,10 +4,12 @@ import { updateTotal } from "@/store/slices/orders"
 import { OrderType } from "@/types/OrderType"
 import { ProductCartType } from "@/types/ProductType"
 import { ID } from "@/utils/helpers"
-import { Dispatch, useCallback, useEffect } from "react"
+import { Dispatch, useCallback, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
+import { useLocalStorage } from "usehooks-ts"
 
 const CartOrderWrapper = styled.div`
     background-color: var(--color-neutral);
@@ -71,6 +73,14 @@ const Button = styled.button`
         font-size: var(--font-size-text);
         letter-spacing: .01rem;
     }
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid var(--color-text-invert);
+        border-bottom: 2px solid transparent;
+        animation: spinner .3s ease-in infinite;
+    }
 `
 
 const StickerCard = styled.div`
@@ -127,7 +137,10 @@ const DeliveryCard = styled.div`
     }
 `
 
-function CartOrder(): JSX.Element {
+function CartOrder({ setTrigger }: any): JSX.Element {
+    const navigate = useNavigate()
+    const [order, setOrder] = useLocalStorage('order', '')
+    const [loading, setLoading] = useState(false)
     const dispatch: Dispatch<any> = useDispatch()
     const { productsCart } = useSelector(
         (state: RootState) => state.products
@@ -148,8 +161,15 @@ function CartOrder(): JSX.Element {
         setTotal(totalCart)
     }, [productsCart])
 
+    const openWhastapp = (code: string) => {
+        window.open(`https://api.whatsapp.com/send?phone=51980687918&text=%F0%9F%91%8B%20Hola,%20realic%C3%A9%20un%20pedido%20con%20el%20c%C3%B3digo%20%20*${code}*%20en%20la%20tienda%20de%20hooks.pe%20`)
+    }
+
     const registerOrder = async () => {
+        setTrigger(true)
+        if (!user.dni || !user.name || !user.phone) return
         try {
+            setLoading(true)
             const order: OrderType = {
                 id: ID(),
                 user,
@@ -157,7 +177,9 @@ function CartOrder(): JSX.Element {
                 total
             }
             await useOrderCreate(order)
-            console.log(order)
+            setOrder(order.id!)
+            openWhastapp(order.id!)
+            navigate('/done')
         } catch (err) {
             console.error(err)
         }
@@ -188,10 +210,17 @@ function CartOrder(): JSX.Element {
                         </div>
                     </StickerCard>
                 </li>
-                <Button onClick={registerOrder}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16Zm0 160H40V56h176v144ZM176 88a48 48 0 0 1-96 0a8 8 0 0 1 16 0a32 32 0 0 0 64 0a8 8 0 0 1 16 0Z" /></svg>
-                    <span> Confirmar pedido </span>
-                </Button>
+                {!loading &&
+                    <Button onClick={registerOrder}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16Zm0 160H40V56h176v144ZM176 88a48 48 0 0 1-96 0a8 8 0 0 1 16 0a32 32 0 0 0 64 0a8 8 0 0 1 16 0Z" /></svg>
+                        <span> Confirmar pedido </span>
+                    </Button>
+                }
+                {loading &&
+                    <Button>
+                        <div className="spinner"></div>
+                    </Button>
+                }
             </ul>
         </CartOrderWrapper>
     )

@@ -3,6 +3,7 @@ import { ProductCartActionType, ProductCartType, ProductType } from "@/types/Pro
 import { Dispatch, useCallback } from "react"
 import { useDispatch } from "react-redux"
 import styled from "styled-components"
+import TShirt from "./TShirt"
 
 const ProductCartWrapper = styled.li`
     display: flex;
@@ -17,7 +18,7 @@ const ProductCartWrapper = styled.li`
     &:last-child {
         border-bottom: none;
     }
-    img {
+    picture {
         width: 56px;
     }
     .product_cart_content {
@@ -68,7 +69,7 @@ const ProductCartWrapper = styled.li`
     }
     &.compact {
         gap: 10px;
-        img {
+        picture {
             width: 32px;
         }
     }
@@ -123,7 +124,8 @@ function ProductCart({ product, compact = false }: { product: ProductCartType, c
 
     return (
         <ProductCartWrapper className={compact ? 'compact' : ''} >
-            <img src={product.image} />
+            {/* <img src={product.image} /> */}
+            <TShirt image={product.image!} color={product.color!} />
             <div className="product_cart_content">
                 <div className="product_cart_detail">
                     <b>S/ {product.price}</b>

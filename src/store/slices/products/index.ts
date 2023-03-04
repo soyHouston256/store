@@ -16,6 +16,8 @@ export const productsSlice = createSlice({
                 if (type === ProductCartActionType.SUM) itemInCart.quantity! += product.quantity!
                 if (type === ProductCartActionType.ADD) itemInCart.quantity! += 1;
             } else {
+                delete product?.sizes
+                delete product?.colors
                 state.productsCart.push({ ...product, quantity: product.quantity || 1 });
             }
         },

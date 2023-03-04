@@ -4,6 +4,7 @@ import CartOrder from "@/components/CartOrder"
 import { Outlet } from "react-router-dom"
 import styled from "styled-components"
 import CartClient from "@/components/CartClient"
+import { useState } from "react"
 
 const CartWrapper = styled.section`
     display: grid;
@@ -20,16 +21,17 @@ const CartCol = styled.div`
 `
 
 function Cart(): JSX.Element {
-    
+    const [trigger, setTrigger] = useState(false)
+
     return (
         <div>
             <Navbar />
             <CartWrapper>
                 <CartCol>
                     <CartList />
-                    <CartClient />
+                    <CartClient trigger={trigger} />
                 </CartCol>
-                <CartOrder />
+                <CartOrder setTrigger={setTrigger} />
             </CartWrapper>
             <Outlet />
         </div>

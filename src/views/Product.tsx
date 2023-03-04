@@ -1,11 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components"
-import LikeButton from "./LikeButton";
+import LikeButton from "../components/LikeButton";
 import useProductsById from "@/hooks/useProductById";
 import { ProductCartActionType, ProductCartType } from "@/types/ProductType";
 import { Dispatch, useCallback, useEffect, useState } from "react";
 import { addToCart } from "@/store/slices/products";
 import { useDispatch } from "react-redux";
+import TShirt from "@/components/TShirt";
 
 const ProductModal = styled.div`
     position: fixed;
@@ -47,15 +48,6 @@ const ProductModalBody = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        .product_image {
-            image-rendering: -moz-crisp-edges;
-            image-rendering: -o-crisp-edges;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            -ms-interpolation-mode: nearest-neighbor;
-            max-width: 400px;
-            width: 400px;
-        }
     }
     .product_detail {
         background-color: var(--color-accent-light);
@@ -94,11 +86,28 @@ const ProductModalBody = styled.div`
                     text-transform: uppercase;
                     letter-spacing: .03rem;
                     font-weight: 600;
-                    font-size: 11px;
+                    font-size: 12px;
                     display: block;
                     margin-bottom: 8px;
                     opacity: .5;
                     color: var(--color-text);
+                    position: relative;
+                    width: fit-content;
+                    .error {
+                        display: none;
+                        position: absolute;
+                        left: calc(100% + 5px);
+                        top: -2px;
+                    }
+                    &.required {
+                        opacity: 1;
+                        .error {
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                            color: var(--color-error);
+                        }
+                    }
                 }
                 &.colors {
                     .colors_wrapper {
@@ -154,6 +163,7 @@ const ProductModalBody = styled.div`
                             &.selected {
                                 border-color: var(--color-accent);
                             }
+                            
                         }
                     }
                 }
@@ -222,6 +232,7 @@ const Button = styled.button`
 
 function Product(): JSX.Element {
     const [quantity, setQuantity] = useState(1)
+    const [trigger, setTrigger] = useState(false)
     const [color, setColor] = useState<string>()
     const [size, setSize] = useState<string>()
     const navigate = useNavigate();
@@ -242,17 +253,18 @@ function Product(): JSX.Element {
     }
 
     const productAddToCart = () => {
-        delete product?.sizes
-        delete product?.colors
-        setProduct({...product!, quantity, size, color})
-        goBack()
+        setTrigger(true)
+        if (size) {
+            setProduct({ ...product!, quantity, size, color })
+            goBack()
+        }
     }
 
     const increment = () => {
         setQuantity(quantity + 1)
     }
     const decrement = () => {
-        setQuantity(quantity - 1)
+        if (quantity > 1) setQuantity(quantity - 1)
     }
 
     return (
@@ -262,7 +274,7 @@ function Product(): JSX.Element {
                 { product &&
                 <ProductModalBody >
                     <div className="product_image_wrapper">
-                        <img className="product_image" src={product.image} />
+                        <TShirt image={product.image!} color={color!}/>
                     </div>
                     <div className="product_detail">
                         <div className="product_detail_wrapper">
@@ -284,7 +296,13 @@ function Product(): JSX.Element {
                                 </div>
                             </section>
                             <section className="sizes">
-                                <strong>tallas</strong>
+                                <strong className={!size && trigger ? 'required' : ''} >
+                                        tallas
+                                        <div className="error">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.1 108.1 0 0 0 128 20Zm0 192a84 84 0 1 1 84-84a84.1 84.1 0 0 1-84 84Zm-12-80V80a12 12 0 0 1 24 0v52a12 12 0 0 1-24 0Zm28 40a16 16 0 1 1-16-16a16 16 0 0 1 16 16Z" /></svg>
+                                            requerido
+                                        </div>
+                                </strong>
                                 <div className="sizes_wrapper">
                                    { product.sizes!.map(s => <span className={s === size ? 'selected' : ''} onClick={() => setSize(s)} key={s}>{ s }</span>) }
                                 </div>

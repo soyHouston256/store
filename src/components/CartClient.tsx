@@ -5,6 +5,7 @@ import { Dispatch, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import styled from "styled-components"
+import { withMask } from 'use-mask-input';
 
 const CartClientWrapper = styled.div`
     background-color: var(--color-neutral);
@@ -36,7 +37,23 @@ const CartClientWrapper = styled.div`
                 font-weight: 600;
                 font-size: 12px;
                 display: block;
-                color: var(--color-text)
+                color: var(--color-text);
+                position: relative;
+                width: fit-content;
+                .error {
+                    display: none;
+                    position: absolute;
+                    left: calc(100% + 5px);
+                    top: -1px;
+                }
+                &.required {
+                    .error {
+                        display: flex;
+                        align-items: center;
+                        gap: 2px;
+                        color: var(--color-error);
+                    }
+                }
             }
             input {
                 height: 42px;
@@ -54,7 +71,7 @@ const CartClientWrapper = styled.div`
     }
 `
 
-function CartClient(): JSX.Element {
+function CartClient({ trigger }: any): JSX.Element {
     const dispatch: Dispatch<any> = useDispatch()
 
     const { user } = useSelector(
@@ -72,10 +89,17 @@ function CartClient(): JSX.Element {
             <h1>Datos</h1>
             <div className="cart_client_form">
                 <fieldset>
-                    <label>DNI</label>
+                    <label className={!user.dni && trigger ? 'required' : ''}>
+                        DNI
+                        <div className="error">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.1 108.1 0 0 0 128 20Zm0 192a84 84 0 1 1 84-84a84.1 84.1 0 0 1-84 84Zm-12-80V80a12 12 0 0 1 24 0v52a12 12 0 0 1-24 0Zm28 40a16 16 0 1 1-16-16a16 16 0 0 1 16 16Z" /></svg>
+                            requerido
+                        </div>
+                    </label>
                     <input
                         type="text"
                         placeholder="ejem: 71010101"
+                        ref={withMask('99999999')}
                         value={user.dni}
                         onChange={(event) => {
                             setUser({dni: event.target.value});
@@ -83,7 +107,13 @@ function CartClient(): JSX.Element {
                     />
                 </fieldset>
                 <fieldset>
-                    <label>Nombres y Apellidos</label>
+                    <label className={!user.name && trigger ? 'required' : ''}>
+                        Nombres y Apellidos
+                        <div className="error">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.1 108.1 0 0 0 128 20Zm0 192a84 84 0 1 1 84-84a84.1 84.1 0 0 1-84 84Zm-12-80V80a12 12 0 0 1 24 0v52a12 12 0 0 1-24 0Zm28 40a16 16 0 1 1-16-16a16 16 0 0 1 16 16Z" /></svg>
+                            requerido
+                        </div>
+                    </label>
                     <input
                         type="text"
                         placeholder="ejem: Juan Perez Rodriguez"
@@ -94,10 +124,17 @@ function CartClient(): JSX.Element {
                     />
                 </fieldset>
                 <fieldset>
-                    <label>Celular</label>
+                    <label className={!user.phone && trigger ? 'required' : ''}>
+                        Celular
+                        <div className="error">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.1 108.1 0 0 0 128 20Zm0 192a84 84 0 1 1 84-84a84.1 84.1 0 0 1-84 84Zm-12-80V80a12 12 0 0 1 24 0v52a12 12 0 0 1-24 0Zm28 40a16 16 0 1 1-16-16a16 16 0 0 1 16 16Z" /></svg>
+                            requerido
+                        </div>
+                    </label>
                     <input
                         type="text"
                         placeholder="ejem: 999222333"
+                        ref={withMask('999-999-999')}
                         value={user.phone}
                         onChange={(event) => {
                             setUser({ phone: event.target.value });

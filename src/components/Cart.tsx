@@ -13,7 +13,7 @@ const CartWrapper = styled.section`
     min-width: 360px;
     z-index: 5;
     border-radius: var(--radius);
-	box-shadow: var(--shadow);
+	box-shadow: var(--shadow-dark);
     .tip {
         position: absolute;
         top: -10px;

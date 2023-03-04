@@ -14,7 +14,8 @@ const themes: any = {
     surface: '#FFF',
     surfaceLight: '#FFF',
     border: 'rgba(0,0,0,.05)',
-    borderDark: 'rgba(0,0,0,.08)'
+    borderDark: 'rgba(0,0,0,.08)',
+    error: '#ca4a4a'
   },
   Dark: {
     background: '#000',
@@ -29,7 +30,8 @@ const themes: any = {
     surface: '#2a2a2a',
     surfaceLight: '#1f1f1f',
     border: 'rgba(255,255,255,.02)',
-    borderDark: 'rgba(255,255,255,.06)'
+    borderDark: 'rgba(255,255,255,.06)',
+    error: '#c44747'
   }
 }
 export const GlobalStyles = createGlobalStyle`
@@ -43,6 +45,7 @@ export const GlobalStyles = createGlobalStyle`
     --radius: 16px;
     --radius-xl: 32px;
     --shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
+    --shadow-dark: 0px 4px 20px rgba(0, 0, 0, 0.04);
     --color-background: ${themes.Light.background};
     --color-accent-light: ${themes.Light.accentLight};
     --color-accent: ${themes.Light.accent};
@@ -56,6 +59,7 @@ export const GlobalStyles = createGlobalStyle`
     --color-border-dark: ${themes.Light.borderDark};
     --color-warning: ${themes.Light.warning};
     --color-warning-light: ${themes.Light.warningLight};
+    --color-error: ${themes.Light.error};
   }
   .dark-theme {
     --color-background: ${themes.Dark.background};
@@ -71,5 +75,6 @@ export const GlobalStyles = createGlobalStyle`
     --color-border-dark: ${themes.Dark.borderDark};
         --color-warning: ${themes.Dark.warning};
     --color-warning-light: ${themes.Dark.warningLight};
+    --color-error: ${themes.Dark.error};
   }
 `;

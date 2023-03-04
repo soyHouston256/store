@@ -2,6 +2,7 @@ import styled from "styled-components"
 import LikeButton from "@/components/LikeButton"
 import { useNavigate } from "react-router-dom";
 import { ProductType } from "@/types/ProductType";
+import TShirt from "./TShirt";
 
 const CardWrapper = styled.section`
 	display: flex;
@@ -23,10 +24,13 @@ const CardImage = styled.section`
 	width: 100%;
 	background-color: var(--color-neutral);
 	div {
-		width:80%;
-		height: 80%;
-		img{
-			padding-top: 1rem;
+		width: 60%;
+		height: auto;
+		margin-top: 1rem;
+		picture {
+			width: 100%;
+		}
+		/* img{
 			object-fit: contain;
 			width:100%;
 			height: 100%;
@@ -38,7 +42,7 @@ const CardImage = styled.section`
 			image-rendering: crisp-edges;
 			-ms-interpolation-mode: nearest-neighbor;
 			cursor: pointer;
-		}
+		} */
 	}
 `
 const CardInfo = styled.section`
@@ -70,7 +74,8 @@ function Card({ product }: {product: ProductType}): JSX.Element {
 			<LikeButton />
 			<CardImage onClick={() => goToProduct(product.id!)}>
 				<div>
-					<img src={product.image} />
+					<TShirt image={product.image!} color={product.colors![0]!} />
+					{/* <img src={product.image} /> */}
 				</div>
 			</CardImage>
 			<CardInfo>

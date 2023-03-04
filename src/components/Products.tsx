@@ -1,10 +1,6 @@
 import Card from '@/components/Card';
-import useProductsList from '@/hooks/useProductsList';
 import { RootState } from '@/store';
-import { all } from '@/store/slices/products';
-import { Dispatch, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
 import styled from "styled-components"
 
 const ProductsGrid = styled.section`
