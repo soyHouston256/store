@@ -15,8 +15,10 @@ import { ProductType } from './types/ProductType'
 import store, { RootState } from './store'
 import { useSelector } from 'react-redux'
 import Done from './views/Done'
+import { useReadLocalStorage } from 'usehooks-ts'
 
 function App() {
+  const orderId = useReadLocalStorage<string>('order')
   const [theme, setTheme] = useState(Theme.Light);
   const location = useLocation();
   const background = location.state && location.state.background;
@@ -45,7 +47,7 @@ function App() {
           </Route>
           <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
           </Route>
-          <Route path="/done" element={<Done />} >
+          <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
           </Route>
         </Routes>
         {background && (

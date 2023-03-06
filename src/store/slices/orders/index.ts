@@ -20,9 +20,16 @@ export const ordersSlice = createSlice({
         updateTotal(state, action: PayloadAction<OrderAction>) {
             const { total } = action.payload
             state.total = total!
+        },
+        removeUser(state) {
+            state.user = {
+                dni: '',
+                name: '',
+                phone: ''
+            }
         }
     }
 })
 
-export const { updateUser, updateTotal } = ordersSlice.actions
+export const { updateUser, updateTotal, removeUser } = ordersSlice.actions
 export default ordersSlice.reducer

@@ -79,29 +79,43 @@ const ProductCartDetailExtra = styled.div`
     margin-top: 4px;
     display: flex;
     gap: 10px;
-    span.size {
-        border-radius: 4px;
-        width: 22px;
-        height: 22px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid var(--color-border);
-        font-size: 12px;
-        font-weight: 600;
-        background-color: var(--color-surface);
-        color: var(--color-text);
+    span {
+        &.size {
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--color-border);
+            font-size: 12px;
+            font-weight: 600;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+        }
+        &.color {
+            border-radius: 50%;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            border: 1px solid var(--color-border);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
-    span.color {
-        border-radius: 50%;
-        border-radius: 4px;
-        width: 22px;
-        height: 22px;
-        border: 1px solid var(--color-border);
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    &.compact {
+        span {
+            &.size {
+                width: 16px;
+                height: 16px;
+            }
+            &.color {
+                width: 16px;
+                height: 16px;
+            }
+        }
     }
 `
 
@@ -130,12 +144,10 @@ function ProductCart({ product, compact = false }: { product: ProductCartType, c
                 <div className="product_cart_detail">
                     <b>S/ {product.price}</b>
                     <p>{product.name}</p>
-                    {!compact &&
-                        <ProductCartDetailExtra>
-                            <span title="Talla" className="size">{product.size}</span>
-                            <span title="Color" className="color" style={{ backgroundColor: product.color }}></span>
-                        </ProductCartDetailExtra>
-                    }
+                    <ProductCartDetailExtra className={compact ? 'compact' : ''}>
+                        <span title="Talla" className="size">{product.size}</span>
+                        <span title="Color" className="color" style={{ backgroundColor: product.color }}></span>
+                    </ProductCartDetailExtra>
                 </div>
                 <div className="product_cart_quantity">
                     <span onClick={ decrement }> { product.quantity! > 1 ? '-' : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="M216 48h-36V36a28.1 28.1 0 0 0-28-28h-48a28.1 28.1 0 0 0-28 28v12H40a12 12 0 0 0 0 24h4v136a20.1 20.1 0 0 0 20 20h128a20.1 20.1 0 0 0 20-20V72h4a12 12 0 0 0 0-24ZM100 36a4 4 0 0 1 4-4h48a4 4 0 0 1 4 4v12h-56Zm88 168H68V72h120Zm-72-100v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Zm48 0v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Z"/></svg> } </span>

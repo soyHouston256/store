@@ -11,7 +11,7 @@ export const productsSlice = createSlice({
     reducers: {
         addToCart(state, action: PayloadAction<ProductCartAction>) {
             const { product, type } = action.payload
-            const itemInCart = state.productsCart.find((item) => item.id === product.id);
+            const itemInCart = state.productsCart.find((item) => item.id === product.id && item.color == product.color && item.size === product.size);
             if (itemInCart) {
                 if (type === ProductCartActionType.SUM) itemInCart.quantity! += product.quantity!
                 if (type === ProductCartActionType.ADD) itemInCart.quantity! += 1;
@@ -31,10 +31,13 @@ export const productsSlice = createSlice({
         },
         addAllProducts(state, action: PayloadAction<ProductsAction>) { 
             state.products = action.payload.products
+        },
+        removeAllProducts(state) {
+            state.productsCart = []
         }
     }
 })
 
-export const { addToCart, removeFromCart, addAllProducts } = productsSlice.actions
+export const { addToCart, removeFromCart, addAllProducts, removeAllProducts } = productsSlice.actions
 
 export default productsSlice.reducer
