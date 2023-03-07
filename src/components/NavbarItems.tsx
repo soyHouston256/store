@@ -45,7 +45,7 @@ function NavbarItems(): JSX.Element {
 	const cartRef = useRef(null);
 	const [isOpen, setIsOpen] = useState(false)
 	const { productsCart } = useSelector(
-		(state: RootState) => state.products
+		(state: RootState) => state.cart
 	)
 	useOnClickOutside(cartRef, () => setIsOpen(false))
 	return (

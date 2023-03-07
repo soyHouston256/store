@@ -113,7 +113,7 @@ const Button = styled.button`
 function Cart({ innerRef }: { innerRef: any }): JSX.Element {
     const navigate = useNavigate();
     const { productsCart } = useSelector(
-        (state: RootState) => state.products
+        (state: RootState) => state.cart
     )
     const goToOrder = () => {
         navigate('/cart')

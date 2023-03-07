@@ -7,9 +7,12 @@ type OrdersState = {
 }
 
 type ProductsState = {
-    productsCart: ProductCartType[],
     products: ProductType[]
     productsFiltered: ProductType[]
+}
+
+type ProductsCartState = {
+    productsCart: ProductCartType[],
 }
 
 type ProductCartAction = {

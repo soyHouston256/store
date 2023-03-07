@@ -47,7 +47,7 @@ const CartEmpty = styled.div`
 
 function CartList(): JSX.Element {
     const { productsCart } = useSelector(
-        (state: RootState) => state.products
+        (state: RootState) => state.cart
     )
     return (
         <CartListWrapper>

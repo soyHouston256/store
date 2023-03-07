@@ -17,47 +17,48 @@ import { useSelector } from 'react-redux'
 import Done from './views/Done'
 import { useReadLocalStorage } from 'usehooks-ts'
 
+
 function App() {
-  const orderId = useReadLocalStorage<string>('order')
-  const [theme, setTheme] = useState(Theme.Light);
-  const location = useLocation();
-  const background = location.state && location.state.background;
-  const dispatch: Dispatch<any> = useDispatch()
-  const setProducts = useCallback(
-    (products: ProductType[]) => dispatch(addAllProducts({ products })),
-    [dispatch]
-  )
+    const orderId = useReadLocalStorage<string>('order')
+    const [theme, setTheme] = useState(Theme.Light);
+    const location = useLocation();
+    const background = location.state && location.state.background;
+    const dispatch: Dispatch<any> = useDispatch()
+    const setProducts = useCallback(
+        (products: ProductType[]) => dispatch(addAllProducts({ products })),
+        [dispatch]
+    )
 
-  const { products } = useProductsList()
-  useEffect(() => {
-    setProducts(products)
-  }, [products])
+    const { products } = useProductsList()
+    useEffect(() => {
+        setProducts(products)
+    }, [products])
 
-  const { productsCart } = useSelector(
-    (state: RootState) => state.products
-  )
-  
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      <GlobalStyles />
-      <div className="App">
-        <Routes location={background || location}>
-          <Route path="/" element={<Home />}>
-            <Route path="/product/:id" element={<Product />} />
-          </Route>
-          <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
-          </Route>
-          <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
-          </Route>
-        </Routes>
-        {background && (
-          <Routes>
-            <Route path="/product/:id" element={<Product />} />
-          </Routes>
-        )}
-      </div>
-    </ThemeContext.Provider>
-  )
+    const { productsCart } = useSelector(
+        (state: RootState) => state.cart
+    )
+
+    return (
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+            <GlobalStyles />
+            <div className="App">
+                <Routes location={background || location}>
+                    <Route path="/" element={<Home />}>
+                        <Route path="/product/:id" element={<Product />} />
+                    </Route>
+                    <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
+                    </Route>
+                    <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
+                    </Route>
+                </Routes>
+                {background && (
+                    <Routes>
+                        <Route path="/product/:id" element={<Product />} />
+                    </Routes>
+                )}
+            </div>
+        </ThemeContext.Provider>
+    )
 }
 
 export default App

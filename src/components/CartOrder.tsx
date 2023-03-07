@@ -1,7 +1,7 @@
 import useOrderCreate from "@/hooks/useOrderCreate"
 import { RootState } from "@/store"
 import { removeUser, updateTotal } from "@/store/slices/orders"
-import { removeAllProducts } from "@/store/slices/products"
+import { removeAllProducts } from "@/store/slices/products/cart"
 import { OrderType } from "@/types/OrderType"
 import { ProductCartType } from "@/types/ProductType"
 import { ID } from "@/utils/helpers"
@@ -145,7 +145,7 @@ function CartOrder({ setTrigger }: any): JSX.Element {
     const [loading, setLoading] = useState(false)
     const dispatch: Dispatch<any> = useDispatch()
     const { productsCart } = useSelector(
-        (state: RootState) => state.products
+        (state: RootState) => state.cart
     )
     const { user, total } = useSelector(
         (state: RootState) => state.orders

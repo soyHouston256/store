@@ -4,7 +4,7 @@ import LikeButton from "../components/LikeButton";
 import useProductsById from "@/hooks/useProductById";
 import { ProductCartActionType, ProductCartType } from "@/types/ProductType";
 import { Dispatch, useCallback, useEffect, useState } from "react";
-import { addToCart } from "@/store/slices/products";
+import { addToCart } from "@/store/slices/products/cart";
 import { useDispatch } from "react-redux";
 import TShirt from "@/components/TShirt";
 
