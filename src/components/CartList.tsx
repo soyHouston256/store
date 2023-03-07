@@ -53,7 +53,7 @@ function CartList(): JSX.Element {
         <CartListWrapper>
             {productsCart.length > 0 && <h1>Carrito</h1> }
             <ul>
-                {productsCart.map((product) => <ProductCart compact={false} product={product} key={product.id} />)}
+                {productsCart.map((product) => <ProductCart compact={false} product={product} key={product._id} />)}
             </ul>
             {!productsCart.length &&
                 <CartEmpty>
