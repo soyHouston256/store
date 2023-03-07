@@ -6,7 +6,8 @@ export const productsSlice = createSlice({
     name: "products",
     initialState: {
         productsCart: [],
-        products: []
+        products: [],
+        productsFiltered: []
     } as ProductsState,
     reducers: {
         addToCart(state, action: PayloadAction<ProductCartAction>) {
@@ -30,14 +31,19 @@ export const productsSlice = createSlice({
             }
         },
         addAllProducts(state, action: PayloadAction<ProductsAction>) { 
-            state.products = action.payload.products
+            state.products = action.payload.products!
+            state.productsFiltered = action.payload.products!
         },
         removeAllProducts(state) {
             state.productsCart = []
+        },
+        filterProducts(state, action: PayloadAction<ProductsAction>) {
+            const term = action.payload.term
+            state.productsFiltered = state.products.filter(p => p.name?.toLowerCase().includes(term!.toLowerCase()))
         }
     }
 })
 
-export const { addToCart, removeFromCart, addAllProducts, removeAllProducts } = productsSlice.actions
+export const { addToCart, removeFromCart, addAllProducts, removeAllProducts, filterProducts } = productsSlice.actions
 
 export default productsSlice.reducer

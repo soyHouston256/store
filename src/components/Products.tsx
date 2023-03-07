@@ -29,13 +29,13 @@ const ProductsGrid = styled.section`
 `
 
 function Products(): JSX.Element {
-    const { products } = useSelector(
+    const { productsFiltered } = useSelector(
         (state: RootState) => state.products
     )
 
     return(
         <ProductsGrid>
-            { products.map((product) => <Card key={product.id} product={product} />)}
+            { productsFiltered.map((product) => <Card key={product.id} product={product} />) }
         </ProductsGrid>
     )
 }

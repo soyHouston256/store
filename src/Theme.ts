@@ -49,7 +49,7 @@ export const GlobalStyles = createGlobalStyle`
     --radius: 16px;
     --radius-xl: 32px;
     --shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
-    --shadow-dark: 0px 4px 20px rgba(0, 0, 0, 0.04);
+    --shadow-dark: 0px 4px 25px rgba(0, 0, 0, 0.04);
     --color-background: ${themes.Light.background};
     --color-accent-light: ${themes.Light.accentLight};
     --color-accent: ${themes.Light.accent};
