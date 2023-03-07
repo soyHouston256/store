@@ -7,6 +7,7 @@ import { Dispatch, useCallback, useEffect, useState } from "react";
 import { addToCart } from "@/store/slices/products/cart";
 import { useDispatch } from "react-redux";
 import TShirt from "@/components/TShirt";
+import LikeProduct from "@/components/LikeProduct";
 
 const ProductModal = styled.div`
     position: fixed;
@@ -315,7 +316,7 @@ function Product(): JSX.Element {
                                     <h1>{ product.name }</h1>
                                     <h2>S/ {product.price}</h2>
                                 </div>
-                                <LikeButton />
+                                <LikeProduct product={product}/>
                             </div>
                             <section className="colors">
                                 <strong>colores</strong>

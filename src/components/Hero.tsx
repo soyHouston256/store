@@ -112,7 +112,7 @@ const Button = styled.button`
 	align-items: center;
 	justify-content: center;
 	width: fit-content;
-	padding: 0 25px;
+	padding: 0 20px;
 	&:before {
 		content: "";
 		position: absolute;

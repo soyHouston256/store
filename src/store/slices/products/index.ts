@@ -8,6 +8,14 @@ export const productsSlice = createSlice({
         productsFiltered: []
     } as ProductsState,
     reducers: {
+        updateProduct(state, action: PayloadAction<ProductsAction>) {
+            const { product } = action.payload
+            const item = state.products.find((item) => item.id === product?.id);
+            if (item) {
+                item.likes = product?.likes
+                state.productsFiltered = state.products
+            }
+        },
         addAllProducts(state, action: PayloadAction<ProductsAction>) { 
             state.products = action.payload.products!
             state.productsFiltered = action.payload.products!
@@ -19,6 +27,6 @@ export const productsSlice = createSlice({
     }
 })
 
-export const { addAllProducts, filterProducts } = productsSlice.actions
+export const { addAllProducts, filterProducts, updateProduct } = productsSlice.actions
 
 export default productsSlice.reducer

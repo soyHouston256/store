@@ -5,6 +5,9 @@ type OrdersState = {
     user: UserType
     total: number
 }
+type LikesState = {
+    likedList: string[]
+}
 
 type ProductsState = {
     products: ProductType[]
@@ -21,8 +24,13 @@ type ProductCartAction = {
 }
 
 type ProductsAction = {
-    products?: ProductCartType[],
+    products?: ProductType[],
+    product?: ProductType,
     term?: string
+}
+
+type LikesAction = {
+    like?: string,
 }
 
 type OrderAction = {

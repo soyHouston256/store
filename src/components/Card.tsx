@@ -1,8 +1,9 @@
 import styled from "styled-components"
-import LikeButton from "@/components/LikeButton"
+import LikeProduct from "@/components/LikeProduct"
 import { useNavigate } from "react-router-dom";
 import { ProductType } from "@/types/ProductType";
 import TShirt from "./TShirt";
+
 
 const CardWrapper = styled.section`
 	display: flex;
@@ -58,20 +59,18 @@ const CardInfo = styled.section`
 	}
 `
 
-function Card({ product }: {product: ProductType}): JSX.Element {
-    const navigate = useNavigate();
-
+function Card({ product }: { product: ProductType }): JSX.Element {
+	const navigate = useNavigate();
 	const goToProduct = (id: string) => {
 		navigate(`product/${id}`)
 	}
-
+	
 	return (
 		<CardWrapper >
-			<LikeButton />
+			<LikeProduct product={product} />
 			<CardImage onClick={() => goToProduct(product.id!)}>
 				<div>
 					<TShirt image={product.image!} color={product.colors![0]!} />
-					{/* <img src={product.image} /> */}
 				</div>
 			</CardImage>
 			<CardInfo>

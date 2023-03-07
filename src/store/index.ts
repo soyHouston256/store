@@ -1,6 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import products from './slices/products'
 import cart from './slices/products/cart'
+import likes from './slices/products/likes'
 import orders from './slices/orders'
 import {
     persistReducer,
@@ -18,7 +19,7 @@ const persistConfig = {
     blacklist: ['orders', 'products'],
     storage,
 }
-const reducers = combineReducers({cart, products, orders})
+const reducers = combineReducers({cart, likes, products, orders})
 const persistedReducer = persistReducer(persistConfig, reducers)
 
 const store = configureStore({

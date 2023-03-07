@@ -5,6 +5,7 @@ export interface ProductType {
     image?: string;
     colors?: string[];
     sizes?: string[];
+    likes?: number;
 }
 
 export interface ProductCartType extends ProductType{
