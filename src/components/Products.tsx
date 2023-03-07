@@ -2,6 +2,7 @@ import Card from '@/components/Card';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
 import styled from "styled-components"
+import CardShimmer from './CardShimmer';
 
 const ProductsGrid = styled.section`
     display: grid;
@@ -35,7 +36,15 @@ function Products(): JSX.Element {
 
     return(
         <ProductsGrid>
-            { productsFiltered.map((product) => <Card key={product.id} product={product} />) }
+            {productsFiltered.map((product) => <Card key={product.id} product={product} />)}
+            { !productsFiltered.length &&
+                <>
+                    <CardShimmer />
+                    <CardShimmer />
+                    <CardShimmer />
+                    <CardShimmer />
+                </>
+            }
         </ProductsGrid>
     )
 }
