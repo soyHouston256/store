@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 function Home(): JSX.Element {
     return (
         <div>
-            <Navbar />
+            {/* <Navbar /> */}
             <Hero />
             <SearchBox />
             <Products />

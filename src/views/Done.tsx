@@ -108,7 +108,7 @@ function Done(): JSX.Element {
     const orderId = useReadLocalStorage<string>('order')
     return (
         <div>
-            <Navbar />
+            {/* <Navbar /> */}
             <DoneWrapper>
                 <div className="done_content">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256"><path  d="m221.4 69.3l-16-32A6 6 0 0 0 200 34H56a6 6 0 0 0-5.4 3.3l-16 32A6.3 6.3 0 0 0 34 72v136a14 14 0 0 0 14 14h160a14 14 0 0 0 14-14V72a6.3 6.3 0 0 0-.6-2.7ZM59.7 46h136.6l10 20H49.7ZM208 210H48a2 2 0 0 1-2-2V78h164v130a2 2 0 0 1-2 2Zm-41.8-64.2a6.1 6.1 0 0 1 0 8.5l-34 33.9a5.8 5.8 0 0 1-8.4 0l-34-33.9a6 6 0 0 1 8.5-8.5l23.7 23.7V104a6 6 0 0 1 12 0v65.5l23.7-23.7a6.1 6.1 0 0 1 8.5 0Z" /></svg>

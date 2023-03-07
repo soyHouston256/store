@@ -15,6 +15,7 @@ import { RootState } from './store'
 import { useSelector } from 'react-redux'
 import Done from './views/Done'
 import { useReadLocalStorage } from 'usehooks-ts'
+import Navbar from './components/Navbar'
 
 
 function App() {
@@ -37,7 +38,8 @@ function App() {
     )
 
     return (
-    <div className="App">
+        <div className="App">
+        <Navbar />
         <GlobalStyles />
         <Routes location={background || location}>
             <Route path="/" element={<Home />}>

@@ -41,7 +41,7 @@ function Cart(): JSX.Element {
 
     return (
         <div>
-            <Navbar />
+            {/* <Navbar /> */}
             <CartWrapper>
                 <CartCol>
                     <CartList />
