@@ -2,7 +2,6 @@ import { Dispatch, useCallback, useEffect, useState } from 'react'
 
 import '@/assets/reset.css'
 import '@/App.css'
-import { ThemeContext, Theme } from '@/components/context/ThemeContext'
 import { GlobalStyles } from '@/Theme'
 import Home from '@/views/Home'
 import Product from '@/views/Product'
@@ -12,7 +11,7 @@ import { useDispatch } from 'react-redux'
 import { addAllProducts } from './store/slices/products'
 import useProductsList from './hooks/useProductsList'
 import { ProductType } from './types/ProductType'
-import store, { RootState } from './store'
+import { RootState } from './store'
 import { useSelector } from 'react-redux'
 import Done from './views/Done'
 import { useReadLocalStorage } from 'usehooks-ts'
@@ -20,7 +19,6 @@ import { useReadLocalStorage } from 'usehooks-ts'
 
 function App() {
     const orderId = useReadLocalStorage<string>('order')
-    const [theme, setTheme] = useState(Theme.Light);
     const location = useLocation();
     const background = location.state && location.state.background;
     const dispatch: Dispatch<any> = useDispatch()
@@ -39,25 +37,23 @@ function App() {
     )
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-            <GlobalStyles />
-            <div className="App">
-                <Routes location={background || location}>
-                    <Route path="/" element={<Home />}>
-                        <Route path="/product/:id" element={<Product />} />
-                    </Route>
-                    <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
-                    </Route>
-                    <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
-                    </Route>
-                </Routes>
-                {background && (
-                    <Routes>
-                        <Route path="/product/:id" element={<Product />} />
-                    </Routes>
-                )}
-            </div>
-        </ThemeContext.Provider>
+    <div className="App">
+        <GlobalStyles />
+        <Routes location={background || location}>
+            <Route path="/" element={<Home />}>
+                <Route path="/product/:id" element={<Product />} />
+            </Route>
+            <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
+            </Route>
+            <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
+            </Route>
+        </Routes>
+        {background && (
+            <Routes>
+                <Route path="/product/:id" element={<Product />} />
+            </Routes>
+        )}
+    </div>
     )
 }
 

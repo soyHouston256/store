@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from 'react'
-import { Theme, ThemeContext } from './context/ThemeContext'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import '@/components/ThemeSwitch.scss'
 import { motion } from 'framer-motion'
 import clickSound from '@/assets/click.mp3'
+import { useDarkMode } from 'usehooks-ts'
 
 const ButtonTheme = styled(motion.div)`
     border: none;
@@ -17,8 +17,7 @@ const ButtonTheme = styled(motion.div)`
   `
 
 function ThemeSwitch(): JSX.Element {
-  const { theme, setTheme } = useContext(ThemeContext)
-  const [isOpen, setIsOpen] = useState(false);
+  const { isDarkMode, toggle } = useDarkMode()
 
   const audio = new Audio(clickSound)
 
@@ -27,25 +26,19 @@ function ThemeSwitch(): JSX.Element {
     audio.play()
   };
 
-  const toggleTheme = (isOpen: any) => {
-    if (theme === Theme.Light) setTheme(Theme.Dark)
-    else setTheme(Theme.Light)
-    setIsOpen(isOpen)
-  }
-
   useEffect(() => {
     playClickSound()
     document.body.classList.remove('dark-theme')
-    if (isOpen) document.body.classList.add('dark-theme')
-  }, [isOpen]);
+    if (isDarkMode) document.body.classList.add('dark-theme')
+  }, [isDarkMode]);
 
   return (
     <ButtonTheme>
       <motion.div
           layout
-          data-isopen={isOpen}
+          data-isopen={isDarkMode}
           className="parent"
-          onClick={() => toggleTheme(!isOpen)}
+          onClick={toggle}
         >
         <motion.div layout className="child" />
         <motion.div layout className="tip" />

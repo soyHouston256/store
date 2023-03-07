@@ -25,7 +25,7 @@ const ProductsGrid = styled.section`
      @media screen and (max-width: 425px){
 		width: calc(100% - 40px);
 		margin: 20px;
-        grid-gap: 10px;
+        /* grid-gap: 10px; */
 	}
 `
 
