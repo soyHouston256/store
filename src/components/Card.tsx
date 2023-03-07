@@ -14,6 +14,9 @@ const CardWrapper = styled.section`
 	flex-direction: column;
 	height: 300px;
 	position: relative;
+	@media screen and (max-width: 1024px){
+		height: 240px;
+	}
 `
 const CardImage = styled.section`
 	flex: 1;
@@ -30,19 +33,6 @@ const CardImage = styled.section`
 		picture {
 			width: 100%;
 		}
-		/* img{
-			object-fit: contain;
-			width:100%;
-			height: 100%;
-			max-width: 100%;
-			vertical-align: middle;
-			image-rendering: -moz-crisp-edges;
-			image-rendering: -o-crisp-edges;
-			image-rendering: -webkit-optimize-contrast;
-			image-rendering: crisp-edges;
-			-ms-interpolation-mode: nearest-neighbor;
-			cursor: pointer;
-		} */
 	}
 `
 const CardInfo = styled.section`
@@ -59,6 +49,12 @@ const CardInfo = styled.section`
 		font-size: var(--font-size-price);
 		font-weight: 700;
 		color: var(--color-text);
+	}
+	@media screen and (max-width: 1024px){
+		padding: 1.2rem;
+	}
+	@media screen and (max-width: 425px){
+		padding-top: 0;
 	}
 `
 

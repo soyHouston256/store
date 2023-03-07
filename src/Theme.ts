@@ -36,10 +36,14 @@ const themes: any = {
 }
 export const GlobalStyles = createGlobalStyle`
   :root {
-    --screen-desktop: 1024px;
+    --screen-desktop: 994px;
+    --screen-tablet: 738px;
+    --screen-phone: 395px;
     --font-size-title: 28px;
+    --font-size-title_sm: 20px;
     --font-size-text: 16px;
     --font-size-price: 18px;
+    --font-size-price_xl: 24px;
     --button-height: 40px;
     --button-radius: 25px;
     --radius: 16px;
@@ -73,8 +77,23 @@ export const GlobalStyles = createGlobalStyle`
     --color-surface-light: ${themes.Dark.surfaceLight};
     --color-border: ${themes.Dark.border};
     --color-border-dark: ${themes.Dark.borderDark};
-        --color-warning: ${themes.Dark.warning};
+    --color-warning: ${themes.Dark.warning};
     --color-warning-light: ${themes.Dark.warningLight};
     --color-error: ${themes.Dark.error};
+  }
+
+	@media screen and (max-width: 1024px){
+    :root {
+      --font-size-title: 24px;
+      --font-size-price: 16px;
+      --font-size-text: 15px;
+      --font-size-price_xl: 20px;
+      --font-size-title_sm: 18px;
+    }
+  }
+  @media screen and (max-width: 425px){
+    :root {
+      --shadow-dark: 0px 10px 120px rgba(0, 0, 0, 0.2);
+    }
   }
 `;

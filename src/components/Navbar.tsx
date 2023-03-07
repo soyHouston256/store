@@ -10,6 +10,18 @@ const NavbarWrapper = styled.nav`
 	margin: 0 auto;
 	justify-content: space-between;
 	height: 100px;
+	@media screen and (max-width: 1024px){
+		width: var(--screen-tablet);
+	}
+	@media screen and (max-width: 768px){
+		width: var(--screen-phone);
+		height: 80px;
+	}
+	@media screen and (max-width: 425px){
+		width: 100%;
+		padding: 0 20px;
+		box-sizing: border-box;
+	}
 `
 
 function Navbar(): JSX.Element {

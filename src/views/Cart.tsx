@@ -12,12 +12,28 @@ const CartWrapper = styled.section`
     grid-gap: 25px;
     width: var(--screen-desktop);
     margin: 0 auto;
+    margin-bottom: 20px;
+    @media screen and (max-width: 1024px){
+        width: var(--screen-tablet);
+        grid-template-columns: 1fr 280px;
+    }
+    @media screen and (max-width: 768px){
+        width: var(--screen-phone);
+        grid-template-columns: 1fr;
+    }
+    @media screen and (max-width: 425px){
+        width: calc(100% - 40px);
+        grid-gap: 20px;
+    }
 `
 
 const CartCol = styled.div`
     display: flex;
     flex-direction: column;
     gap: 25px;
+    @media screen and (max-width: 425px){
+        gap: 20px;
+    }
 `
 
 function Cart(): JSX.Element {

@@ -19,6 +19,9 @@ const CartListWrapper = styled.div`
         opacity: .5;
         color: var(--color-text)
     }
+    @media screen and (max-width: 425px){
+        padding: 20px;
+    }
 `
 
 const CartEmpty = styled.div`

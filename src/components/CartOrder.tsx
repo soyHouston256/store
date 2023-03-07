@@ -8,7 +8,6 @@ import { ID } from "@/utils/helpers"
 import { Dispatch, useCallback, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -46,6 +45,9 @@ const CartOrderWrapper = styled.div`
                 }
             }
         }
+    }
+    @media screen and (max-width: 425px){
+        padding: 20px;
     }
 `
 
@@ -139,7 +141,6 @@ const DeliveryCard = styled.div`
 `
 
 function CartOrder({ setTrigger }: any): JSX.Element {
-    const navigate = useNavigate()
     const [order, setOrder] = useLocalStorage('order', '')
     const [loading, setLoading] = useState(false)
     const dispatch: Dispatch<any> = useDispatch()
@@ -174,11 +175,12 @@ function CartOrder({ setTrigger }: any): JSX.Element {
         window.open(`https://api.whatsapp.com/send?phone=51980687918&text=%F0%9F%91%8B%20Hola,%20realic%C3%A9%20un%20pedido%20con%20el%20c%C3%B3digo%20%20*${code}*%20en%20la%20tienda%20de%20hooks.pe%20`)
     }
 
-    const completeOrder = (order: OrderType) => {
+    const completeOrder = async (order: OrderType) => {
         setOrder(order.id!)
-        openWhastapp(order.id!)
         clearCart()
         clearUser()
+        openWhastapp(order.id!)
+        location.href = '/done'
     }
 
     const registerOrder = async () => {
@@ -194,7 +196,6 @@ function CartOrder({ setTrigger }: any): JSX.Element {
             }
             await useOrderCreate(order)
             completeOrder(order)
-            navigate('/done')
         } catch (err) {
             console.error(err)
         }
@@ -207,15 +208,18 @@ function CartOrder({ setTrigger }: any): JSX.Element {
                     <p>Total</p>
                     <b>S/ {total}</b>
                 </li>
-                <li>
-                    <DeliveryCard>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M230 70.8h-.1a16.7 16.7 0 0 0-5.9-5.9l-88-49.7a16.2 16.2 0 0 0-15.7 0l-88 49.5a16.2 16.2 0 0 0-6 5.9a.1.1 0 0 1-.1.1v.2a15 15 0 0 0-2.1 7.8v98.6a16.1 16.1 0 0 0 8.2 14l88 49.5a16.5 16.5 0 0 0 7.2 2h1.4a16.5 16.5 0 0 0 7.1-2l88-49.5a16.2 16.2 0 0 0 8.1-14V78.7a15.6 15.6 0 0 0-2.1-7.9ZM128.1 29.2L207.9 74l-30.7 17.4l-80.6-44.5Zm.9 89.6L48.5 74l31.7-17.8l80.7 44.5ZM40.1 87.6l80.9 45.1l-.8 89.7l-80.1-45.1Zm96.1 134.7l.8-89.6l32.1-18.3v38.1a8 8 0 0 0 16 0v-47.2l31-17.6v89.6Z" /></svg>
-                        <div className="delivery_card_detail">
-                            <b>Delivery gratis</b>
-                            <p>Por pedido mayor a S/ 70</p>
-                        </div>
-                    </DeliveryCard>
-                </li>
+                { total > 90 &&
+                    <li>
+                        <DeliveryCard>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M230 70.8h-.1a16.7 16.7 0 0 0-5.9-5.9l-88-49.7a16.2 16.2 0 0 0-15.7 0l-88 49.5a16.2 16.2 0 0 0-6 5.9a.1.1 0 0 1-.1.1v.2a15 15 0 0 0-2.1 7.8v98.6a16.1 16.1 0 0 0 8.2 14l88 49.5a16.5 16.5 0 0 0 7.2 2h1.4a16.5 16.5 0 0 0 7.1-2l88-49.5a16.2 16.2 0 0 0 8.1-14V78.7a15.6 15.6 0 0 0-2.1-7.9ZM128.1 29.2L207.9 74l-30.7 17.4l-80.6-44.5Zm.9 89.6L48.5 74l31.7-17.8l80.7 44.5ZM40.1 87.6l80.9 45.1l-.8 89.7l-80.1-45.1Zm96.1 134.7l.8-89.6l32.1-18.3v38.1a8 8 0 0 0 16 0v-47.2l31-17.6v89.6Z" /></svg>
+                            <div className="delivery_card_detail">
+                                <b>Delivery gratis</b>
+                                <p>Por pedido mayor a S/ 70</p>
+                            </div>
+                        </DeliveryCard>
+                        
+                    </li>
+                }
                 <li>
                     <StickerCard>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path d="M223.9 137.2a4.9 4.9 0 0 0 .1-1.2V88a56 56 0 0 0-56-56H88a56 56 0 0 0-56 56v80a56 56 0 0 0 56 56h49.4l1.1-.3c26.3-8.8 76.3-58.8 85.1-85.1l.3-1.1ZM48 168V88a40 40 0 0 1 40-40h80a40 40 0 0 1 40 40v40h-24a56 56 0 0 0-56 56v24H88a40 40 0 0 1-40-40Zm96 35.1V184a40 40 0 0 1 40-40h19.1c-12.1 19.5-39.6 47-59.1 59.1Z" /></svg>

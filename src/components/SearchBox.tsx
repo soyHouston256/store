@@ -15,7 +15,8 @@ const SearchBoxWrapper = styled.div`
     box-sizing: border-box;
     svg {
         margin-right: 10px;
-        fill: var(--color-text)
+        fill: var(--color-text);
+        min-width: 24px;
     }
     input, select {
         border: none;
@@ -31,6 +32,18 @@ const SearchBoxWrapper = styled.div`
         flex: 1;
         border-right: 1px solid var(--color-neutral-light);
     }
+    @media screen and (max-width: 1024px){
+		width: var(--screen-tablet);
+        margin-top: 25px;
+	}
+	@media screen and (max-width: 768px){
+		width: var(--screen-phone);
+    }
+    @media screen and (max-width: 425px){
+		width: calc(100% - 40px);
+		margin: 0 20px;
+        margin-top: 20px;
+	}
 `
 
 function SearchBox(): JSX.Element {

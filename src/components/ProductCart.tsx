@@ -73,6 +73,12 @@ const ProductCartWrapper = styled.li`
             width: 32px;
         }
     }
+    @media screen and (max-width: 425px) {
+        gap: 10px;
+        picture {
+            width: 32px;
+        }
+    }
 `
 
 const ProductCartDetailExtra = styled.div`
@@ -106,6 +112,18 @@ const ProductCartDetailExtra = styled.div`
         }
     }
     &.compact {
+        span {
+            &.size {
+                width: 16px;
+                height: 16px;
+            }
+            &.color {
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+    @media screen and (max-width: 425px) {
         span {
             &.size {
                 width: 16px;

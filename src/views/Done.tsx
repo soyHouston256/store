@@ -42,11 +42,26 @@ const DoneWrapper = styled.section`
         }
         svg {
             fill: var(--color-accent);
-            /* opacity: .7; */
             width: 36px;
             margin-left: -8px;
         }
     }
+    @media screen and (max-width: 1024px){
+        width: var(--screen-tablet);
+	}
+    @media screen and (max-width: 768px){
+        width: var(--screen-phone);
+	}
+     @media screen and (max-width: 425px){
+        width: calc(100% - 40px);
+        margin: 0 20px;
+        min-height: calc(100vh - 80px);
+        .done_content {
+            p {
+                margin-bottom: 15rem;
+            }
+        }
+	}
 `
 
 const DoneImage = styled.section`
@@ -64,6 +79,27 @@ const DoneImage = styled.section`
 			image-rendering: -webkit-optimize-contrast;
 			image-rendering: crisp-edges;
 			-ms-interpolation-mode: nearest-neighbor;
+		}
+	}
+    @media screen and (max-width: 768px){
+        div {
+            img {
+                width: 320px;
+            }
+        }
+	}
+    @media screen and (max-width: 425px){
+        div {
+            img {
+                width: 280px;
+            }
+        }
+    }
+    @media screen and (max-width: 320px){
+		div {
+			img {
+				width: 240px;
+			}
 		}
 	}
 `

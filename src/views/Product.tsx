@@ -29,10 +29,12 @@ const ModalOverlay = styled.div`
 `
 
 const ProductModalBody = styled.div`
+    max-height: calc(100vh - 40px);
+    overflow: auto;
     background-color: var(--color-neutral);
     width: var(--screen-desktop);
     min-height: 550px;
-    border-radius: 16px;
+    border-radius: var(--radius);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -41,9 +43,7 @@ const ProductModalBody = styled.div`
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    /* grid-auto-rows: min-content; */
     grid-gap: 50px;
-    /* align-content: center; */
     .product_image_wrapper {
         display: flex;
         align-items: center;
@@ -53,7 +53,7 @@ const ProductModalBody = styled.div`
         background-color: var(--color-accent-light);
         padding: 25px;
         box-sizing: border-box;
-        border-radius: 16px;
+        border-radius: var(--radius);
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -63,14 +63,14 @@ const ProductModalBody = styled.div`
                 position: relative;
                 .title_wrapper {
                     h1 {
-                        font-size: 20px;
+                        font-size: var(--font-size-title_sm);
                         margin-bottom: 10px;
                         color: var(--color-text);
                         opacity: .7;
                     }
                     h2 {
                         font-weight: 700;
-                        font-size: 24px;
+                        font-size: var(--font-size-price_xl);
                         margin-bottom: 20px;
                         color: var(--color-text)
                     }
@@ -200,6 +200,38 @@ const ProductModalBody = styled.div`
             }
         }
     }
+    @media screen and (max-width: 1024px){
+		width: var(--screen-tablet);
+        padding: 3rem;
+        min-height: 400px;
+        grid-gap: 25px;
+        .product_detail {
+            .product_detail_wrapper {
+                .title {
+                    .title_wrapper h1{
+                        margin-bottom: 5px;
+                    }
+                }
+            }
+        }
+	}
+    @media screen and (max-width: 768px){
+		width: var(--screen-phone);
+        grid-template-columns: 1fr;
+        padding: 2rem 1.2rem;
+        padding-bottom: 1.2rem;
+	}
+    @media screen and (max-width: 425px){
+		width: 100%;
+        top: inherit;
+        left: inherit;
+        bottom: 0;
+        transform: translate(0);
+        border-radius: var(--radius) var(--radius) 0 0;
+        .product_detail {
+            padding: 20px;
+        }
+	}
 `
 
 const Button = styled.button`

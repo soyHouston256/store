@@ -45,6 +45,20 @@ const CartWrapper = styled.section`
     .go_to_cart {
         padding: 15px 25px;
     }
+    @media screen and (max-width: 425px){
+        position: fixed;
+        right: 0;
+        top: inherit;
+        bottom: 0;
+        width: 100%;
+        border-radius: var(--radius) var(--radius) 0 0;
+        .tip {
+            display: none;
+        }
+        ul {
+            max-height: calc(100vh - 250px);
+        }
+	}
 `
 
 const CartEmpty = styled.div`
