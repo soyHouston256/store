@@ -8,7 +8,7 @@ import TShirt from "./TShirt";
 const CardWrapper = styled.section`
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
+	/* overflow: hidden; */
 	background-color: var(--color-neutral);
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
@@ -26,7 +26,7 @@ const CardImage = styled.section`
 	justify-content: center;
 	overflow: hidden;
 	width: 100%;
-	background-color: var(--color-neutral);
+	/* background-color: var(--color-neutral); */
 	div {
 		width: 60%;
 		height: auto;

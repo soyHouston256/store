@@ -15,7 +15,8 @@ const themes: any = {
     surfaceLight: '#FFF',
     border: 'rgba(0,0,0,.05)',
     borderDark: 'rgba(0,0,0,.08)',
-    error: '#ca4a4a'
+    error: '#ca4a4a',
+    borderSolid: '#ccc'
   },
   Dark: {
     background: '#000',
@@ -31,7 +32,8 @@ const themes: any = {
     surfaceLight: '#1f1f1f',
     border: 'rgba(255,255,255,.02)',
     borderDark: 'rgba(255,255,255,.06)',
-    error: '#c44747'
+    error: '#c44747',
+    borderSolid: '#434343'
   }
 }
 export const GlobalStyles = createGlobalStyle`
@@ -64,6 +66,7 @@ export const GlobalStyles = createGlobalStyle`
     --color-warning: ${themes.Light.warning};
     --color-warning-light: ${themes.Light.warningLight};
     --color-error: ${themes.Light.error};
+    --color-border-solid: ${themes.Light.borderSolid};
   }
   .dark-theme {
     --color-background: ${themes.Dark.background};
@@ -80,6 +83,7 @@ export const GlobalStyles = createGlobalStyle`
     --color-warning: ${themes.Dark.warning};
     --color-warning-light: ${themes.Dark.warningLight};
     --color-error: ${themes.Dark.error};
+    --color-border-solid: ${themes.Dark.borderSolid};
   }
 
 	@media screen and (max-width: 1024px){
