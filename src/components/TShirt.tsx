@@ -5,13 +5,16 @@ import styled from 'styled-components'
 const TShirtWrapper = styled.picture`
     position: relative;
     width: 320px;
-    display: block;
+    display: flex;
+    align-items: center;
+    height: 100%;
     svg {
         width: 100%;
-        height: 100%;
+        height: auto;
         position: absolute;
-        left: 0;
-        top: 0;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         mix-blend-mode: multiply;
         z-index: 1;
         path {
@@ -23,8 +26,9 @@ const TShirtWrapper = styled.picture`
         width:100%;
         &.model {
             position: absolute;
-            left: 0;
-            top: 0;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             z-index: 2;
         }
         &.base, &.filter {
@@ -36,8 +40,9 @@ const TShirtWrapper = styled.picture`
         }
         &.filter {
             position: absolute;
-            left: 0;
-            top: 0;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             z-index: 3;
             mix-blend-mode: overlay;
             opacity: 0.15;

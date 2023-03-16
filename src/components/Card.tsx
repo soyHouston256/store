@@ -13,7 +13,7 @@ const CardWrapper = styled.section`
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
 	flex-direction: column;
-	height: 300px;
+	height: 280px;
 	position: relative;
 	@media screen and (max-width: 1024px){
 		height: 240px;
@@ -28,8 +28,10 @@ const CardImage = styled.section`
 	width: 100%;
 	/* background-color: var(--color-neutral); */
 	div {
-		width: 60%;
-		height: auto;
+		width: 55%;
+		height: 100%;
+		display: flex;
+    	align-items: center;
 		margin-top: 1rem;
 		picture {
 			width: 100%;
