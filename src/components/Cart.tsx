@@ -124,7 +124,7 @@ const Button = styled.button`
     }
 `
 
-function Cart({ innerRef }: { innerRef: any }): JSX.Element {
+function Cart({ innerRef, className }: { innerRef: any, className: any }): JSX.Element {
     const navigate = useNavigate();
     const { productsCart } = useSelector(
         (state: RootState) => state.cart
@@ -133,14 +133,7 @@ function Cart({ innerRef }: { innerRef: any }): JSX.Element {
         navigate('/cart')
     }
     return (
-        // TODO: improve transition performance
-        <CartWrapper
-            key={"setuplayout_motion"}
-            initial={{ opacity: 0, translateY: 20 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            exit={{ opacity: 0, translateY: 20 }}
-            transition={{ duration: .12 }}>
-            
+        <CartWrapper className={className} >
             <div className="cart_content" ref={innerRef}>
                 <div className="tip"></div>
                 {productsCart.length > 0 && 

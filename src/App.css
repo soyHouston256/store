@@ -1,6 +1,48 @@
+:root {
+  --animate_translate_y: 10px;
+}
+
 body {
   background-color: var(--color-background);
 }
 .App {
   overflow-x: hidden;
+}
+
+.openIt {
+  animation: fadeIn .3s forwards;
+}
+
+.closeIt {
+  animation: fadeOut .3s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--animate_translate_y));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(var(--animate_translate_y));
+  }
+}
+
+@media screen and (max-width: 425px){
+  :root {
+    --animate_translate_y: 200px;
+  }
 }
