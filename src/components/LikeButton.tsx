@@ -68,6 +68,7 @@ function LikeButton({ liked, status }: { liked: any, status: boolean }): JSX.Ele
                     animationData={lottieJson}
                     play={animating}
                     speed={1}
+                    
                     style={{ width: 64, height: 64 }}
                     rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
                     onComplete={() => setAnimating(false)}

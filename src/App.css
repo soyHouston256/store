@@ -1,5 +1,6 @@
 :root {
   --animate_translate_y: 10px;
+  --property_translate_y: margin-top;
 }
 
 body {
@@ -7,6 +8,14 @@ body {
 }
 .App {
   overflow-x: hidden;
+}
+
+.show {
+  animation: fade .3s forwards;
+}
+
+.showIt {
+  animation: showUp .3s forwards;
 }
 
 .openIt {
@@ -41,8 +50,42 @@ body {
   }
 }
 
+@keyframes showUp {
+  from {
+    opacity: 0;
+    margin-top: var(--animate_translate_y);
+  }
+
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media screen and (max-width: 425px){
   :root {
-    --animate_translate_y: 200px;
+    --animate_translate_y: 100px;
+  }
+
+  @keyframes showUp {
+    from {
+      opacity: 0;
+      margin-bottom: calc(-1 * var(--animate_translate_y));
+    }
+
+    to {
+      opacity: 1;
+      margin-bottom: 0;
+    }
   }
 }
