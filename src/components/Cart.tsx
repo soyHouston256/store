@@ -133,11 +133,15 @@ function Cart({ innerRef }: { innerRef: any }): JSX.Element {
         navigate('/cart')
     }
     return (
+        // TODO: improve transition performance
         <CartWrapper
-            initial={{ opacity: 0, translateY: 10 }}
+            key={"setuplayout_motion"}
+            initial={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            exit={{ opacity: 0, translateY: 10 }}>
-            <div className="cart_content" ref={innerRef} >
+            exit={{ opacity: 0, translateY: 20 }}
+            transition={{ duration: .12 }}>
+            
+            <div className="cart_content" ref={innerRef}>
                 <div className="tip"></div>
                 {productsCart.length > 0 && 
                     <div>
