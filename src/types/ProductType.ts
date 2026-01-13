@@ -7,12 +7,14 @@ export interface ProductType {
     colors?: string[];
     sizes?: string[];
     likes?: number;
+    quantity?: number;
 }
 
 export interface ProductCartType extends ProductType{
     quantity?: number;
     size?: string;
     color?: string;
+    logoPosition?: string;
 }
 
 export enum ProductCartActionType {

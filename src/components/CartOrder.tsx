@@ -171,16 +171,24 @@ function CartOrder({ setTrigger }: any): JSX.Element {
         setTotal(totalCart)
     }, [productsCart])
 
-    const openWhastapp = (code: string) => {
-        window.open(`https://api.whatsapp.com/send?phone=51980687918&text=%F0%9F%91%8B%20Hola,%20realic%C3%A9%20un%20pedido%20con%20el%20c%C3%B3digo%20%20*${code}*%20en%20la%20tienda%20de%20hooks.pe%20`)
+    const openWhastapp = (order: OrderType) => {
+        const { user, products, total } = order;
+        const productList = products?.map(product => `${product?.quantity} ${product.name}`).join(', ');
+
+        const message = `Hola ${user?.name}, tu pedido de ${productList} ha sido confirmado con el codigo *${order.id}*. El total es de ${total} soles`;
+
+        // Parsear el mensaje para enviarlo por WhatsApp
+        const parsedMessage = encodeURIComponent(message);
+
+        window.open(`https://api.whatsapp.com/send?phone=51980687918&text=${parsedMessage}%20en%20la%20tienda%20de%20estilos.dev%20`)
     }
 
     const completeOrder = async (order: OrderType) => {
         setOrder(order.id!)
         clearCart()
         clearUser()
-        openWhastapp(order.id!)
-        location.href = '/done'
+        openWhastapp(order!)
+        //location.href = '/done'
     }
 
     const registerOrder = async () => {

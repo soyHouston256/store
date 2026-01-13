@@ -49,6 +49,7 @@ const ProductModalBody = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
     }
     .product_detail {
         background-color: var(--color-accent-light);
@@ -137,6 +138,49 @@ const ProductModalBody = styled.div`
                                 svg {
                                     display: block;
                                 }
+                            }
+                        }
+                    }
+                }
+                &.logo_position {
+                    .logo_position_wrapper {
+                        display: flex;
+                        gap: 10px;
+                        flex-wrap: wrap;
+                        span {
+                            border-radius: 8px;
+                            padding: 12px;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                            border: 2px solid var(--color-border);
+                            background-color: var(--color-surface);
+                            color: var(--color-text);
+                            cursor: pointer;
+                            box-sizing: border-box;
+                            transition: all 0.2s ease;
+                            min-width: 80px;
+                            position: relative;
+                            &:hover {
+                                border-color: var(--color-border-dark);
+                                transform: translateY(-2px);
+                            }
+                            &.selected {
+                                border-color: var(--color-accent);
+                                background-color: var(--color-accent-light);
+                            }
+                            svg {
+                                width: 40px;
+                                height: 40px;
+                            }
+                            small {
+                                font-size: 10px;
+                                text-align: center;
+                                font-weight: 500;
+                                opacity: 0.7;
+                                line-height: 1.2;
                             }
                         }
                     }
@@ -264,11 +308,34 @@ const Button = styled.button`
     }
 `
 
+const FlipButton = styled.button`
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    z-index: 10;
+    &:hover {
+        border-color: var(--color-border-dark);
+        background-color: var(--color-accent-light);
+    }
+`
+
 function Product(): JSX.Element {
     const [quantity, setQuantity] = useState(1)
     const [trigger, setTrigger] = useState(false)
     const [color, setColor] = useState<string>()
     const [size, setSize] = useState<string>()
+    const [logoPosition, setLogoPosition] = useState<string>()
+    const [isFlipped, setIsFlipped] = useState(false)
     const navigate = useNavigate();
     const { id } = useParams()
     const { product } = useProductsById(id!)
@@ -282,14 +349,18 @@ function Product(): JSX.Element {
         setColor(product?.colors![0])
    }, [product])
 
+    useEffect(() => {
+        setIsFlipped(false)
+    }, [logoPosition])
+
     const goBack = () => {
         navigate(-1)
     }
 
     const productAddToCart = () => {
         setTrigger(true)
-        if (size) {
-            setProduct({ ...product!, quantity, size, color, _id: ID() })
+        if (size && logoPosition) {
+            setProduct({ ...product!, quantity, size, color, logoPosition, _id: ID() })
             goBack()
         }
     }
@@ -309,7 +380,12 @@ function Product(): JSX.Element {
                         <ModalOverlay className="show" onClick={goBack} />
                         <ProductModalBody className="showIt">
                             <div className="product_image_wrapper">
-                                <TShirt image={product.image!} color={color!}/>
+                                <TShirt image={product.image!} color={color!} logoPosition={logoPosition} isFlipped={isFlipped}/>
+                                {logoPosition === 'back-chest' && (
+                                    <FlipButton onClick={() => setIsFlipped(!isFlipped)}>
+                                        {isFlipped ? 'Ver frente' : 'Ver espalda'}
+                                    </FlipButton>
+                                )}
                             </div>
                             <div className="product_detail">
                                 <div className="product_detail_wrapper">
@@ -328,6 +404,56 @@ function Product(): JSX.Element {
                                                     <svg style={{ color: c }} width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="M104 196a12.2 12.2 0 0 1-8.5-3.5l-56-56a12 12 0 0 1 17-17L104 167L207.5 63.5a12 12 0 0 1 17 17l-112 112a12.2 12.2 0 0 1-8.5 3.5Z" /></svg>
                                                 </span>
                                             )}
+                                        </div>
+                                    </section>
+                                    <section className="logo_position">
+                                        <strong className={!logoPosition && trigger ? 'required' : ''}>
+                                            Ubicación del logo
+                                            <div className="error">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256"><path fill="currentColor" d="M128 20a108 108 0 1 0 108 108A108.1 108.1 0 0 0 128 20Zm0 192a84 84 0 1 1 84-84a84.1 84.1 0 0 1-84 84Zm-12-80V80a12 12 0 0 1 24 0v52a12 12 0 0 1-24 0Zm28 40a16 16 0 1 1-16-16a16 16 0 0 1 16 16Z" /></svg>
+                                                requerido
+                                            </div>
+                                        </strong>
+                                        <div className="logo_position_wrapper">
+                                            <span
+                                                className={logoPosition === 'pocket' ? 'selected' : ''}
+                                                onClick={() => setLogoPosition('pocket')}
+                                                title="Logo pequeño en el bolsillo izquierdo"
+                                            >
+                                                <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="10" y="20" width="80" height="90" rx="8" stroke="currentColor" strokeWidth="2" fill="none"/>
+                                                    <circle cx="35" cy="45" r="8" fill="currentColor" opacity="0.3"/>
+                                                    <rect x="30" y="40" width="10" height="10" fill="currentColor"/>
+                                                </svg>
+                                                <small>Bolsillo</small>
+                                            </span>
+                                            <span
+                                                className={logoPosition === 'chest' ? 'selected' : ''}
+                                                onClick={() => setLogoPosition('chest')}
+                                                title="Logo grande en el pecho"
+                                            >
+                                                <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="10" y="20" width="80" height="90" rx="8" stroke="currentColor" strokeWidth="2" fill="none"/>
+                                                    <circle cx="50" cy="55" r="15" fill="currentColor" opacity="0.3"/>
+                                                    <rect x="40" y="45" width="20" height="20" fill="currentColor"/>
+                                                </svg>
+                                                <small>Pecho</small>
+                                            </span>
+                                            <span
+                                                className={logoPosition === 'back-chest' ? 'selected' : ''}
+                                                onClick={() => setLogoPosition('back-chest')}
+                                                title="Logo grande en la espalda y pequeño en el pecho"
+                                            >
+                                                <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="10" y="20" width="80" height="90" rx="8" stroke="currentColor" strokeWidth="2" fill="none"/>
+                                                    <circle cx="35" cy="45" r="6" fill="currentColor" opacity="0.3"/>
+                                                    <rect x="30" y="40" width="10" height="10" fill="currentColor"/>
+                                                    <circle cx="50" cy="80" r="12" fill="currentColor" opacity="0.5"/>
+                                                    <rect x="42" y="72" width="16" height="16" fill="currentColor" opacity="0.8"/>
+                                                    <text x="50" y="88" fontSize="12" fill="currentColor" textAnchor="middle" fontWeight="bold">E</text>
+                                                </svg>
+                                                <small>Espalda</small>
+                                            </span>
                                         </div>
                                     </section>
                                     <section className="sizes">
