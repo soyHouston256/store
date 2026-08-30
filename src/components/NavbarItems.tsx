@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import Cart from './Cart';
 import lottieJson from '@/assets/animations/like.json'
 import addedSound from '@/assets/added.wav'
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import useDelayUnmount from '@/hooks/useDelayUnmount';
 
 const NavbarItemsWrapper = styled.ul`
@@ -16,6 +16,18 @@ const NavbarItemsWrapper = styled.ul`
 	align-items: center;
 	gap: 20px;
 	li {
+		&.tracking_link {
+			a {
+				color: var(--color-text);
+				font-size: 14px;
+				text-decoration: none;
+				opacity: .6;
+				white-space: nowrap;
+				&:hover {
+					opacity: 1;
+				}
+			}
+		}
 		& > svg {
 			fill: var(--color-text);
 			width: 28px;
@@ -82,6 +94,9 @@ function NavbarItems(): JSX.Element {
 
 	return (
 		<NavbarItemsWrapper>
+			<li className='tracking_link'>
+				<Link to='/pedido'>Sigue tu pedido</Link>
+			</li>
 			<li>
 				<ThemeSwitch />
 			</li>

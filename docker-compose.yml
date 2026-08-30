@@ -1,0 +1,88 @@
+# Production topology (design §8) — single VPS behind Caddy.
+#
+#   caddy (only service publishing ports: 80/443, auto-TLS)
+#     ├── store.$DOMAIN → storefront:80  (nginx SPA)
+#     ├── admin.$DOMAIN → backoffice:80  (nginx SPA)
+#     └── api.$DOMAIN   → api:3000      (express; also serves /uploads)
+#   api → mongo (internal only)
+#
+# Config comes from the root .env (copy .env.example). VITE_API_URL is a
+# BUILD-TIME arg baked into both frontend bundles — changing it requires
+# `docker compose build storefront backoffice`.
+#
+# One-shot idempotent seed (products.json is bind-mounted read-only and its
+# path passed via SEED_FILE):
+#   docker compose run --rm api node dist/scripts/seed-products.js
+#
+# Dev: overlay docker-compose.dev.yml (see that file's header).
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    # internal only — never publish 27017 in prod
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: ${MONGO_URI:-mongodb://mongo:27017/store}
+      PORT: ${PORT:-3000}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (see .env.example)}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-12h}
+      ADMIN_USER: ${ADMIN_USER:?set ADMIN_USER in .env (see .env.example)}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:?set ADMIN_PASSWORD_HASH in .env (see .env.example)}
+      UPLOAD_DIR: ${UPLOAD_DIR:-/data/uploads}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS in .env (see .env.example)}
+      SEED_FILE: /seed/products.json
+    volumes:
+      - uploads_data:/data/uploads
+      - ./products.json:/seed/products.json:ro
+    # internal :3000 — exposed to the network via caddy only
+
+  storefront:
+    build:
+      context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL in .env (see .env.example)}
+    restart: unless-stopped
+    # internal :80
+
+  backoffice:
+    build:
+      context: ./backoffice
+      args:
+        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL in .env (see .env.example)}
+        # optional: storefront origin for WhatsApp tracking links
+        # (falls back to http://store.localhost when unset)
+        VITE_STORE_URL: ${VITE_STORE_URL:-}
+    restart: unless-stopped
+    # internal :80
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - api
+      - storefront
+      - backoffice
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env (see .env.example)}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # TLS certificates — must persist across restarts
+
+volumes:
+  mongo_data:
+  uploads_data:
+  caddy_data:
+
+# All services share the compose-default bridge network; only caddy
+# publishes host ports (NFR-5 topology).

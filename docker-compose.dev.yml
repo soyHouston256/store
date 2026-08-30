@@ -1,0 +1,50 @@
+# Dev overlay (design §8). Usage:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up mongo api
+#
+# What it changes vs prod:
+#   - mongo publishes 27017 (Compass / mongosh from the host)
+#   - api is built from the Dockerfile `dev` target (full deps incl. tsx),
+#     bind-mounts ./api/src and runs `tsx watch` → live reload; publishes 3000
+#   - storefront / backoffice / caddy are DISABLED (moved to the "prod-only"
+#     profile) — run the frontends locally instead:
+#
+#       # storefront (repo root; vite 2 defaults to port 3000 = api's port,
+#       # so pick another):
+#       VITE_API_URL=http://localhost:3000 npm run dev -- --port 3001
+#
+#       # backoffice (vite 5, defaults to 5173):
+#       cd backoffice && VITE_API_URL=http://localhost:3000 npm run dev
+#
+#   (Both also read VITE_API_URL from their .env files.)
+#
+# Seed in dev (dev image has src + tsx, not dist):
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml \
+#     run --rm api npx tsx src/scripts/seed-products.ts
+
+services:
+  mongo:
+    ports:
+      - "27017:27017"
+
+  api:
+    build:
+      context: ./api
+      target: dev
+    command: ["npx", "tsx", "watch", "src/index.ts"]
+    environment:
+      # allow the locally-run vite dev servers unless .env overrides
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3001,http://localhost:5173}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api/src:/app/src
+
+  storefront:
+    profiles: ["prod-only"]
+
+  backoffice:
+    profiles: ["prod-only"]
+
+  caddy:
+    profiles: ["prod-only"]

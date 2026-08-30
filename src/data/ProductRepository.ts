@@ -1,18 +1,15 @@
 import { ProductType } from "@/types/ProductType";
 import { ProductApi } from "./ProductApi";
-import { getProducts, getProduct, editProduct } from "./ProductService";
+import { getProducts, getProduct, likeProduct } from "./ProductService";
 
 export class ProductRepository implements ProductApi<ProductType> {
-    async update(id: string, { likes }: { likes: number; }): Promise<ProductType> {
-        const product = await editProduct(id, { likes })
-        return product!
+    async like(id: string, delta: 1 | -1): Promise<{ id: string; likes: number }> {
+        return likeProduct(id, delta)
     }
     async find(id: string): Promise<ProductType> {
-        const product = await getProduct(id)
-        return product!
+        return getProduct(id)
     }
     async all(): Promise<ProductType[]> {
-        const products = await getProducts()
-        return products
+        return getProducts()
     }
 }

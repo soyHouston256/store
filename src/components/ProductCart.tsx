@@ -3,7 +3,7 @@ import { ProductCartActionType, ProductCartType, ProductType } from "@/types/Pro
 import { Dispatch, useCallback } from "react"
 import { useDispatch } from "react-redux"
 import styled from "styled-components"
-import TShirt from "./TShirt"
+import ProductVisual from "./ProductVisual"
 
 const ProductCartWrapper = styled.li`
     display: flex;
@@ -110,6 +110,21 @@ const ProductCartDetailExtra = styled.div`
             align-items: center;
             justify-content: center;
         }
+        &.type {
+            border-radius: 4px;
+            height: 22px;
+            padding: 0 6px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--color-border);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: capitalize;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            opacity: .7;
+            box-sizing: border-box;
+        }
     }
     &.compact {
         span {
@@ -120,6 +135,11 @@ const ProductCartDetailExtra = styled.div`
             &.color {
                 width: 16px;
                 height: 16px;
+            }
+            &.type {
+                height: 16px;
+                padding: 0 4px;
+                font-size: 9px;
             }
         }
     }
@@ -132,6 +152,11 @@ const ProductCartDetailExtra = styled.div`
             &.color {
                 width: 16px;
                 height: 16px;
+            }
+            &.type {
+                height: 16px;
+                padding: 0 4px;
+                font-size: 9px;
             }
         }
     }
@@ -148,27 +173,27 @@ function ProductCart({ product, compact = false }: { product: ProductCartType, c
         [dispatch]
     )
     const increment = () => {
-        addProduct(product!)
+        addProduct(product)
     }
     const decrement = () => {
-        removeProduct(product!)
+        removeProduct(product)
     }
 
     return (
         <ProductCartWrapper className={compact ? 'compact' : ''} >
-            {/* <img src={product.image} /> */}
-            <TShirt image={product.image!} color={product.color!} />
+            <ProductVisual product={product} color={product.color} />
             <div className="product_cart_content">
                 <div className="product_cart_detail">
                     <b>S/ {product.price}</b>
                     <p>{product.name}</p>
                     <ProductCartDetailExtra className={compact ? 'compact' : ''}>
-                        <span title="Talla" className="size">{product.size}</span>
-                        <span title="Color" className="color" style={{ backgroundColor: product.color }}></span>
+                        <span title="Tipo" className="type">{product.type ?? 'polo'}</span>
+                        {product.size && <span title="Talla" className="size">{product.size}</span>}
+                        {product.color && <span title="Color" className="color" style={{ backgroundColor: product.color }}></span>}
                     </ProductCartDetailExtra>
                 </div>
                 <div className="product_cart_quantity">
-                    <span onClick={ decrement }> { product.quantity! > 1 ? '-' : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="M216 48h-36V36a28.1 28.1 0 0 0-28-28h-48a28.1 28.1 0 0 0-28 28v12H40a12 12 0 0 0 0 24h4v136a20.1 20.1 0 0 0 20 20h128a20.1 20.1 0 0 0 20-20V72h4a12 12 0 0 0 0-24ZM100 36a4 4 0 0 1 4-4h48a4 4 0 0 1 4 4v12h-56Zm88 168H68V72h120Zm-72-100v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Zm48 0v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Z"/></svg> } </span>
+                    <span onClick={ decrement }> { (product.quantity ?? 0) > 1 ? '-' : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="M216 48h-36V36a28.1 28.1 0 0 0-28-28h-48a28.1 28.1 0 0 0-28 28v12H40a12 12 0 0 0 0 24h4v136a20.1 20.1 0 0 0 20 20h128a20.1 20.1 0 0 0 20-20V72h4a12 12 0 0 0 0-24ZM100 36a4 4 0 0 1 4-4h48a4 4 0 0 1 4 4v12h-56Zm88 168H68V72h120Zm-72-100v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Zm48 0v64a12 12 0 0 1-24 0v-64a12 12 0 0 1 24 0Z"/></svg> } </span>
                     <p>{product.quantity}</p>
                     <span onClick={increment}>+</span>
                 </div>

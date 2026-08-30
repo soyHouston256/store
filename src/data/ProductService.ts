@@ -1,25 +1,46 @@
-import { db } from "@/firebaseSetup";
-import { collection, getDocs, getDoc, doc, setDoc, updateDoc } from "firebase/firestore";
+import type { LogoPosition, ProductKind, ProductType } from "@/types/ProductType";
+import { assetUrl, request } from "./http";
 
-export const getProducts = async () => {
-    const docSnap = await getDocs(collection(db, "products"));
-    const products: Array<any> =[];
-        docSnap.forEach((doc) => {
-            products.push({
-                id: doc.id,
-                ...doc.data(),
-                likes: doc.data().likes || 0
-            })
-        });
-    return products
+interface ProductDTO {
+    id?: string;
+    _id?: string;
+    name?: string;
+    price?: number;
+    type?: ProductKind;
+    colors?: string[];
+    sizes?: string[];
+    logoPositions?: LogoPosition[];
+    likes?: number;
+    published?: boolean;
+    image?: string;
+    logo?: string;
 }
 
-export const getProduct = async (id: string) => {
-    const docSnap = await getDoc(doc(db, "products", id));
-    return { id: docSnap.id, ...docSnap.data(), likes: docSnap.data()?.likes || 0 }
+/** Read-time tolerance mapping: legacy/partial docs never reach components raw. */
+const toProduct = (dto: ProductDTO): ProductType => ({
+    ...dto,
+    id: dto.id ?? dto._id,
+    likes: dto.likes ?? 0,
+    colors: dto.colors ?? [],
+    sizes: dto.sizes ?? [],
+    logoPositions: dto.logoPositions ?? [],
+    type: dto.type ?? 'polo',
+    logo: assetUrl(dto.logo),
+})
+
+export const getProducts = async (): Promise<ProductType[]> => {
+    const products = await request<ProductDTO[]>('/api/products')
+    return products.map(toProduct)
 }
 
-export const editProduct = async (id: string, { likes }: { likes: number}) => {
-    await updateDoc(doc(db, "products", id), { likes });
-    return { id }
+export const getProduct = async (id: string): Promise<ProductType> => {
+    const product = await request<ProductDTO>(`/api/products/${encodeURIComponent(id)}`)
+    return toProduct(product)
+}
+
+export const likeProduct = async (id: string, delta: 1 | -1): Promise<{ id: string; likes: number }> => {
+    return request<{ id: string; likes: number }>(`/api/products/${encodeURIComponent(id)}/like`, {
+        method: 'POST',
+        body: JSON.stringify({ delta }),
+    })
 }

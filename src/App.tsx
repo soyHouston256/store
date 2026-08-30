@@ -14,6 +14,7 @@ import { ProductType } from './types/ProductType'
 import { RootState } from './store'
 import { useSelector } from 'react-redux'
 import Done from './views/Done'
+import Tracking from './views/Tracking'
 import { useReadLocalStorage } from 'usehooks-ts'
 import Navbar from './components/Navbar'
 
@@ -48,6 +49,10 @@ function App() {
             <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
             </Route>
             <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
+            </Route>
+            <Route path="/pedido" element={<Tracking />}>
+            </Route>
+            <Route path="/pedido/:id" element={<Tracking />}>
             </Route>
         </Routes>
         {background && (

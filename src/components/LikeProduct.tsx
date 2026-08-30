@@ -5,7 +5,7 @@ import { addLike } from "@/store/slices/products/likes";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import LikeButton from "@/components/LikeButton"
-import useProductUpdate from "@/hooks/useProductUpdate";
+import useProductLike from "@/hooks/useProductLike";
 import { updateProduct } from "@/store/slices/products";
 
 function LikeProduct({product}: { product: ProductType }): JSX.Element {
@@ -28,11 +28,21 @@ function LikeProduct({product}: { product: ProductType }): JSX.Element {
         setLike(Boolean(productLiked))
     }, [likedList])
 
-    const registerLike = () => {
-        setProductLiked(product.id!)
-        const likes = !like ? product.likes! + 1 : product.likes! - (product.likes! > 0 ? 1 : 0)
-        editProduct({ id: product.id!, likes })
-        useProductUpdate(product.id!, { likes })
+    const registerLike = async () => {
+        const id = product.id
+        if (!id) return
+        setProductLiked(id)
+        const delta: 1 | -1 = !like ? 1 : -1
+        const currentLikes = product.likes ?? 0
+        // optimistic local update; the server $inc (floored at 0) is authoritative
+        editProduct({ id, likes: Math.max(0, currentLikes + delta) })
+        try {
+            const { likes } = await useProductLike(id, delta)
+            editProduct({ id, likes })
+        } catch (err) {
+            console.error(err)
+            editProduct({ id, likes: currentLikes })
+        }
     }
     return (
         <LikeButton liked={registerLike} status={like} />

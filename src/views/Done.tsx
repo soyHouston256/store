@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar'
 import styled from 'styled-components'
 import HeroBgImage from "@/assets/images/hero/hero.png"
 import { useReadLocalStorage } from 'usehooks-ts'
+import { Link } from 'react-router-dom'
 
 const DoneWrapper = styled.section`
     min-height: 480px;
@@ -38,6 +39,20 @@ const DoneWrapper = styled.section`
             width: 100%;
             max-width: 400px;
             line-height: 1.3;
+        }
+        .done_code {
+            font-size: var(--font-size-title_sm);
+            font-weight: 700;
+            letter-spacing: .1rem;
+            border: 1px dashed var(--color-border-solid);
+            border-radius: var(--radius);
+            padding: 8px 25px;
+            margin: 5px 0;
+        }
+        .done_tracking {
+            color: var(--color-accent);
+            font-size: 15px;
+            font-weight: 500;
             margin-bottom: 4rem;
         }
         svg {
@@ -57,7 +72,7 @@ const DoneWrapper = styled.section`
         margin: 0 20px;
         min-height: calc(100vh - 80px);
         .done_content {
-            p {
+            .done_tracking {
                 margin-bottom: 15rem;
             }
         }
@@ -112,8 +127,10 @@ function Done(): JSX.Element {
             <DoneWrapper>
                 <div className="done_content">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256"><path  d="m221.4 69.3l-16-32A6 6 0 0 0 200 34H56a6 6 0 0 0-5.4 3.3l-16 32A6.3 6.3 0 0 0 34 72v136a14 14 0 0 0 14 14h160a14 14 0 0 0 14-14V72a6.3 6.3 0 0 0-.6-2.7ZM59.7 46h136.6l10 20H49.7ZM208 210H48a2 2 0 0 1-2-2V78h164v130a2 2 0 0 1-2 2Zm-41.8-64.2a6.1 6.1 0 0 1 0 8.5l-34 33.9a5.8 5.8 0 0 1-8.4 0l-34-33.9a6 6 0 0 1 8.5-8.5l23.7 23.7V104a6 6 0 0 1 12 0v65.5l23.7-23.7a6.1 6.1 0 0 1 8.5 0Z" /></svg>
-                    <h1>Pedido <strong>"{orderId}"</strong> registrado</h1>
+                    <h1>Pedido registrado</h1>
                     <p>Tu pedido fue registrado correctamente estaremos en contacto por Whastapp.</p>
+                    <div className="done_code">{orderId}</div>
+                    <Link className="done_tracking" to={`/pedido/${orderId}`}>Ver seguimiento de tu pedido</Link>
                     <DoneImage>
                         <div>
                             <img src={HeroBgImage} />

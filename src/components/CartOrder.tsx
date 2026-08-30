@@ -1,10 +1,10 @@
+import { buildOrderMessage } from "@/data/orderMessage"
 import useOrderCreate from "@/hooks/useOrderCreate"
 import { RootState } from "@/store"
 import { removeUser, updateTotal } from "@/store/slices/orders"
 import { removeAllProducts } from "@/store/slices/products/cart"
 import { OrderType } from "@/types/OrderType"
 import { ProductCartType } from "@/types/ProductType"
-import { ID } from "@/utils/helpers"
 import { Dispatch, useCallback, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
@@ -172,22 +172,20 @@ function CartOrder({ setTrigger }: any): JSX.Element {
     }, [productsCart])
 
     const openWhastapp = (order: OrderType) => {
-        const { user, products, total } = order;
-        const productList = products?.map(product => `${product?.quantity} ${product.name}`).join(', ');
-
-        const message = `Hola ${user?.name}, tu pedido de ${productList} ha sido confirmado con el codigo *${order.id}*. El total es de ${total} soles`;
+        const trackingUrl = `${window.location.origin}/pedido/${order.id}`
+        const message = buildOrderMessage(order, trackingUrl)
 
         // Parsear el mensaje para enviarlo por WhatsApp
         const parsedMessage = encodeURIComponent(message);
 
-        window.open(`https://api.whatsapp.com/send?phone=51980687918&text=${parsedMessage}%20en%20la%20tienda%20de%20estilos.dev%20`)
+        window.open(`https://api.whatsapp.com/send?phone=51980687918&text=${parsedMessage}`)
     }
 
     const completeOrder = async (order: OrderType) => {
-        setOrder(order.id!)
+        setOrder(order.id ?? '')
         clearCart()
         clearUser()
-        openWhastapp(order!)
+        openWhastapp(order)
         //location.href = '/done'
     }
 
@@ -197,15 +195,16 @@ function CartOrder({ setTrigger }: any): JSX.Element {
         try {
             setLoading(true)
             const order: OrderType = {
-                id: ID(),
                 user,
                 products: productsCart,
                 total
             }
-            await useOrderCreate(order)
-            completeOrder(order)
+            // the server generates the order id and recomputes the total
+            const orderCreated = await useOrderCreate(order)
+            completeOrder(orderCreated)
         } catch (err) {
             console.error(err)
+            setLoading(false)
         }
     }
     return (

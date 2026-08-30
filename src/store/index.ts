@@ -5,6 +5,8 @@ import likes from './slices/products/likes'
 import orders from './slices/orders'
 import {
     persistReducer,
+    createMigrate,
+    MigrationManifest,
     FLUSH,
     REHYDRATE,
     PAUSE,
@@ -14,8 +16,19 @@ import {
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
+// v2 (API cutover): purge carts persisted before the Firestore -> API switch —
+// their items lack `type` and carry stale Firestore-era snapshots.
+const migrations: MigrationManifest = {
+    2: (state: any) => ({
+        ...state,
+        cart: { productsCart: [] },
+    }),
+}
+
 const persistConfig = {
     key: 'root',
+    version: 2,
+    migrate: createMigrate(migrations),
     blacklist: ['orders', 'products'],
     storage,
 }

@@ -1,0 +1,18 @@
+# Build context for the ROOT (storefront) Dockerfile only.
+# api/ and backoffice/ have their own contexts and .dockerignore files.
+api
+backoffice
+node_modules
+dist
+.git
+.idea
+.vscode
+.DS_Store
+*.log
+.env
+.env.*
+Dockerfile
+docker-compose*.yml
+Caddyfile
+*.md
+products.json

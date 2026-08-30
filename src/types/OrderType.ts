@@ -1,9 +1,9 @@
-import { ProductType } from "./ProductType";
+import { ProductCartType } from "./ProductType";
 import { UserType } from "./UserType";
 
 export interface OrderType {
     id?: string;
     user?: UserType;
     total?: number;
-    products?: ProductType[];
+    products?: ProductCartType[];
 }

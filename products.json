@@ -1,0 +1,366 @@
+[
+  {
+    "id": "0utzWxB9wGfCW1G7P9JI",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/redis_tshirt.png?alt=media&token=ea5d67b9-bf00-41f1-b0b3-6754b5b01b6a",
+    "price": 60,
+    "name": "Redis",
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 2
+  },
+  {
+    "id": "1ZvHa0FHEwUgwgZHeyAq",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 0,
+    "name": "Firebase",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/firebase_tshirt.png?alt=media&token=833fc6aa-d707-4c3c-9182-3f77fe878dcf",
+    "price": 60,
+    "colors": [
+      "#FFF",
+      "#000"
+    ]
+  },
+  {
+    "id": "2PftDsjX8SfIuBrRXl6m",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/spring_tshirt.png?alt=media&token=81d1354f-54f1-4d6f-a182-909c6758755d",
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "price": 60,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 1,
+    "name": "Spring Boot"
+  },
+  {
+    "id": "2znuPaf3gHoF93PUYmeE",
+    "colors": [
+      "#FFFFFF",
+      "#000"
+    ],
+    "price": 60,
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/nodejs_tshirt.png?alt=media&token=18a222ed-59c7-40a4-be6c-d2c306f30e25",
+    "name": "Polo Node.js",
+    "likes": 0,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "liks": 0
+  },
+  {
+    "id": "A4WTeBfc8H57XJvtro0o",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "S"
+    ],
+    "likes": 0,
+    "name": "Polo AWS",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/aws_tshirt.png?alt=media&token=6a915a16-6544-40c9-9dd3-0eb1740bdcb7",
+    "price": "60",
+    "colors": [
+      "#FFFFFF",
+      "#000000",
+      "#6B6B7B",
+      "#ACCBDD"
+    ]
+  },
+  {
+    "id": "AhMCOzDIBdjv5wKkoQOX",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 0,
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/python_tshirt.png?alt=media&token=13308548-e88c-48f7-b14c-628c15989cbb",
+    "name": "Polo Python",
+    "price": 60
+  },
+  {
+    "id": "ER0Hh8a2M9Hy1ANuk6Jr",
+    "likes": 1,
+    "name": "Hacker Rank",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "price": 60,
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/hacker_rank_tshirt.png?alt=media&token=c3e5b607-fc29-44ad-bffe-a32eb0aeded9"
+  },
+  {
+    "id": "L8hcojuKDdgmp7lc5Suk",
+    "price": 60,
+    "name": "Polo Github",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/github_tshirt.png?alt=media&token=a3d3afba-f66e-413a-ba5f-2f651d0dcd26",
+    "likes": 0,
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": "Lc9SsfAb8KFFRxPSAWAh",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 0,
+    "name": "Angular",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/angular_tshirt.png?alt=media&token=fbaafcc7-ae75-4bcb-a836-a6327d074257",
+    "price": 60,
+    "colors": [
+      "#FFF",
+      "#000"
+    ]
+  },
+  {
+    "id": "NzfZX52aU7ErWxjUle4y",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 0,
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/ubuntu_tshirt.png?alt=media&token=6cc8e4b9-62ea-49f7-98fb-1fd57ca03ecc",
+    "name": "Ubuntu",
+    "price": 60,
+    "colors": [
+      "#FFF",
+      "#000"
+    ]
+  },
+  {
+    "id": "QeZExtRZb9F3Yjzq2Sqz",
+    "price": 60,
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/react_tshirt.png?alt=media&token=3739f9b8-b22c-4cb9-b499-052b0761866c",
+    "name": "React",
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "likes": 0,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": "UAh6gS4kNXup4mLzs4BI",
+    "likes": 0,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "name": "CSS",
+    "price": 60,
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/css_tshirt.png?alt=media&token=eb885029-7acf-4bb7-b920-e5939d3c2cea",
+    "colors": [
+      "#FFF",
+      "#000"
+    ]
+  },
+  {
+    "id": "Zsmx6SFHZ0uny0XKmXPW",
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/java_tshirt.png?alt=media&token=252162a6-b429-4172-b904-b5da4cb45d95",
+    "price": 60,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "name": "Java",
+    "likes": 0
+  },
+  {
+    "id": "ap562w2TKz8rq0eCTIqH",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 6,
+    "colors": [
+      "#FFFFFF",
+      "#D0FFED",
+      "#4a6170",
+      "#1C262D"
+    ],
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/vue_tshirt.png?alt=media&token=cdf5803b-121d-4a8c-bce5-bcaa37e228bf",
+    "name": "Polo Vue",
+    "price": 75
+  },
+  {
+    "id": "bwPGSrSb1l8lZ6kHeOVI",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 1,
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/golang_tshirt.png?alt=media&token=7fc01231-ba26-43d7-b147-dcf72e5c61e1",
+    "price": 60,
+    "name": "Golang",
+    "colors": [
+      "#FFF",
+      "#000"
+    ]
+  },
+  {
+    "id": "kIjnoYM7iDFqbI9z1exp",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "likes": 0,
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/redux_tshirt.png?alt=media&token=9d23675e-5574-416f-8f70-98787d60a8e0",
+    "name": "Redux",
+    "price": 60
+  },
+  {
+    "id": "sJLD71WuLLeg0pwwPKKy",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/code_tshirt.png?alt=media&token=3f984b94-8f25-4d8f-a7b8-99920baf2327",
+    "colors": [
+      "#242321",
+      "#5E5D59",
+      "#E3DBC6",
+      "#a3c3bd"
+    ],
+    "price": 90,
+    "sizes": [
+      "XS",
+      "S",
+      "M"
+    ],
+    "name": "Polo Dev Retro",
+    "likes": 6
+  },
+  {
+    "id": "suksulRQ9ZILTdxyNKt2",
+    "name": "Polo Docker",
+    "likes": 5,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "price": 80,
+    "colors": [
+      "#FFFFFF",
+      "#6b6b6b",
+      "#000000",
+      "#ACCBDD"
+    ],
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/docker_tshirt.png?alt=media&token=c6361f25-5ee2-409d-882d-7fd2549dc5ac"
+  },
+  {
+    "id": "v6wB1piAkk8AomrWB8HX",
+    "price": 60,
+    "name": "Laravel",
+    "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/laravel_tshirt.png?alt=media&token=7082319b-f598-4514-9645-792e28b0f7be",
+    "colors": [
+      "#FFF",
+      "#000"
+    ],
+    "likes": 1,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
+  },
+  {
+    "id": "demo-taza-react",
+    "name": "Taza React",
+    "price": 35,
+    "type": "taza",
+    "colors": [
+      "#FFFFFF",
+      "#111827",
+      "#A7F3D0"
+    ],
+    "likes": 0
+  },
+  {
+    "id": "demo-taza-docker",
+    "name": "Taza Docker",
+    "price": 35,
+    "type": "taza",
+    "colors": [
+      "#FFFFFF",
+      "#0F172A",
+      "#93C5FD"
+    ],
+    "likes": 0
+  },
+  {
+    "id": "demo-mousepad-python",
+    "name": "Mousepad Python",
+    "price": 45,
+    "type": "mousepad",
+    "colors": [
+      "#111827",
+      "#F8FAFC",
+      "#FDE68A"
+    ],
+    "likes": 0
+  },
+  {
+    "id": "demo-mousepad-github",
+    "name": "Mousepad Github",
+    "price": 45,
+    "type": "mousepad",
+    "colors": [
+      "#0B0F19",
+      "#FFFFFF",
+      "#CBD5E1"
+    ],
+    "likes": 0
+  }
+]

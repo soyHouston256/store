@@ -2,7 +2,7 @@ import styled from "styled-components"
 import LikeProduct from "@/components/LikeProduct"
 import { useNavigate } from "react-router-dom";
 import { ProductType } from "@/types/ProductType";
-import TShirt from "./TShirt";
+import ProductVisual from "./ProductVisual";
 
 
 const CardWrapper = styled.section`
@@ -70,9 +70,9 @@ function Card({ product }: { product: ProductType }): JSX.Element {
 	return (
 		<CardWrapper >
 			<LikeProduct product={product} />
-			<CardImage onClick={() => goToProduct(product.id!)}>
+			<CardImage onClick={() => product.id && goToProduct(product.id)}>
 				<div>
-					<TShirt image={product.image!} color={product.colors![0]!} />
+					<ProductVisual product={product} color={product.colors?.[0]} />
 				</div>
 			</CardImage>
 			<CardInfo>
