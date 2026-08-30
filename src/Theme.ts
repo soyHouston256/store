@@ -41,17 +41,24 @@ export const GlobalStyles = createGlobalStyle`
     --screen-desktop: 994px;
     --screen-tablet: 738px;
     --screen-phone: 395px;
+    --font-size-hero: 44px;
     --font-size-title: 28px;
     --font-size-title_sm: 20px;
+    --font-size-section-title: 24px;
     --font-size-text: 16px;
+    --font-size-text-sm: 14px;
     --font-size-price: 18px;
     --font-size-price_xl: 24px;
     --button-height: 40px;
     --button-radius: 25px;
     --radius: 16px;
+    --radius-sm: 10px;
     --radius-xl: 32px;
     --shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
     --shadow-dark: 0px 4px 25px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0px 16px 36px rgba(0, 0, 0, 0.12);
+    --gradient-brand: linear-gradient(120deg, #FF5959 0%, #EAC56C 55%, #A3C4BD 100%);
+    --color-star: #f5b942;
     --color-background: ${themes.Light.background};
     --color-accent-light: ${themes.Light.accentLight};
     --color-accent: ${themes.Light.accent};
@@ -88,11 +95,19 @@ export const GlobalStyles = createGlobalStyle`
 
 	@media screen and (max-width: 1024px){
     :root {
+      --font-size-hero: 34px;
       --font-size-title: 24px;
+      --font-size-section-title: 21px;
       --font-size-price: 16px;
       --font-size-text: 15px;
       --font-size-price_xl: 20px;
       --font-size-title_sm: 18px;
+    }
+  }
+  @media screen and (max-width: 768px){
+    :root {
+      --font-size-hero: 28px;
+      --font-size-section-title: 19px;
     }
   }
   @media screen and (max-width: 425px){

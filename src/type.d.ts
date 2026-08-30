@@ -1,4 +1,4 @@
-import { ProductCartActionType, ProductCartType, ProductType } from "./types/ProductType"
+import { ProductCartActionType, ProductCartType, ProductKind, ProductType } from "./types/ProductType"
 import { UserType } from "./types/UserType"
 
 type OrdersState = {
@@ -12,6 +12,10 @@ type LikesState = {
 type ProductsState = {
     products: ProductType[]
     productsFiltered: ProductType[]
+    filters: {
+        term: string
+        category?: ProductKind
+    }
 }
 
 type ProductsCartState = {
@@ -26,7 +30,8 @@ type ProductCartAction = {
 type ProductsAction = {
     products?: ProductType[],
     product?: ProductType,
-    term?: string
+    term?: string,
+    category?: ProductKind | 'all'
 }
 
 type LikesAction = {
