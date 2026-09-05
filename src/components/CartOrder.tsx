@@ -1,4 +1,5 @@
 import { buildOrderMessage } from "@/data/orderMessage"
+import { buildWhatsappUrl } from "@/data/whatsapp"
 import useOrderCreate from "@/hooks/useOrderCreate"
 import { RootState } from "@/store"
 import { removeUser, updateTotal } from "@/store/slices/orders"
@@ -175,10 +176,7 @@ function CartOrder({ setTrigger }: any): JSX.Element {
         const trackingUrl = `${window.location.origin}/pedido/${order.id}`
         const message = buildOrderMessage(order, trackingUrl)
 
-        // Parsear el mensaje para enviarlo por WhatsApp
-        const parsedMessage = encodeURIComponent(message);
-
-        window.open(`https://api.whatsapp.com/send?phone=51980687918&text=${parsedMessage}`)
+        window.open(buildWhatsappUrl(message))
     }
 
     const completeOrder = async (order: OrderType) => {

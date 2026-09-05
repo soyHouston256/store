@@ -1,4 +1,5 @@
 import Logo from "@/components/Logo"
+import { buildWhatsappUrl } from "@/data/whatsapp"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 
@@ -135,7 +136,7 @@ const BottomBar = styled.div`
 	}
 `
 
-const whatsappHref = 'https://api.whatsapp.com/send?phone=51980687918&text=%F0%9F%91%8B%20Hola,%20tengo%20una%20consulta%20sobre%20un%20pedido.'
+const whatsappHref = buildWhatsappUrl('👋 Hola, tengo una consulta sobre un pedido.')
 
 function Footer(): JSX.Element {
 	return (

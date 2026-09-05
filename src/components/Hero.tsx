@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import HeroBgImage from "@/assets/images/hero/hero.png"
+import { buildWhatsappUrl } from "@/data/whatsapp"
 
 const HeroWrapper = styled.section`
 	position: relative;
@@ -267,7 +268,7 @@ const SecondaryLink = styled.a`
 
 function Hero(): JSX.Element {
 	const openWhastapp = () => {
-		window.open('https://api.whatsapp.com/send?phone=51980687918&text=%F0%9F%91%8B%20Hola,%20quisiera%20personalizar%20uno%20polo.')
+		window.open(buildWhatsappUrl('👋 Hola, quisiera personalizar uno polo.'))
 	}
 	return (
 		<HeroWrapper>
