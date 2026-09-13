@@ -9,12 +9,19 @@ export function normalizePhone(phone: string): string {
   return digits.length <= 9 ? `51${digits}` : digits;
 }
 
-/**
- * Public storefront origin, used for the customer-facing tracking link.
- * BUILD-TIME value (vite bakes it in) — set VITE_STORE_URL when building
- * the docker image. `||` (not `??`): vite may define it as ''.
- */
-export const STORE_URL: string = import.meta.env.VITE_STORE_URL || 'http://store.localhost';
+/** Public storefront origin, used for the customer-facing tracking link. */
+function defaultStoreUrl(): string {
+  if (typeof window === 'undefined') return 'http://store.localhost';
+
+  const { hostname, protocol } = window.location;
+  if (hostname === 'admin.devhaus.pe') return 'https://devhaus.pe';
+  if (hostname === 'admin.devstore.maxflow.ink') return 'https://devstore.maxflow.ink';
+  if (hostname.startsWith('admin.')) return `${protocol}//${hostname.slice('admin.'.length)}`;
+
+  return 'http://store.localhost';
+}
+
+export const STORE_URL: string = import.meta.env.VITE_STORE_URL || defaultStoreUrl();
 
 /** Spanish notification message for the order's CURRENT status. */
 export function whatsappMessage(order: OrderDTO): string {

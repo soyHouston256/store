@@ -1,0 +1,33 @@
+name: Deploy Backoffice
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backoffice/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-backoffice.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-production-backoffice
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy backoffice only
+    runs-on: [self-hosted, deploy, docker, store]
+    timeout-minutes: 20
+    steps:
+      - name: Deploy backoffice
+        run: |
+          set -euo pipefail
+          cd /opt/n8n/store
+          git fetch --prune origin master
+          git reset --hard origin/master
+          docker compose up -d --build backoffice
+          docker compose ps backoffice
+          curl -fsS https://admin.devstore.maxflow.ink/ >/dev/null

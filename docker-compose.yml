@@ -19,6 +19,7 @@
 services:
   mongo:
     image: mongo:7
+    container_name: store-mongo
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
@@ -26,6 +27,7 @@ services:
 
   api:
     build: ./api
+    container_name: store-api
     restart: unless-stopped
     depends_on:
       - mongo
@@ -42,47 +44,43 @@ services:
     volumes:
       - uploads_data:/data/uploads
       - ./products.json:/seed/products.json:ro
-    # internal :3000 — exposed to the network via caddy only
+    networks:
+      - default
+      - traefik-public
+    # internal :3000 — exposed to the network via Traefik only
 
   storefront:
     build:
       context: .
       args:
-        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL in .env (see .env.example)}
+        VITE_API_URL: ${VITE_API_URL:-}
+        VITE_WHATSAPP_NUMBER: ${VITE_WHATSAPP_NUMBER:?set VITE_WHATSAPP_NUMBER in .env}
+    container_name: store-storefront
     restart: unless-stopped
+    networks:
+      - traefik-public
     # internal :80
 
   backoffice:
     build:
       context: ./backoffice
       args:
-        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL in .env (see .env.example)}
+        VITE_API_URL: ${VITE_API_URL:-}
         # optional: storefront origin for WhatsApp tracking links
         # (falls back to http://store.localhost when unset)
         VITE_STORE_URL: ${VITE_STORE_URL:-}
+    container_name: store-backoffice
     restart: unless-stopped
+    networks:
+      - traefik-public
     # internal :80
-
-  caddy:
-    image: caddy:2
-    restart: unless-stopped
-    depends_on:
-      - api
-      - storefront
-      - backoffice
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      DOMAIN: ${DOMAIN:?set DOMAIN in .env (see .env.example)}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data # TLS certificates — must persist across restarts
 
 volumes:
   mongo_data:
   uploads_data:
-  caddy_data:
 
-# All services share the compose-default bridge network; only caddy
-# publishes host ports (NFR-5 topology).
+networks:
+  traefik-public:
+    external: true
+
+# Only Traefik publishes host ports (NFR-5 topology on this VPS).

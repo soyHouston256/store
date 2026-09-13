@@ -1,4 +1,23 @@
-export const API_URL: string = import.meta.env.VITE_API_URL ?? ''
+const configuredApiUrl = import.meta.env.VITE_API_URL ?? ''
+
+function defaultApiUrl(): string {
+    if (typeof window === 'undefined') return ''
+
+    const { hostname, protocol } = window.location
+    if (hostname === 'devhaus.pe' || hostname === 'www.devhaus.pe') {
+        return 'https://api.devhaus.pe'
+    }
+    if (hostname === 'devstore.maxflow.ink') {
+        return 'https://api.devstore.maxflow.ink'
+    }
+    if (hostname.startsWith('admin.')) {
+        return `${protocol}//api.${hostname.slice('admin.'.length)}`
+    }
+
+    return ''
+}
+
+export const API_URL: string = configuredApiUrl || defaultApiUrl()
 
 interface ApiErrorEnvelope {
     error?: {
