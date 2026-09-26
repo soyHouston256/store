@@ -4,16 +4,32 @@ import Lottie from 'react-lottie-player'
 import lottieJson from '@/assets/animations/bounce.json'
 import likeSound from '@/assets/like.mp3'
 
+// Favorito 44×44 (spec R3.6 / canvas): círculo sobre la imagen, arriba-der.
+// Sonido `like.mp3` + Lottie `bounce.json` intactos (spec R0.2).
 const LikeWrapper = styled.button`
-    background-color: transparent;
+    background-color: var(--dh-surface);
     border: none;
+    border-radius: 22px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 12px;
+    top: 12px;
+    z-index: 3;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+    &:focus-visible {
+        outline: 2px solid var(--dh-ink);
+        outline-offset: 2px;
+    }
     & > svg {
-        width: 24px;
-        height: 24px;
-        fill: var(--color-border-solid);
+        width: 20px;
+        height: 20px;
+        fill: var(--dh-line-2);
         position: relative;
         transition: all .2s ease-in;
         &.animating {
@@ -56,7 +72,7 @@ function LikeButton({ liked, status }: { liked: any, status: boolean }): JSX.Ele
     }, [status])
 
     return (
-        <LikeWrapper onClick={triggerLike}>
+        <LikeWrapper type="button" onClick={triggerLike} aria-pressed={like} aria-label={like ? 'Quitar de favoritos' : 'Agregar a favoritos'}>
             {like && !animating ? 
                 <svg className="icon_liked" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path d="M236 92c0 30.6-17.7 62-52.6 93.4a314.3 314.3 0 0 1-51.5 37.6a8.1 8.1 0 0 1-7.8 0C119.8 220.6 20 163.9 20 92a60 60 0 0 1 108-36a60 60 0 0 1 108 36Z"></path></svg>
                 : <svg className={animating ? 'animating' : ''} preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path d="M236 92c0 30.6-17.7 62-52.6 93.4a314.3 314.3 0 0 1-51.5 37.6a8.1 8.1 0 0 1-7.8 0C119.8 220.6 20 163.9 20 92a60 60 0 0 1 108-36a60 60 0 0 1 108 36Z"></path></svg>

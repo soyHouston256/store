@@ -1,6 +1,6 @@
 // Enlaces compartidos por Header, MobileMenu y Footer (design §4).
-// `?cat=` lo consume `useCatalogUrlSync` a partir de la fase 3; hasta entonces
-// el enlace lleva al catálogo (#catalogo) sin filtrar.
+// `?cat=` lo consume `useCatalogUrlSync` (Products.tsx) y `#catalogo` lo
+// desplaza el ScrollManager de Layout.
 
 export interface NavLink {
     label: string

@@ -1,7 +1,6 @@
 import Container from "@/components/layout/Container";
-import { filterProducts } from "@/store/slices/products";
-import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useCatalogParams } from "@/hooks/useCatalogUrlSync";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components"
 
@@ -10,6 +9,7 @@ import styled from "styled-components"
 // a `/#buscar` y el input se enfoca al montar con ese hash.
 export const SEARCH_FOCUS_EVENT = 'dh:focus-search'
 export const SEARCH_ANCHOR = 'buscar'
+const SEARCH_DEBOUNCE_MS = 250
 
 export function useRequestSearchFocus(): () => void {
     const navigate = useNavigate()
@@ -25,60 +25,74 @@ export function useRequestSearchFocus(): () => void {
 
 const SearchBoxWrapper = styled.div`
     height: 48px;
-    border-radius: var(--radius-xl);
-    background-color: var(--color-neutral);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow);
-    margin-top: 40px;
+    border-radius: var(--dh-radius-pill);
+    background-color: var(--dh-surface);
+    border: 1px solid var(--dh-line-2);
     display: flex;
     align-items: center;
     padding: 0 20px;
     box-sizing: border-box;
     svg {
         margin-right: 10px;
-        fill: var(--color-text);
-        min-width: 24px;
+        stroke: var(--dh-muted);
+        min-width: 20px;
     }
-    input, select {
+    input {
         border: none;
         background-color: transparent;
         height: 100%;
-        color: var(--color-text);
+        color: var(--dh-ink);
         outline: none;
-    }
-    select {
-        padding-left: 15px;
-        min-width: 150px;
-    }
-    input {
         flex: 1;
         min-width: 0;
+        font-size: 15px;
+        font-family: inherit;
+        &::placeholder {
+            color: var(--dh-muted);
+        }
+    }
+    .clear {
+        border: none;
+        background: transparent;
+        color: var(--dh-muted);
+        font-size: 13px;
+        cursor: pointer;
+        padding: 0 4px;
+        font-family: inherit;
+        &:hover {
+            color: var(--dh-ink);
+        }
     }
     &:focus-within {
         border-color: var(--dh-ink);
     }
-    @media screen and (max-width: 1024px){
-        margin-top: 25px;
-	}
-    @media screen and (max-width: 425px){
-        margin-top: 20px;
-	}
 `
 
+// Búsqueda por texto (spec R0.2 / R3.5): escribe `?q=` con debounce 250 ms vía
+// `setParam` (`replace:false`); nunca despacha a Redux directamente. Si la URL
+// cambia desde fuera (Atrás, deep link) el input se actualiza.
 function SearchBox(): JSX.Element {
-    const [term, setTerm] = useState('')
+    const { filters, setParam } = useCatalogParams()
+    const [term, setTerm] = useState(filters.term)
+    const lastPushed = useRef(filters.term)
     const inputRef = useRef<HTMLInputElement>(null)
     const location = useLocation()
-    const dispatch: Dispatch<any> = useDispatch()
-
-    const searchProducts = useCallback(
-        (term: string) => dispatch(filterProducts({ term })),
-        [dispatch]
-    )
 
     useEffect(() => {
-        searchProducts(term)
-    }, [term])
+        if (filters.term !== lastPushed.current) {
+            lastPushed.current = filters.term
+            setTerm(filters.term)
+        }
+    }, [filters.term])
+
+    useEffect(() => {
+        if (term === lastPushed.current) return
+        const timer = window.setTimeout(() => {
+            lastPushed.current = term
+            setParam('q', term.trim() ? term : null)
+        }, SEARCH_DEBOUNCE_MS)
+        return () => window.clearTimeout(timer)
+    }, [term, setParam])
 
     const focusInput = useCallback(() => {
         const input = inputRef.current
@@ -99,17 +113,20 @@ function SearchBox(): JSX.Element {
     return (
         <Container id={SEARCH_ANCHOR}>
             <SearchBoxWrapper>
-                <svg width="24" height="24" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512" aria-hidden="true"><path d="M443.5 420.2L336.7 312.4c20.9-26.2 33.5-59.4 33.5-95.5 0-84.5-68.5-153-153.1-153S64 132.5 64 217s68.5 153 153.1 153c36.6 0 70.1-12.8 96.5-34.2l106.1 107.1c3.2 3.4 7.6 5.1 11.9 5.1 4.1 0 8.2-1.5 11.3-4.5 6.6-6.3 6.8-16.7.6-23.3zm-226.4-83.1c-32.1 0-62.3-12.5-85-35.2-22.7-22.7-35.2-52.9-35.2-84.9 0-32.1 12.5-62.3 35.2-84.9 22.7-22.7 52.9-35.2 85-35.2s62.3 12.5 85 35.2c22.7 22.7 35.2 52.9 35.2 84.9 0 32.1-12.5 62.3-35.2 84.9-22.7 22.7-52.9 35.2-85 35.2z"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
                 <input
                     ref={inputRef}
-                    type="text"
+                    type="search"
                     aria-label="Buscar producto"
                     placeholder="Busca tu producto..."
                     value={term}
-                    onChange={(event) => {
-                        setTerm(event.target.value);
-                    }}
+                    onChange={(event) => setTerm(event.target.value)}
                 />
+                {term && (
+                    <button type="button" className="clear" onClick={() => setTerm('')} aria-label="Limpiar búsqueda">
+                        Limpiar
+                    </button>
+                )}
             </SearchBoxWrapper>
         </Container>
     )

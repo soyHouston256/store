@@ -1,303 +1,242 @@
 import styled from "styled-components"
-import HeroBgImage from "@/assets/images/hero/hero.png"
-import { buildWhatsappUrl } from "@/data/whatsapp"
+import { useSelector } from "react-redux"
 import Container from "@/components/layout/Container"
+import { buildWhatsappUrl } from "@/data/whatsapp"
+import { site } from "@/config/site"
+import { RootState } from "@/store"
+import { useCatalogStatus } from "@/hooks/useProductsList"
 
-const HeroWrapper = styled.section`
-	position: relative;
-	display: flex;
-	margin-top: 40px;
-	background-color: var(--color-neutral);
-	border-radius: var(--radius-xl);
-	box-shadow: var(--shadow);
-	overflow: hidden;
-	min-height: 320px;
-	&:before, &:after {
-		content: "";
-		position: absolute;
-		border-radius: 50%;
-		background: var(--gradient-brand);
-		filter: blur(70px);
-		opacity: .28;
-		pointer-events: none;
-	}
-	&:before {
-		width: 320px;
-		height: 320px;
-		top: -140px;
-		right: -80px;
-	}
-	&:after {
-		width: 220px;
-		height: 220px;
-		bottom: -120px;
-		left: 30%;
-		opacity: .18;
-	}
+// Hero (spec 02 §1 / R3.3, canvas Home.dc.html): tarjeta blanca radio 28,
+// línea mono, h1 64/800 con "a tu medida" en --dh-accent (sin degradado),
+// párrafo 18 con customization.fromPrice, CTAs "Ver catálogo" y WhatsApp (R1.6),
+// panel --dh-sand con 3 mockups procedurales en abanico (hasta tener fotos) y
+// etiqueta "Polos S/ {mín} · Personaliza desde S/ {fromPrice}" solo con data.
+const HeroSection = styled(Container)`
+	padding-top: 48px;
 	@media screen and (max-width: 1024px){
-		min-height: 280px;
-		margin-top: 24px;
+		padding-top: 32px;
 	}
-	@media screen and (max-width: 768px){
-		min-height: auto;
-		flex-direction: column;
-	}
-	@media screen and (max-width: 425px){
-		margin-top: 16px;
-		border-radius: var(--radius);
+	@media screen and (max-width: 640px){
+		padding-top: 20px;
 	}
 `
-const HeroInfo = styled.div`
-	position: relative;
-	z-index: 1;
-	flex: 1;
+const HeroCard = styled.div`
+	display: flex;
+	min-height: 460px;
+	border-radius: var(--dh-radius-xl);
+	background: var(--dh-surface);
+	border: 1px solid var(--dh-line);
+	overflow: hidden;
+	@media screen and (max-width: 1024px){
+		flex-direction: column;
+		min-height: 0;
+	}
+	@media screen and (max-width: 640px){
+		border-radius: var(--dh-radius-lg);
+	}
+`
+const HeroCopy = styled.div`
+	flex: 0 0 52%;
+	max-width: 600px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding: 3.5rem 3rem;
-	.kicker {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		width: fit-content;
-		font-size: 12px;
-		font-weight: 700;
-		letter-spacing: .12em;
-		text-transform: uppercase;
-		color: var(--color-text);
-		opacity: .55;
-		margin-bottom: 1rem;
-		&:before {
-			content: "";
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: var(--gradient-brand);
-		}
+	gap: 22px;
+	padding: 56px 40px 56px 64px;
+	box-sizing: border-box;
+	.mono {
+		font-family: var(--dh-font-mono);
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--dh-muted);
 	}
 	h1 {
-		font-size: var(--font-size-hero);
-		line-height: 1.15;
+		margin: 0;
+		font-family: var(--dh-font-display);
+		font-size: var(--dh-text-hero);
+		line-height: 1.02;
 		font-weight: 800;
-		letter-spacing: -.01em;
-		color: var(--color-text);
-		margin: 0 0 .9rem;
-		max-width: 480px;
-	}
-	.accent {
-		background: var(--gradient-brand);
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+		letter-spacing: -0.03em;
+		color: var(--dh-ink);
+		.accent {
+			color: var(--dh-accent);
+		}
 	}
 	p {
-		font-size: var(--font-size-text);
-		color: var(--color-text);
-		opacity: .6;
-		max-width: 420px;
-		margin: 0 0 2rem;
-		line-height: 1.5;
+		margin: 0;
+		font-size: 18px;
+		line-height: 1.55;
+		color: var(--dh-ink-2);
+		max-width: 470px;
 	}
-	.hero_actions {
+	.actions {
 		display: flex;
-		align-items: center;
 		flex-wrap: wrap;
-		gap: 14px;
+		gap: 12px;
+		padding-top: 6px;
 	}
 	@media screen and (max-width: 1024px){
-		padding: 3rem 2rem;
+		flex-basis: auto;
+		max-width: none;
+		padding: 40px 32px;
+		gap: 18px;
+	}
+	@media screen and (max-width: 640px){
+		padding: 28px 20px;
+		h1 {
+			font-size: 40px;
+		}
 		p {
-			margin-bottom: 1.5rem;
-		}
-	}
-	@media screen and (max-width: 768px){
-		align-items: center;
-		text-align: center;
-		padding: 2.5rem 1.75rem 1.5rem;
-		h1, p {
-			max-width: 100%;
+			font-size: 16px;
 		}
 	}
 `
-const HeroImage = styled.div`
-	position: relative;
-	z-index: 1;
-	flex: 1;
-	display: flex;
-	align-items: flex-end;
-	justify-content: center;
-	overflow: hidden;
-	.hero_price_tag {
-		position: absolute;
-		top: 24px;
-		left: 24px;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		background-color: var(--color-neutral);
-		box-shadow: var(--shadow-hover);
-		border: 1px solid var(--color-border);
-		border-radius: 999px;
-		padding: 8px 16px 8px 10px;
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--color-text);
-		.dot {
-			width: 22px;
-			height: 22px;
-			border-radius: 50%;
-			background: var(--gradient-brand);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-shrink: 0;
-			svg {
-				width: 12px;
-				height: 12px;
-				fill: #fff;
-			}
-		}
-		strong {
-			color: var(--color-text);
-		}
-	}
-	.hero_img_holder {
-		position: relative;
-		margin-top: 24px;
-		img {
-			width: 400px;
-			display: block;
-			image-rendering: -moz-crisp-edges;
-			image-rendering: -o-crisp-edges;
-			image-rendering: -webkit-optimize-contrast;
-			image-rendering: crisp-edges;
-			-ms-interpolation-mode: nearest-neighbor;
-		}
-	}
-	@media screen and (max-width: 1024px){
-		.hero_img_holder {
-			margin-top: 50px;
-			img {
-				width: 340px;
-			}
-		}
-	}
-	@media screen and (max-width: 768px){
-		.hero_price_tag {
-			top: 16px;
-			left: 16px;
-		}
-		.hero_img_holder {
-			margin-top: 0;
-			margin-bottom: -20px;
-			img {
-				width: 320px;
-			}
-		}
-	}
-	@media screen and (max-width: 425px){
-		.hero_img_holder img {
-			width: 260px;
-		}
-	}
-	@media screen and (max-width: 320px){
-		.hero_img_holder img {
-			width: 230px;
-		}
-	}
-`
-const Button = styled.button`
-	border: none;
-	cursor: pointer;
-	background: var(--gradient-brand);
-	border-radius: var(--button-radius);
-	height: var(--button-height);
-	display: flex;
+// Ancla nativa: conserva los `?` params del catálogo y el navegador desplaza a #catalogo.
+const PrimaryCta = styled.a`
+	height: 52px;
+	padding: 0 26px;
+	border-radius: 26px;
+	background: var(--dh-ink);
+	color: var(--color-text-invert);
+	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	width: fit-content;
-	padding: 0 22px;
-	transition: transform .15s ease, box-shadow .15s ease;
+	font-weight: 600;
+	font-size: 16px;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: opacity .15s ease;
 	&:hover {
-		transform: translateY(-2px);
-		box-shadow: var(--shadow-hover);
+		opacity: .9;
 	}
 	&:focus-visible {
-		outline: 2px solid var(--color-text);
+		outline: 2px solid var(--dh-ink);
 		outline-offset: 3px;
 	}
+`
+const SecondaryCta = styled.a`
+	height: 52px;
+	padding: 0 24px;
+	border-radius: 26px;
+	border: 1.5px solid var(--dh-ink);
+	color: var(--dh-ink);
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 600;
+	font-size: 16px;
+	text-decoration: none;
+	white-space: nowrap;
+	box-sizing: border-box;
+	transition: background .15s ease, color .15s ease;
 	svg {
-		width: 22px;
-		height: 22px;
-		fill: #1a1a1a;
-		margin-right: 9px;
+		width: 18px;
+		height: 18px;
+		stroke: currentColor;
 	}
-	span {
-		color: #1a1a1a;
-		font-weight: 700;
-		font-size: var(--font-size-text);
-		letter-spacing: .01rem;
+	&:hover {
+		background: var(--dh-ink);
+		color: var(--color-text-invert);
+	}
+	&:focus-visible {
+		outline: 2px solid var(--dh-ink);
+		outline-offset: 3px;
+	}
+`
+const HeroArt = styled.div`
+	flex: 1 1 auto;
+	position: relative;
+	background: var(--dh-sand);
+	min-height: 460px;
+	overflow: hidden;
+	.shirt {
+		position: absolute;
+		display: block;
+	}
+	.shirt_a {
+		left: 6%;
+		top: 15%;
+		width: 40%;
+		transform: rotate(-8deg);
+	}
+	.shirt_b {
+		left: 30%;
+		top: 8%;
+		width: 48%;
+		z-index: 1;
+	}
+	.shirt_c {
+		left: 61%;
+		top: 26%;
+		width: 39%;
+		transform: rotate(7deg);
+	}
+	.tag {
+		position: absolute;
+		right: 32px;
+		top: 28px;
+		z-index: 2;
+		padding: 10px 16px;
+		border-radius: 20px;
+		background: var(--dh-surface);
+		border: 1px solid var(--dh-line);
+		color: var(--dh-ink);
+		font-size: 14px;
+		font-weight: 600;
 		white-space: nowrap;
 	}
-`
-const SecondaryLink = styled.a`
-	display: flex;
-	align-items: center;
-	height: var(--button-height);
-	padding: 0 20px;
-	border-radius: var(--button-radius);
-	border: 1px solid var(--color-border-solid);
-	color: var(--color-text);
-	font-weight: 600;
-	font-size: var(--font-size-text);
-	text-decoration: none;
-	cursor: pointer;
-	transition: border-color .15s ease, opacity .15s ease;
-	opacity: .8;
-	&:hover, &:focus-visible {
-		opacity: 1;
-		border-color: var(--color-text);
+	@media screen and (max-width: 1024px){
+		min-height: 340px;
 	}
-	&:focus-visible {
-		outline: 2px solid var(--color-text);
-		outline-offset: 3px;
+	@media screen and (max-width: 640px){
+		min-height: 240px;
+		.tag {
+			right: 16px;
+			top: 16px;
+			font-size: 13px;
+			padding: 8px 12px;
+		}
 	}
 `
+
+const SHIRT_PATH = 'M62 18 L80 10 Q100 24 120 10 L138 18 L182 46 L164 80 L146 70 L146 190 L54 190 L54 70 L36 80 L18 46 Z'
 
 function Hero(): JSX.Element {
 	// null sin número configurado (spec R1.6): el CTA de WhatsApp no se renderiza.
 	const whatsappHref = buildWhatsappUrl('👋 Hola, quisiera personalizar un polo.')
-	const openWhastapp = () => {
-		if (whatsappHref) window.open(whatsappHref)
-	}
+	const { loading, error } = useCatalogStatus()
+	const products = useSelector((state: RootState) => state.products.products)
+	const poloPrices = products
+		.filter((product) => (product.type ?? 'polo') === 'polo' && typeof product.price === 'number')
+		.map((product) => product.price as number)
+	const minPoloPrice = poloPrices.length ? Math.min(...poloPrices) : null
+	const showTag = !loading && !error && minPoloPrice !== null
+	const fromPrice = site.customization.fromPrice
+
 	return (
-		<Container>
-		<HeroWrapper>
-			<HeroInfo>
-				<span className="kicker">Diseños para developers</span>
-				<h1>Estilo y comodidad <span className="accent">a tu medida</span></h1>
-				<p>Polos y accesorios con los stacks que amas: Angular, React, Golang, Java y más. Personaliza el tuyo desde S/ 15.00.</p>
-				<div className="hero_actions">
-					{whatsappHref && <Button onClick={openWhastapp} type="button">
-						<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256" aria-hidden="true"><path d="M200.8 53.9A103.4 103.4 0 0 0 128 24h-1.1a104 104 0 0 0-33.5 202.1a32 32 0 0 0 42.6-30.2V192a16 16 0 0 1 16-16h46.2a31.7 31.7 0 0 0 31.2-24.9a101.5 101.5 0 0 0 2.6-24a102.9 102.9 0 0 0-31.2-73.2Zm13 93.7a15.9 15.9 0 0 1-15.6 12.4H152a32.1 32.1 0 0 0-32 32v3.9A16 16 0 0 1 98.7 211A88.2 88.2 0 0 1 40 128a88.1 88.1 0 0 1 87.1-88h.9a88.3 88.3 0 0 1 88 87.2a86.8 86.8 0 0 1-2.2 20.4ZM140 76a12 12 0 1 1-12-12a12 12 0 0 1 12 12Zm-46.6 32A12 12 0 1 1 89 91.6a12.1 12.1 0 0 1 4.4 16.4Zm0 40a12 12 0 1 1-16.4-4.4a12.1 12.1 0 0 1 16.4 4.4Zm90-52a12 12 0 1 1-16.4-4.4a12 12 0 0 1 16.4 4.4Z"></path></svg>
-						<span>Personalizar por WhatsApp</span>
-					</Button>}
-					<SecondaryLink href="#catalogo">Ver catálogo</SecondaryLink>
-				</div>
-			</HeroInfo>
-			<HeroImage>
-				<div className="hero_price_tag">
-					<span className="dot">
-						<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256" aria-hidden="true"><path d="M223.4 114.2 141.8 32.6a22.1 22.1 0 0 0-15.6-6.5H48a22 22 0 0 0-22 22v78.2a22.1 22.1 0 0 0 6.5 15.6l81.6 81.6a22 22 0 0 0 31.1 0l78.2-78.2a22 22 0 0 0 0-31.1ZM168 96a16 16 0 1 1 16-16a16 16 0 0 1-16 16Z"></path></svg>
-					</span>
-					Desde <strong>&nbsp;S/ 15</strong>
-				</div>
-				<div className="hero_img_holder">
-					<img src={HeroBgImage} alt="Modelo luciendo un polo personalizado devhaus.pe" />
-				</div>
-			</HeroImage>
-		</HeroWrapper>
-		</Container>
+		<HeroSection as="section" aria-labelledby="hero-title">
+			<HeroCard>
+				<HeroCopy>
+					<span className="mono" aria-hidden="true">$ git checkout -b tu-estilo</span>
+					<h1 id="hero-title">Estilo y comodidad <span className="accent">a tu medida</span></h1>
+					<p>Polos, mousepads y tazas con los stacks que amas: Angular, React, Go, Java y más. Personaliza el tuyo desde S/ {fromPrice}.</p>
+					<div className="actions">
+						<PrimaryCta href="#catalogo">Ver catálogo</PrimaryCta>
+						{whatsappHref && (
+							<SecondaryCta href={whatsappHref} target="_blank" rel="noreferrer">
+								<svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.2L15.8 5.2a2 2 0 0 1 2.9 0l.1.1a2 2 0 0 1 0 2.9L8.2 18.8z" /></svg>
+								Personalizar por WhatsApp
+							</SecondaryCta>
+						)}
+					</div>
+				</HeroCopy>
+				<HeroArt aria-hidden="true">
+					<svg className="shirt shirt_a" viewBox="0 0 200 200"><path d={SHIRT_PATH} fill="#E9B949" /><text x="100" y="98" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="11" fontWeight="700" fill="#1B1A17">console.log(</text><text x="100" y="114" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="11" fontWeight="700" fill="#1B1A17">"hola")</text></svg>
+					<svg className="shirt shirt_b" viewBox="0 0 200 200"><path d={SHIRT_PATH} fill="#1B1A17" /><text x="100" y="92" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="10" fontWeight="700" fill="#7FA894">git commit -m</text><text x="100" y="110" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="12" fontWeight="700" fill="#E9B949">"ya funciona"</text></svg>
+					<svg className="shirt shirt_c" viewBox="0 0 200 200"><path d={SHIRT_PATH} fill="#8C8A86" /><text x="100" y="100" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="13" fontWeight="700" fill="#FAF6F1">&lt;/&gt;</text></svg>
+					{showTag && <span className="tag">Polos S/ {minPoloPrice} · Personaliza desde S/ {fromPrice}</span>}
+				</HeroArt>
+			</HeroCard>
+		</HeroSection>
 	)
 }
 

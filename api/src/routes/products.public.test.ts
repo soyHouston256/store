@@ -44,6 +44,33 @@ describe('GET /api/products (R1.1)', () => {
     });
   });
 
+  it('every item carries an ISO createdAt parseable by Date (R3.2)', async () => {
+    await seed();
+    const res = await request(app).get('/api/products');
+    expect(res.status).toBe(200);
+    for (const item of res.body as Array<{ createdAt: unknown }>) {
+      expect(typeof item.createdAt).toBe('string');
+      const parsed = new Date(item.createdAt as string);
+      expect(Number.isNaN(parsed.getTime())).toBe(false);
+      expect(parsed.toISOString()).toBe(item.createdAt);
+    }
+    // timestamps: true stamps creation time on insert
+    const polo = res.body.find((p: { id: string }) => p.id === '0utzWxB9wGfCW1G7P9JI');
+    expect(Date.now() - new Date(polo.createdAt).getTime()).toBeLessThan(60_000);
+  });
+
+  it('legacy doc without createdAt still serves a parseable createdAt (epoch) (R3.2)', async () => {
+    await Product.collection.insertOne({
+      _id: 'legacy-2' as unknown as never,
+      name: 'Legacy Shirt 2',
+      price: 20,
+      published: true,
+    });
+    const res = await request(app).get('/api/products');
+    const legacy = res.body.find((p: { id: string }) => p.id === 'legacy-2');
+    expect(legacy.createdAt).toBe('1970-01-01T00:00:00.000Z');
+  });
+
   it('legacy doc without type is served with type "polo" (R1.4)', async () => {
     // Raw insert bypassing mongoose, mimicking a pre-migration document.
     await Product.collection.insertOne({

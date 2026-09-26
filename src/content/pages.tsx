@@ -79,7 +79,7 @@ export const faqItems: AccordionItem[] = [
     { id: 'personalizacion', question: '¿Cómo funciona la personalización?', answer: customizationAnswer() }
 ]
 
-function HelpIntro(): JSX.Element {
+export function HelpIntro(): JSX.Element {
     const hours = isConfigured('contact.hours') ? ` en horario de atención ${contact.hours}` : ''
     return (
         <>

@@ -1,173 +1,284 @@
 import styled from "styled-components"
 import LikeProduct from "@/components/LikeProduct"
-import { useNavigate } from "react-router-dom";
-import { ProductType } from "@/types/ProductType";
-import ProductVisual from "./ProductVisual";
+import ProductVisual from "@/components/ProductVisual"
+import { useNavigate } from "react-router-dom"
+import { ProductCartActionType, ProductType } from "@/types/ProductType"
+import { Dispatch, useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "@/store"
+import { selectBestSellerIds } from "@/store/slices/products"
+import { addToCart } from "@/store/slices/products/cart"
+import { configFor } from "@/data/typeConfig"
+import { logoPositionsFor } from "@/data/logoPositions"
+import { displayColor, sizeRange } from "@/data/catalogFilters"
+import { isConfigured, site } from "@/config/site"
+import { ID } from "@/utils/helpers"
 
+// Tarjeta de producto (spec 02 §3 / R3.6, canvas Home.dc.html): imagen 300 en
+// --dh-sand, badge "Más vendido" (top 3 likes, C13) o "Nuevo" (< 30 días),
+// favorito 44 (LikeProduct preservado), puntos de color 14 (máx. 6, +N), nombre
+// → ficha (/product/:id hasta fase 5), meta por tipo, precio Bricolage 20/700 y
+// `+` 44 que agrega con talla/color/posición por defecto SIN navegar.
+const NEW_DAYS = 30
+const MAX_DOTS = 6
+const ADDED_FEEDBACK_MS = 1500
 
-const CardWrapper = styled.section`
+const CardWrapper = styled.article`
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-neutral);
-	border: 1px solid var(--color-border);
-	border-radius: var(--radius);
-	box-shadow: var(--shadow);
-	height: 310px;
+	background-color: var(--dh-surface);
+	border: 1px solid var(--dh-line);
+	border-radius: var(--dh-radius-lg);
+	overflow: hidden;
 	position: relative;
 	transition: transform .18s ease, box-shadow .18s ease;
 	&:hover, &:focus-within {
-		transform: translateY(-4px);
-		box-shadow: var(--shadow-hover);
+		transform: translateY(-3px);
+		box-shadow: 0 16px 36px rgba(0, 0, 0, .08);
 	}
-	&:hover .card_image_zoom, &:focus-within .card_image_zoom {
-		transform: scale(1.06);
-	}
-	@media screen and (max-width: 1024px){
-		height: 270px;
-	}
-	@media screen and (max-width: 425px){
-		height: 250px;
+	&:hover .card_visual, &:focus-within .card_visual {
+		transform: scale(1.04);
 	}
 `
 const Badge = styled.span`
 	position: absolute;
-	top: 12px;
-	left: 12px;
+	top: 14px;
+	left: 14px;
 	z-index: 2;
-	display: flex;
-	align-items: center;
-	gap: 4px;
-	background: var(--gradient-brand);
-	color: #1a1a1a;
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: .02em;
-	text-transform: uppercase;
-	padding: 5px 10px;
-	border-radius: 999px;
-	svg {
-		width: 11px;
-		height: 11px;
-		fill: #1a1a1a;
-	}
+	padding: 6px 10px;
+	border-radius: 12px;
+	background: #1B1A17;
+	color: #FAF6F1;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1;
 `
 const CardImage = styled.button`
 	all: unset;
-	flex: 1;
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	overflow: hidden;
+	height: 300px;
 	width: 100%;
+	background: var(--dh-sand);
 	cursor: pointer;
+	overflow: hidden;
 	box-sizing: border-box;
-	.card_image_zoom {
-		width: 55%;
+	.card_visual {
+		width: 64%;
 		height: 100%;
 		display: flex;
 		align-items: center;
-		margin-top: 1rem;
+		justify-content: center;
 		transition: transform .25s ease;
 		picture {
 			width: 100%;
 		}
 	}
 	&:focus-visible {
-		outline: 2px solid var(--color-text);
+		outline: 2px solid var(--dh-ink);
 		outline-offset: -4px;
 	}
+	@media screen and (max-width: 1024px){
+		height: 260px;
+	}
+	@media screen and (max-width: 640px){
+		height: 180px;
+		.card_visual {
+			width: 74%;
+		}
+	}
 `
-const CardInfo = styled.section`
+const CardInfo = styled.div`
 	display: flex;
 	flex-direction: column;
-	padding: 1.4rem 1.6rem 1.6rem;
-	.card_row {
+	gap: 8px;
+	padding: 16px 18px 18px;
+	.dots {
 		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: 10px;
+		align-items: center;
+		gap: 6px;
+		min-height: 14px;
+		.dot {
+			width: 14px;
+			height: 14px;
+			border-radius: 7px;
+			border: 1px solid rgba(0, 0, 0, .18);
+			box-sizing: border-box;
+		}
+		.more {
+			font-size: 12px;
+			color: var(--dh-muted);
+		}
 	}
-	p {
-		font-size: var(--font-size-text);
-		color: var(--color-text);
-		opacity: .7;
-		padding-bottom: 5px;
-		margin: 0;
+	.name {
+		all: unset;
+		cursor: pointer;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--dh-ink);
+		line-height: 1.3;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		&:hover {
+			color: var(--dh-accent);
+		}
+		&:focus-visible {
+			outline: 2px solid var(--dh-ink);
+			outline-offset: 2px;
+			border-radius: 4px;
+		}
 	}
-	span.price {
-		font-size: var(--font-size-price);
+	.meta {
+		font-size: 13px;
+		color: var(--dh-muted);
+		min-height: 1.3em;
+	}
+	.row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding-top: 4px;
+	}
+	.price {
+		font-family: var(--dh-font-display);
+		font-size: 20px;
 		font-weight: 700;
-		color: var(--color-text);
+		color: var(--dh-ink);
 	}
-	@media screen and (max-width: 1024px){
-		padding: 1.1rem 1.2rem 1.2rem;
-	}
-	@media screen and (max-width: 425px){
-		padding-top: .6rem;
+	@media screen and (max-width: 640px){
+		padding: 12px 12px 14px;
+		gap: 6px;
+		.name {
+			font-size: 14px;
+		}
+		.price {
+			font-size: 18px;
+		}
 	}
 `
-const AddButton = styled.button`
+const AddButton = styled.button<{ $added: boolean }>`
 	flex-shrink: 0;
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
+	width: 44px;
+	height: 44px;
+	border-radius: 22px;
 	border: none;
 	cursor: pointer;
-	background: var(--gradient-brand);
-	transition: transform .15s ease;
+	background: ${({ $added }) => $added ? 'var(--dh-green)' : 'var(--dh-accent)'};
+	transition: transform .15s ease, background .2s ease;
 	svg {
-		width: 17px;
-		height: 17px;
-		fill: #1a1a1a;
+		width: 18px;
+		height: 18px;
+		stroke: #FFFFFF;
 	}
 	&:hover {
-		transform: scale(1.08);
+		background: ${({ $added }) => $added ? 'var(--dh-green)' : 'var(--dh-accent-hover)'};
+		transform: scale(1.06);
 	}
 	&:focus-visible {
-		outline: 2px solid var(--color-text);
+		outline: 2px solid var(--dh-ink);
 		outline-offset: 2px;
+	}
+	@media screen and (max-width: 640px){
+		width: 40px;
+		height: 40px;
 	}
 `
 
-const POPULAR_LIKES_THRESHOLD = 3
+const isNew = (createdAt?: string): boolean => {
+	if (!createdAt) return false
+	const time = Date.parse(createdAt)
+	if (Number.isNaN(time)) return false
+	return Date.now() - time < NEW_DAYS * 24 * 60 * 60 * 1000
+}
+
+/** Meta 13px por tipo (spec R3.6): polo → rango de tallas; mousepad/taza → medida si está configurada. */
+export const productMeta = (product: ProductType): string => {
+	const kind = product.type ?? 'polo'
+	if (kind === 'polo') {
+		const range = sizeRange(product.sizes)
+		return range ? `Polo · ${range}` : 'Polo'
+	}
+	if (kind === 'mousepad') {
+		return isConfigured('product.mousepadSize') ? `Mousepad · ${site.product.mousepadSize}` : 'Mousepad'
+	}
+	return isConfigured('product.mugMl') ? `Taza · ${site.product.mugMl} ml` : 'Taza'
+}
 
 function Card({ product }: { product: ProductType }): JSX.Element {
-	const navigate = useNavigate();
-	const goToProduct = (id: string) => {
-		navigate(`/product/${id}`)
+	const navigate = useNavigate()
+	const dispatch: Dispatch<any> = useDispatch()
+	const bestSellerIds = useSelector(selectBestSellerIds)
+	const filterColor = useSelector((state: RootState) => state.products.filters.color)
+	const [added, setAdded] = useState(false)
+
+	useEffect(() => {
+		if (!added) return
+		const timer = window.setTimeout(() => setAdded(false), ADDED_FEEDBACK_MS)
+		return () => window.clearTimeout(timer)
+	}, [added])
+
+	const goToProduct = () => {
+		if (product.id) navigate(`/product/${product.id}`)
 	}
-	const isPopular = (product.likes ?? 0) >= POPULAR_LIKES_THRESHOLD
+
+	const isBestSeller = product.id !== undefined && bestSellerIds.includes(product.id)
+	const badge = isBestSeller ? 'Más vendido' : isNew(product.createdAt) ? 'Nuevo' : null
+	const colors = product.colors ?? []
+	const color = displayColor(product, filterColor)
+	const name = product.name ?? 'producto'
+
+	// Agregar rápido (spec R3.6): talla M si existe (si no la primera), color mostrado
+	// (colors[0] o el filtrado), logo "chest" si aplica. Sonido/Lottie los dispara
+	// NavbarItems al cambiar el carrito (spec R0.2). No navega.
+	const quickAdd = () => {
+		const config = configFor(product)
+		const sizes = product.sizes ?? []
+		const size = config.hasSizes ? (sizes.includes('M') ? 'M' : sizes[0]) : undefined
+		const positions = config.hasLogoPosition ? logoPositionsFor(product) : []
+		const logoPosition = positions.length ? (positions.includes('chest') ? 'chest' : positions[0]) : undefined
+		dispatch(addToCart({
+			type: ProductCartActionType.ADD,
+			product: { ...product, quantity: 1, size, color, logoPosition, _id: ID() }
+		}))
+		setAdded(true)
+	}
 
 	return (
 		<CardWrapper>
-			{isPopular &&
-				<Badge>
-					<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256" aria-hidden="true"><path d="M172.5 39.4a8 8 0 0 0-12.9 5.2c-2 17.4-9.1 30.9-19.4 41.5a72.6 72.6 0 0 1-8.7-25.3a8 8 0 0 0-11.9-5.7C88.6 74.9 72 104.4 72 136a56 56 0 0 0 112 0c0-33.7-11.6-73.6-11.5-96.6ZM128 176a40 40 0 0 1-24-72c1.2 9.4 4.7 22.3 15.1 33.5a8 8 0 0 0 11.7-10.9a56.6 56.6 0 0 1-8.5-13c11.5-9.9 20.9-23.1 25-40.2c3.9 20.9 8.7 50.2 8.7 62.6a40 40 0 0 1-28 40Z"></path></svg>
-					Popular
-				</Badge>
-			}
-			<LikeProduct product={product} />
-			<CardImage type="button" onClick={() => product.id && goToProduct(product.id)} aria-label={`Ver detalle de ${product.name ?? 'producto'}`}>
-				<div className="card_image_zoom">
-					<ProductVisual product={product} color={product.colors?.[0]} />
+			<CardImage type="button" onClick={goToProduct} aria-label={`Ver detalle de ${name}`}>
+				{badge && <Badge>{badge}</Badge>}
+				<div className="card_visual">
+					<ProductVisual product={product} color={color} />
 				</div>
 			</CardImage>
+			<LikeProduct product={product} />
 			<CardInfo>
-				<p>{product.name}</p>
-				<div className="card_row">
+				<div className="dots" aria-label={colors.length ? `${colors.length} ${colors.length === 1 ? 'color' : 'colores'}` : undefined}>
+					{colors.slice(0, MAX_DOTS).map((swatch) => (
+						<span key={swatch} className="dot" style={{ background: swatch }} title={swatch} />
+					))}
+					{colors.length > MAX_DOTS && <span className="more">+{colors.length - MAX_DOTS}</span>}
+				</div>
+				<button type="button" className="name" onClick={goToProduct}>{product.name}</button>
+				<span className="meta">{productMeta(product)}</span>
+				<div className="row">
 					<span className="price">S/ {product.price}</span>
 					<AddButton
 						type="button"
-						aria-label={`Personalizar ${product.name ?? 'producto'}`}
-						onClick={() => product.id && goToProduct(product.id)}
+						$added={added}
+						aria-label={added ? `${name} agregado al carrito` : `Agregar ${name} al carrito`}
+						onClick={quickAdd}
 					>
-						<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256" aria-hidden="true"><path d="M216 116h-84V32a12 12 0 0 0-24 0v84H24a12 12 0 0 0 0 24h84v84a12 12 0 0 0 24 0v-84h84a12 12 0 0 0 0-24Z"></path></svg>
+						{added
+							? <svg viewBox="0 0 24 24" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+							: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>}
 					</AddButton>
 				</div>
 			</CardInfo>

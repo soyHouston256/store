@@ -2,6 +2,7 @@ import Card from '@/components/Card'
 import CardShimmer from '@/components/CardShimmer'
 import Container from '@/components/layout/Container'
 import { RootState } from '@/store'
+import { useCatalogStatus } from '@/hooks/useProductsList'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -81,8 +82,9 @@ const Empty = styled.div`
 function Favorites(): JSX.Element {
     const { likedList } = useSelector((state: RootState) => state.likes)
     const { products } = useSelector((state: RootState) => state.products)
+    const { loading } = useCatalogStatus()
     const favorites = products.filter((product) => product.id !== undefined && likedList.includes(product.id))
-    const isLoading = products.length === 0 && likedList.length > 0
+    const isLoading = loading && likedList.length > 0
 
     useEffect(() => {
         document.title = 'Tus favoritos — devhaus.pe'

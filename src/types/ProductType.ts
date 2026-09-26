@@ -16,6 +16,8 @@ export interface ProductType {
     published?: boolean;
     logo?: string;
     logoPositions?: LogoPosition[];
+    /** ISO 8601 (API DTO, spec R3.2). Orden "Novedades" y badge "Nuevo". */
+    createdAt?: string;
 }
 
 export interface ProductCartType extends ProductType{

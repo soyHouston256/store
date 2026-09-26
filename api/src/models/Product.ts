@@ -52,11 +52,23 @@ export interface ProductDTO {
   logoPositions: LogoPosition[];
   likes: number;
   published: boolean;
+  /** ISO 8601. Storefront sorts "Novedades" by it and shows the "Nuevo" badge (< 30 days). */
+  createdAt: string;
   image?: string;
   logo?: string;
 }
 
+/**
+ * Legacy documents inserted raw (pre-`timestamps`) carry no `createdAt`;
+ * they are served as the Unix epoch so the field is always present and
+ * parseable (spec R3.2) and they sort last under "Novedades".
+ */
+const EPOCH_ISO = new Date(0).toISOString();
+
 export function toProductDTO(doc: ProductDocument): ProductDTO {
+  const createdAt = doc.createdAt instanceof Date && !Number.isNaN(doc.createdAt.getTime())
+    ? doc.createdAt.toISOString()
+    : EPOCH_ISO;
   return {
     id: doc._id,
     name: doc.name,
@@ -67,6 +79,7 @@ export function toProductDTO(doc: ProductDocument): ProductDTO {
     logoPositions: logoPositionsFor(doc.type, doc.logoPositions),
     likes: doc.likes ?? 0,
     published: doc.published ?? false,
+    createdAt,
     ...(doc.image != null ? { image: doc.image } : {}),
     ...(doc.logo != null ? { logo: doc.logo } : {}),
   };

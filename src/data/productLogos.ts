@@ -38,8 +38,14 @@ const logos: Record<string, string> = {
     "vue": vue
 }
 
-export const getProductLogo = (name?: string): string | undefined => {
+/** Clave de `logos` derivada del nombre ("Polo Docker" → "docker"); undefined si no hay logo local. */
+export const getProductLogoKey = (name?: string): string | undefined => {
     if (!name) return undefined
     const key = name.trim().toLowerCase().replace(/^(polo|taza|mousepad|mouse pad)\s+/, "")
-    return logos[key]
+    return key in logos ? key : undefined
+}
+
+export const getProductLogo = (name?: string): string | undefined => {
+    const key = getProductLogoKey(name)
+    return key ? logos[key] : undefined
 }
