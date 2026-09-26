@@ -103,7 +103,7 @@ const benefits = [
 
 function Benefits(): JSX.Element {
 	return (
-		<BenefitsWrapper aria-label="Beneficios de comprar en Estilos">
+		<BenefitsWrapper aria-label="Beneficios de comprar en devhaus.pe">
 			{benefits.map((benefit) => (
 				<BenefitItem key={benefit.title}>
 					<span className="icon">{benefit.icon}</span>

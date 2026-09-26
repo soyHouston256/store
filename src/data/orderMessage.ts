@@ -45,7 +45,7 @@ export const buildOrderMessage = (order: OrderType, trackingUrl: string): string
 
     return [
         `Hola ${user?.name}! 🛍️`,
-        `Tu pedido *${id}* ha sido registrado en la tienda de estilos.dev.`,
+        `Tu pedido *${id}* ha sido registrado en la tienda de devhaus.pe.`,
         '',
         '*Detalle del pedido:*',
         detail,

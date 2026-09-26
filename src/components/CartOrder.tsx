@@ -9,6 +9,7 @@ import { ProductCartType } from "@/types/ProductType"
 import { Dispatch, useCallback, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -145,6 +146,7 @@ function CartOrder({ setTrigger }: any): JSX.Element {
     const [order, setOrder] = useLocalStorage('order', '')
     const [loading, setLoading] = useState(false)
     const dispatch: Dispatch<any> = useDispatch()
+    const navigate = useNavigate()
     const { productsCart } = useSelector(
         (state: RootState) => state.cart
     )
@@ -175,8 +177,12 @@ function CartOrder({ setTrigger }: any): JSX.Element {
     const openWhastapp = (order: OrderType) => {
         const trackingUrl = `${window.location.origin}/pedido/${order.id}`
         const message = buildOrderMessage(order, trackingUrl)
+        const url = buildWhatsappUrl(message)
 
-        window.open(buildWhatsappUrl(message))
+        // Sin número de WhatsApp configurado (spec R1.6) el pedido igual queda
+        // registrado: mostramos la confirmación local con el código y tracking.
+        if (url) window.open(url)
+        else navigate('/done')
     }
 
     const completeOrder = async (order: OrderType) => {

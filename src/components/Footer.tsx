@@ -1,4 +1,4 @@
-import Logo from "@/components/Logo"
+import { DevhausLogo } from "@/components/Logo"
 import { buildWhatsappUrl } from "@/data/whatsapp"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
@@ -136,6 +136,7 @@ const BottomBar = styled.div`
 	}
 `
 
+// null cuando no hay número configurado (spec R1.6): los CTA de WhatsApp se ocultan.
 const whatsappHref = buildWhatsappUrl('👋 Hola, tengo una consulta sobre un pedido.')
 
 function Footer(): JSX.Element {
@@ -143,33 +144,32 @@ function Footer(): JSX.Element {
 		<FooterWrapper>
 			<FooterInner>
 				<BrandCol>
-					<Link to="/" aria-label="Ir al inicio de Estilos">
-						<Logo />
+					<Link to="/" aria-label="Ir al inicio de devhaus.pe">
+						<DevhausLogo markSize={36} />
 					</Link>
 					<p>Polos y accesorios para developers, con los diseños de las tecnologías que más usas. Hechos en Perú, personalizables desde S/ 15.</p>
-					<a className="whatsapp_link" href={whatsappHref} target="_blank" rel="noreferrer">
+					{whatsappHref && <a className="whatsapp_link" href={whatsappHref} target="_blank" rel="noreferrer">
 						<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256" aria-hidden="true"><path d="M200.8 53.9A103.4 103.4 0 0 0 128 24h-1.1a104 104 0 0 0-33.5 202.1a32 32 0 0 0 42.6-30.2V192a16 16 0 0 1 16-16h46.2a31.7 31.7 0 0 0 31.2-24.9a101.5 101.5 0 0 0 2.6-24a102.9 102.9 0 0 0-31.2-73.2Z"></path></svg>
 						Escríbenos por WhatsApp
-					</a>
+					</a>}
 				</BrandCol>
 				<LinksCol aria-label="Enlaces de la tienda">
 					<h3>Tienda</h3>
 					<ul>
 						<li><a href="#catalogo">Catálogo</a></li>
-						<li><a href="#resenas">Reseñas</a></li>
 						<li><Link to="/pedido">Sigue tu pedido</Link></li>
 					</ul>
 				</LinksCol>
 				<LinksCol aria-label="Contacto">
 					<h3>Contacto</h3>
 					<ul>
-						<li><a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a></li>
+						{whatsappHref && <li><a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a></li>}
 						<li><a href="#catalogo">Personalizar producto</a></li>
 					</ul>
 				</LinksCol>
 			</FooterInner>
 			<BottomBar>
-				<p>© {new Date().getFullYear()} Estilos. Precios en soles (S/).</p>
+				<p>© {new Date().getFullYear()} devhaus.pe. Precios en soles (S/), IGV incluido.</p>
 				<p>Hecho con cariño para la comunidad developer 💛</p>
 			</BottomBar>
 		</FooterWrapper>

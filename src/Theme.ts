@@ -1,46 +1,88 @@
 import { createGlobalStyle } from 'styled-components';
 
-const themes: any = {
-  Light: {
-    background: '#FCF7F4',
-    neutral: '#FFF',
-    neutralLight: '#f4f4f4',
-    color: '#000',
-    colorInvert: '#fff',
-    accent: '#FF6565',
-    warning: '#f5d46c',
-    warningLight: '#fffaea',
-    accentLight: '#FCF7F4',
-    surface: '#FFF',
-    surfaceLight: '#FFF',
-    border: 'rgba(0,0,0,.05)',
-    borderDark: 'rgba(0,0,0,.08)',
-    error: '#ca4a4a',
-    borderSolid: '#ccc'
-  },
-  Dark: {
-    background: '#000',
-    neutral: '#141414',
-    neutralLight: '#1f1f1f',
-    color: '#fff',
-    colorInvert: '#000',
-    warning: '#ddbe60',
-    warningLight: '#1c1b18',
-    accent: '#f78a76',
-    accentLight: '#181818',
-    surface: '#2a2a2a',
-    surfaceLight: '#1f1f1f',
-    border: 'rgba(255,255,255,.02)',
-    borderDark: 'rgba(255,255,255,.06)',
-    error: '#c44747',
-    borderSolid: '#434343'
-  }
-}
+// devhaus.pe — design tokens (docs/devhaus-handoff/brand/tokens.css) + re-mapeo
+// de las variables `--color-*` históricas para que los componentes existentes
+// hereden la marca sin tocarlos (design §3.1, decisión A1).
+//
+// El tema oscuro sigue mandando desde `body.dark-theme` (ThemeSwitch.tsx).
+// Las variables `--color-*` se declaran tanto en `:root` como en `.dark-theme`
+// porque `var()` dentro de una custom property se resuelve en el elemento que
+// la declara: si solo estuvieran en `:root`, la sobreescritura de `--dh-*` en
+// `body.dark-theme` no las re-evaluaría.
+
+const colorMapping = `
+    --color-background: var(--dh-bg);
+    --color-neutral: var(--dh-surface);
+    --color-neutral-light: var(--dh-sand);
+    --color-text: var(--dh-ink);
+    --color-text-invert: var(--dh-on-dark);
+    --color-accent: var(--dh-accent);
+    --color-accent-light: var(--dh-sand);
+    --color-surface: var(--dh-surface);
+    --color-surface-light: var(--dh-sand-2);
+    --color-border: var(--dh-line);
+    --color-border-dark: var(--dh-line-2);
+    --color-border-solid: var(--dh-line-2);
+    --color-warning: var(--dh-yellow);
+    --color-warning-light: var(--dh-sand);
+    --color-star: var(--dh-yellow);
+    --gradient-brand: var(--dh-accent); /* h1 sin degradado (spec 02) */
+`
+
 export const GlobalStyles = createGlobalStyle`
   :root {
-    --screen-desktop: 994px;
+    /* ---- devhaus tokens: color ---- */
+    --dh-ink: #1B1A17;          /* texto principal, botones primarios, fondo oscuro */
+    --dh-ink-2: #4A4640;        /* párrafos */
+    --dh-muted: #5E5A53;        /* texto secundario (contraste AA sobre crema) */
+    --dh-bg: #FAF6F1;           /* fondo de página */
+    --dh-surface: #FFFFFF;      /* tarjetas */
+    --dh-sand: #F3ECE2;         /* fondo de imagen de producto, hero */
+    --dh-sand-2: #EFE8DE;       /* footer, segmented controls */
+    --dh-line: #E7E1D8;         /* bordes de tarjeta */
+    --dh-line-2: #D8D0C4;       /* bordes de inputs / chips */
+    --dh-accent: #D2432F;       /* CTA "Agregar al carrito", merge del logo */
+    --dh-accent-hover: #B8382A;
+    --dh-yellow: #E9B949;       /* HEAD del logo, destacados */
+    --dh-yellow-dark: #D9A62E;  /* HEAD sobre fondos claros del logo invertido */
+    --dh-sage: #CFE0D7;
+    --dh-green: #6E9A86;
+    --dh-on-dark: #FAF6F1;
+    --dh-on-dark-muted: #BDB5A9;
+
+    /* ---- devhaus tokens: tipografía ---- */
+    --dh-font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    --dh-font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --dh-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --dh-text-hero: 64px;       /* h1, 800, tracking -0.03em, line-height 1.02 */
+    --dh-text-h2: 40px;         /* 800, tracking -0.02em */
+    --dh-text-h3: 26px;         /* 700 */
+    --dh-text-body: 16px;
+    --dh-text-small: 14px;
+    --dh-text-caption: 13px;
+
+    /* ---- devhaus tokens: radios ---- */
+    --dh-radius-pill: 999px;
+    --dh-radius-xl: 28px;       /* hero, bloques grandes */
+    --dh-radius-lg: 20px;       /* tarjetas */
+    --dh-radius-md: 14px;
+    --dh-radius-sm: 12px;
+
+    /* ---- devhaus tokens: espaciado (múltiplos de 4) ---- */
+    --dh-page-x: 64px;          /* 16px en móvil (ver @media 640) */
+    --dh-section-y: 80px;
+    --dh-gap: 20px;
+
+    /* ---- devhaus tokens: tamaños táctiles ---- */
+    --dh-control-h: 44px;
+    --dh-cta-h: 52px;
+
+    /* ---- layout ---- */
+    --screen-desktop: min(1152px, calc(100% - 2 * var(--dh-page-x)));
     --screen-tablet: 738px;
     --screen-phone: 395px;
+
+    /* ---- escala tipográfica heredada (componentes existentes) ---- */
     --font-size-hero: 44px;
     --font-size-title: 28px;
     --font-size-title_sm: 20px;
@@ -57,43 +99,26 @@ export const GlobalStyles = createGlobalStyle`
     --shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
     --shadow-dark: 0px 4px 25px rgba(0, 0, 0, 0.04);
     --shadow-hover: 0px 16px 36px rgba(0, 0, 0, 0.12);
-    --gradient-brand: linear-gradient(120deg, #FF5959 0%, #EAC56C 55%, #A3C4BD 100%);
-    --color-star: #f5b942;
-    --color-background: ${themes.Light.background};
-    --color-accent-light: ${themes.Light.accentLight};
-    --color-accent: ${themes.Light.accent};
-    --color-neutral: ${themes.Light.neutral};
-    --color-neutral-light: ${themes.Light.neutralLight};
-    --color-text: ${themes.Light.color};
-    --color-text-invert: ${themes.Light.colorInvert};
-    --color-surface: ${themes.Light.surface};
-    --color-surface-light: ${themes.Light.surfaceLight};
-    --color-border: ${themes.Light.border};
-    --color-border-dark: ${themes.Light.borderDark};
-    --color-warning: ${themes.Light.warning};
-    --color-warning-light: ${themes.Light.warningLight};
-    --color-error: ${themes.Light.error};
-    --color-border-solid: ${themes.Light.borderSolid};
+    --color-error: #ca4a4a;
+    ${colorMapping}
   }
   .dark-theme {
-    --color-background: ${themes.Dark.background};
-    --color-accent-light: ${themes.Dark.accentLight};
-    --color-accent: ${themes.Dark.accent};
-    --color-neutral: ${themes.Dark.neutral};
-    --color-neutral-light: ${themes.Dark.neutralLight};
-    --color-text: ${themes.Dark.color};
-    --color-text-invert: ${themes.Dark.colorInvert};
-    --color-surface: ${themes.Dark.surface};
-    --color-surface-light: ${themes.Dark.surfaceLight};
-    --color-border: ${themes.Dark.border};
-    --color-border-dark: ${themes.Dark.borderDark};
-    --color-warning: ${themes.Dark.warning};
-    --color-warning-light: ${themes.Dark.warningLight};
-    --color-error: ${themes.Dark.error};
-    --color-border-solid: ${themes.Dark.borderSolid};
+    --dh-bg: #121110;
+    --dh-surface: #1B1A17;
+    --dh-sand: #24221F;
+    --dh-sand-2: #1F1D1A;
+    --dh-line: #2E2C28;
+    --dh-line-2: #3A3833;
+    --dh-ink: #FAF6F1;
+    --dh-ink-2: #D8D2C8;
+    --dh-muted: #A8A196;
+    --dh-accent: #E0553F;
+    --color-error: #c44747;
+    ${colorMapping}
+    --color-text-invert: #1B1A17;
   }
 
-	@media screen and (max-width: 1024px){
+  @media screen and (max-width: 1024px){
     :root {
       --font-size-hero: 34px;
       --font-size-title: 24px;
@@ -108,6 +133,11 @@ export const GlobalStyles = createGlobalStyle`
     :root {
       --font-size-hero: 28px;
       --font-size-section-title: 19px;
+    }
+  }
+  @media screen and (max-width: 640px){
+    :root {
+      --dh-page-x: 16px;
     }
   }
   @media screen and (max-width: 425px){

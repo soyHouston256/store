@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Designer handoff package (local reference only, not versioned)
+docs/devhaus-handoff/
