@@ -140,7 +140,7 @@ const POPULAR_LIKES_THRESHOLD = 3
 function Card({ product }: { product: ProductType }): JSX.Element {
 	const navigate = useNavigate();
 	const goToProduct = (id: string) => {
-		navigate(`product/${id}`)
+		navigate(`/product/${id}`)
 	}
 	const isPopular = (product.likes ?? 0) >= POPULAR_LIKES_THRESHOLD
 

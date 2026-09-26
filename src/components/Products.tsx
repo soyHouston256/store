@@ -4,13 +4,13 @@ import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
 import styled from "styled-components"
 import CardShimmer from './CardShimmer';
+import Container from '@/components/layout/Container';
 
 const ProductsSection = styled.section`
     padding-top: 8px;
 `
-const SectionHeader = styled.div`
-    width: var(--screen-desktop);
-    margin: 40px auto 0;
+const SectionHeader = styled(Container)`
+    margin-top: 40px;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -27,23 +27,17 @@ const SectionHeader = styled.div`
         color: var(--color-text);
         opacity: .55;
     }
-    @media screen and (max-width: 1024px){
-		width: var(--screen-tablet);
-	}
 	@media screen and (max-width: 768px){
-		width: var(--screen-phone);
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
     }
      @media screen and (max-width: 425px){
-		width: calc(100% - 40px);
-		margin: 30px 20px 0;
+		margin-top: 30px;
 	}
 `
 const EmptyState = styled.div`
-    width: var(--screen-desktop);
-    margin: 40px auto;
+    margin: 40px 0;
     text-align: center;
     padding: 60px 20px;
     background-color: var(--color-neutral);
@@ -55,37 +49,23 @@ const EmptyState = styled.div`
         font-size: var(--font-size-text);
         margin: 0;
     }
-    @media screen and (max-width: 1024px){
-		width: var(--screen-tablet);
-	}
-	@media screen and (max-width: 768px){
-		width: var(--screen-phone);
-    }
-     @media screen and (max-width: 425px){
-		width: calc(100% - 40px);
-	}
 `
-const ProductsGrid = styled.section`
+const ProductsGrid = styled(Container)`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 25px;
-    width: var(--screen-desktop);
-    margin: 0 auto;
     margin-top: 24px;
     margin-bottom: 40px;
     @media screen and (max-width: 1024px){
-		width: var(--screen-tablet);
         margin-top: 18px;
         margin-bottom: 25px;
         grid-gap: 15px;
 	}
 	@media screen and (max-width: 768px){
-		width: var(--screen-phone);
         grid-template-columns: 1fr 1fr;
     }
      @media screen and (max-width: 425px){
-		width: calc(100% - 40px);
-		margin: 20px;
+		margin-bottom: 20px;
         margin-top: 18px;
 	}
 `
@@ -105,7 +85,7 @@ function Products(): JSX.Element {
             <CategoryFilters />
             {isLoading
                 ? (
-                    <ProductsGrid>
+                    <ProductsGrid as="section">
                         <CardShimmer />
                         <CardShimmer />
                         <CardShimmer />
@@ -114,14 +94,16 @@ function Products(): JSX.Element {
                 )
                 : productsFiltered.length
                     ? (
-                        <ProductsGrid>
+                        <ProductsGrid as="section">
                             {productsFiltered.map((product) => <Card key={product.id} product={product} />)}
                         </ProductsGrid>
                     )
                     : (
-                        <EmptyState>
-                            <p>No encontramos productos con esos filtros. Prueba con otra búsqueda o categoría.</p>
-                        </EmptyState>
+                        <Container>
+                            <EmptyState>
+                                <p>No encontramos productos con esos filtros. Prueba con otra búsqueda o categoría.</p>
+                            </EmptyState>
+                        </Container>
                     )
             }
         </ProductsSection>

@@ -4,23 +4,16 @@ import { ProductKind } from "@/types/ProductType"
 import { Dispatch, useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
+import Container from "@/components/layout/Container"
 
-const FiltersWrapper = styled.div`
+const FiltersWrapper = styled(Container)`
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
-	width: var(--screen-desktop);
-	margin: 24px auto 0;
-	@media screen and (max-width: 1024px){
-		width: var(--screen-tablet);
-	}
-	@media screen and (max-width: 768px){
-		width: var(--screen-phone);
-	}
+	margin-top: 24px;
 	@media screen and (max-width: 425px){
-		width: calc(100% - 40px);
-		margin: 20px 20px 0;
+		margin-top: 20px;
 	}
 `
 const Chip = styled.button<{ $active: boolean }>`

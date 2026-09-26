@@ -5,6 +5,7 @@ import { ApiError, assetUrl } from "@/data/http"
 import { nearestColorName } from "@/data/colorNames"
 import { getOrderTracking, OrderTrackingDTO } from "@/data/OrderService"
 import ProductVisual from "@/components/ProductVisual"
+import Container from "@/components/layout/Container"
 import StatusIllustration from "@/components/tracking/StatusIllustration"
 import type { CartLogoPosition, ProductKind } from "@/types/ProductType"
 
@@ -40,24 +41,15 @@ const STATUS_MESSAGES: Record<string, string> = {
     recibido: '¡Tu pedido fue entregado! Gracias por tu compra.'
 }
 
-const TrackingWrapper = styled.section`
-    width: var(--screen-desktop);
-    margin: 0 auto;
+const TrackingWrapper = styled(Container)`
+    margin-top: 32px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     gap: 25px;
     color: var(--color-text);
-    @media screen and (max-width: 1024px){
-        width: var(--screen-tablet);
-    }
-    @media screen and (max-width: 768px){
-        width: var(--screen-phone);
-    }
     @media screen and (max-width: 425px){
-        width: calc(100% - 40px);
-        margin: 0 20px;
-        margin-bottom: 20px;
+        margin-top: 20px;
         gap: 20px;
     }
 `
@@ -568,7 +560,7 @@ function Tracking(): JSX.Element {
     const isFinalizado = tracking?.status === 'finalizado'
 
     return (
-        <TrackingWrapper>
+        <TrackingWrapper as="section">
             {!id && <TrackingSearch />}
 
             {id && loading &&

@@ -1,28 +1,25 @@
-import Navbar from "@/components/Navbar"
 import CartList from "@/components/CartList"
 import CartOrder from "@/components/CartOrder"
 import { Outlet } from "react-router-dom"
 import styled from "styled-components"
 import CartClient from "@/components/CartClient"
 import { useState } from "react"
+import Container from "@/components/layout/Container"
 
-const CartWrapper = styled.section`
+const CartWrapper = styled(Container)`
     display: grid;
     grid-template-columns: 1fr 320px;
     grid-gap: 25px;
-    width: var(--screen-desktop);
-    margin: 0 auto;
+    margin-top: 32px;
     margin-bottom: 20px;
     @media screen and (max-width: 1024px){
-        width: var(--screen-tablet);
         grid-template-columns: 1fr 280px;
     }
     @media screen and (max-width: 768px){
-        width: var(--screen-phone);
         grid-template-columns: 1fr;
     }
     @media screen and (max-width: 425px){
-        width: calc(100% - 40px);
+        margin-top: 20px;
         grid-gap: 20px;
     }
 `
@@ -41,8 +38,7 @@ function Cart(): JSX.Element {
 
     return (
         <div>
-            {/* <Navbar /> */}
-            <CartWrapper>
+            <CartWrapper as="section">
                 <CartCol>
                     <CartList />
                     <CartClient trigger={trigger} />

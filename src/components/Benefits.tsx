@@ -1,24 +1,20 @@
 import styled from "styled-components"
+import Container from "@/components/layout/Container"
 
-const BenefitsWrapper = styled.section`
-	width: var(--screen-desktop);
-	margin: 40px auto 0;
+const BenefitsWrapper = styled(Container)`
+	margin-top: 40px;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 16px;
 	@media screen and (max-width: 1024px){
-		width: var(--screen-tablet);
 		margin-top: 25px;
 		gap: 12px;
 	}
 	@media screen and (max-width: 768px){
-		width: var(--screen-phone);
 		grid-template-columns: 1fr 1fr;
 	}
 	@media screen and (max-width: 425px){
-		width: calc(100% - 40px);
-		margin: 20px 20px 0;
-		grid-template-columns: 1fr 1fr;
+		margin-top: 20px;
 		gap: 10px;
 	}
 `
@@ -103,7 +99,7 @@ const benefits = [
 
 function Benefits(): JSX.Element {
 	return (
-		<BenefitsWrapper aria-label="Beneficios de comprar en devhaus.pe">
+		<BenefitsWrapper as="section" aria-label="Beneficios de comprar en devhaus.pe">
 			{benefits.map((benefit) => (
 				<BenefitItem key={benefit.title}>
 					<span className="icon">{benefit.icon}</span>

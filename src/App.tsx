@@ -16,7 +16,10 @@ import { useSelector } from 'react-redux'
 import Done from './views/Done'
 import Tracking from './views/Tracking'
 import { useReadLocalStorage } from 'usehooks-ts'
-import Navbar from './components/Navbar'
+import Layout from './components/layout/Layout'
+import Favorites from './views/Favorites'
+import StaticPage from './views/static/StaticPage'
+import { STATIC_PAGES } from './content/pages'
 
 
 function App() {
@@ -40,8 +43,8 @@ function App() {
 
     return (
         <div className="App">
-        <Navbar />
         <GlobalStyles />
+        <Layout>
         <Routes location={background || location}>
             <Route path="/" element={<Home />}>
                 <Route path="/product/:id" element={<Product />} />
@@ -54,12 +57,17 @@ function App() {
             </Route>
             <Route path="/pedido/:id" element={<Tracking />}>
             </Route>
+            <Route path="/favoritos" element={<Favorites />} />
+            {Object.entries(STATIC_PAGES).map(([path, page]) => (
+                <Route key={path} path={`/${path}`} element={<StaticPage {...page} />} />
+            ))}
         </Routes>
         {background && (
             <Routes>
                 <Route path="/product/:id" element={<Product />} />
             </Routes>
         )}
+        </Layout>
     </div>
     )
 }

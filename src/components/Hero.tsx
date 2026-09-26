@@ -1,12 +1,12 @@
 import styled from "styled-components"
 import HeroBgImage from "@/assets/images/hero/hero.png"
 import { buildWhatsappUrl } from "@/data/whatsapp"
+import Container from "@/components/layout/Container"
 
 const HeroWrapper = styled.section`
 	position: relative;
 	display: flex;
-	width: var(--screen-desktop);
-	margin: 0 auto;
+	margin-top: 40px;
 	background-color: var(--color-neutral);
 	border-radius: var(--radius-xl);
 	box-shadow: var(--shadow);
@@ -35,17 +35,15 @@ const HeroWrapper = styled.section`
 		opacity: .18;
 	}
 	@media screen and (max-width: 1024px){
-		width: var(--screen-tablet);
 		min-height: 280px;
+		margin-top: 24px;
 	}
 	@media screen and (max-width: 768px){
-		width: var(--screen-phone);
 		min-height: auto;
 		flex-direction: column;
 	}
 	@media screen and (max-width: 425px){
-		width: calc(100% - 40px);
-		margin: 0 20px;
+		margin-top: 16px;
 		border-radius: var(--radius);
 	}
 `
@@ -273,6 +271,7 @@ function Hero(): JSX.Element {
 		if (whatsappHref) window.open(whatsappHref)
 	}
 	return (
+		<Container>
 		<HeroWrapper>
 			<HeroInfo>
 				<span className="kicker">Diseños para developers</span>
@@ -298,6 +297,7 @@ function Hero(): JSX.Element {
 				</div>
 			</HeroImage>
 		</HeroWrapper>
+		</Container>
 	)
 }
 

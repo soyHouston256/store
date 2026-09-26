@@ -1,8 +1,8 @@
-import Navbar from '@/components/Navbar'
 import styled from 'styled-components'
 import HeroBgImage from "@/assets/images/hero/hero.png"
 import { useReadLocalStorage } from 'usehooks-ts'
 import { Link } from 'react-router-dom'
+import Container from '@/components/layout/Container'
 
 const DoneWrapper = styled.section`
     min-height: 480px;
@@ -11,8 +11,7 @@ const DoneWrapper = styled.section`
     box-shadow: var(--shadow);
     padding: 0 25px;
     box-sizing: border-box;
-    width: var(--screen-desktop);
-    margin: 0 auto;
+    margin-top: 32px;
     display: flex;
     align-items: flex-end;
     overflow: hidden;
@@ -61,15 +60,8 @@ const DoneWrapper = styled.section`
             margin-left: -8px;
         }
     }
-    @media screen and (max-width: 1024px){
-        width: var(--screen-tablet);
-	}
-    @media screen and (max-width: 768px){
-        width: var(--screen-phone);
-	}
      @media screen and (max-width: 425px){
-        width: calc(100% - 40px);
-        margin: 0 20px;
+        margin-top: 20px;
         min-height: calc(100vh - 80px);
         .done_content {
             .done_tracking {
@@ -122,8 +114,7 @@ const DoneImage = styled.section`
 function Done(): JSX.Element {
     const orderId = useReadLocalStorage<string>('order')
     return (
-        <div>
-            {/* <Navbar /> */}
+        <Container>
             <DoneWrapper>
                 <div className="done_content">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256"><path  d="m221.4 69.3l-16-32A6 6 0 0 0 200 34H56a6 6 0 0 0-5.4 3.3l-16 32A6.3 6.3 0 0 0 34 72v136a14 14 0 0 0 14 14h160a14 14 0 0 0 14-14V72a6.3 6.3 0 0 0-.6-2.7ZM59.7 46h136.6l10 20H49.7ZM208 210H48a2 2 0 0 1-2-2V78h164v130a2 2 0 0 1-2 2Zm-41.8-64.2a6.1 6.1 0 0 1 0 8.5l-34 33.9a5.8 5.8 0 0 1-8.4 0l-34-33.9a6 6 0 0 1 8.5-8.5l23.7 23.7V104a6 6 0 0 1 12 0v65.5l23.7-23.7a6.1 6.1 0 0 1 8.5 0Z" /></svg>
@@ -138,7 +129,7 @@ function Done(): JSX.Element {
                     </DoneImage>
                 </div>
             </DoneWrapper>
-        </div>
+        </Container>
     )
 }
 

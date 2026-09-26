@@ -69,7 +69,7 @@ export const GlobalStyles = createGlobalStyle`
     --dh-radius-sm: 12px;
 
     /* ---- devhaus tokens: espaciado (múltiplos de 4) ---- */
-    --dh-page-x: 64px;          /* 16px en móvil (ver @media 640) */
+    --dh-page-x: 64px;          /* 32px en tablet (@media 1024), 16px en móvil (@media 640) */
     --dh-section-y: 80px;
     --dh-gap: 20px;
 
@@ -127,6 +127,11 @@ export const GlobalStyles = createGlobalStyle`
       --font-size-text: 15px;
       --font-size-price_xl: 20px;
       --font-size-title_sm: 18px;
+    }
+  }
+  @media screen and (max-width: 1024px){
+    :root {
+      --dh-page-x: 32px;        /* tablet 641–1024 (spec R2.5) */
     }
   }
   @media screen and (max-width: 768px){
