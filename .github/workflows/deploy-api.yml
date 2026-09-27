@@ -1,0 +1,50 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'api/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-production-api
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy API only
+    runs-on: [self-hosted, deploy, docker, store]
+    timeout-minutes: 20
+    steps:
+      - name: Deploy API
+        run: |
+          set -euo pipefail
+          cd /opt/n8n/store
+          git fetch --prune origin master
+          git reset --hard origin/master
+          docker compose up -d --build api
+          docker compose ps api
+
+      - name: Run data migration
+        run: |
+          set -euo pipefail
+          cd /opt/n8n/store
+          # Idempotent and additive: only fills missing fields, re-runs are no-ops.
+          docker compose run --rm --no-deps api node dist/scripts/migrate-devhaus.js
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS https://api.devhaus.pe/api/products >/dev/null; then
+              echo "API OK"; exit 0
+            fi
+            echo "API not ready yet (attempt $i), retrying..."; sleep 5
+          done
+          echo "API smoke test failed"; exit 1
