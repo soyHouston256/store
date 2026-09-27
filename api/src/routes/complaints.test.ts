@@ -329,6 +329,25 @@ describe('POST /api/complaints without SMTP', () => {
     expect(res.headers['retry-after']).toBeDefined();
     expect(await Complaint.countDocuments()).toBe(5);
   });
+
+  it('invalid payloads do not consume rate-limit quota (validate runs before the limiter)', async () => {
+    for (let i = 0; i < 10; i++) {
+      const res = await request(app).post('/api/complaints').send({});
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe('VALIDATION');
+    }
+    expect(await Complaint.countDocuments()).toBe(0);
+    expect(await Counter.countDocuments()).toBe(0);
+
+    // The full quota is still available for valid submissions...
+    for (let i = 0; i < 5; i++) {
+      expect((await request(app).post('/api/complaints').send(validBody())).status).toBe(201);
+    }
+    // ...and once exhausted, a valid one is refused while an invalid one still answers 400.
+    expect((await request(app).post('/api/complaints').send(validBody())).status).toBe(429);
+    expect((await request(app).post('/api/complaints').send({})).status).toBe(400);
+    expect(await Complaint.countDocuments()).toBe(5);
+  });
 });
 
 describe('POST /api/complaints with a mailer', () => {

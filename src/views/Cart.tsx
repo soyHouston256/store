@@ -1,6 +1,5 @@
 import CartList from "@/components/CartList"
 import CartOrder from "@/components/CartOrder"
-import { Outlet } from "react-router-dom"
 import styled from "styled-components"
 import CartClient from "@/components/CartClient"
 import { useState } from "react"
@@ -45,7 +44,6 @@ function Cart(): JSX.Element {
                 </CartCol>
                 <CartOrder setTrigger={setTrigger} />
             </CartWrapper>
-            <Outlet />
         </div>
     )
 }

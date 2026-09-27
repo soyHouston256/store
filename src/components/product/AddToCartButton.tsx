@@ -67,14 +67,26 @@ interface AddToCartButtonProps {
 }
 
 function AddToCartButton({ state, total, onAdd, compact }: AddToCartButtonProps): JSX.Element {
-    if (state === 'added') {
-        return <AddedLink to="/cart" $compact={compact} role="status">Agregado ✓ · Ir al carrito</AddedLink>
-    }
     const soldOut = state === 'soldOut'
     return (
-        <Button type="button" $compact={compact} onClick={onAdd} disabled={soldOut} aria-disabled={soldOut || undefined}>
-            {soldOut ? 'Agotado' : `Agregar al carrito · ${formatPrice(total)}`}
-        </Button>
+        <>
+            {state === 'added'
+                // Enlace plano (sin `role="status"`, que anulaba su semántica de enlace).
+                ? <AddedLink to="/cart" $compact={compact}>Agregado ✓ · Ir al carrito</AddedLink>
+                : (
+                    <Button type="button" $compact={compact} onClick={onAdd} disabled={soldOut} aria-disabled={soldOut || undefined}>
+                        {soldOut ? 'Agotado' : `Agregar al carrito · ${formatPrice(total)}`}
+                    </Button>
+                )}
+            {/* Región viva oculta, siempre montada para que el cambio de texto se
+                anuncie. Solo la instancia principal la emite: la barra fija móvil
+                renderiza el mismo componente con `compact` y duplicaría el aviso. */}
+            {!compact && (
+                <span className="sr-only" role="status" aria-live="polite">
+                    {state === 'added' ? 'Producto agregado al carrito' : ''}
+                </span>
+            )}
+        </>
     )
 }
 

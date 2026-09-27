@@ -108,11 +108,13 @@ export function createComplaintsPublicRouter({
 }: ComplaintsPublicDeps): Router {
   const router = Router();
 
-  // POST /api/complaints — rate limit → validate → correlativo → persist → email (best effort) → 201
+  // POST /api/complaints — validate → rate limit → correlativo → persist → email (best effort) → 201
+  // The limiter runs AFTER validation so only well-formed submissions consume
+  // quota: a consumer fixing form errors must not get locked out for 60 min.
   router.post(
     '/',
-    limiter,
     validate(ComplaintCreateSchema),
+    limiter,
     asyncHandler(async (req, res) => {
       const body = req.body as ComplaintCreateDTO;
       const year = now().getFullYear();

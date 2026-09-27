@@ -13,7 +13,6 @@ import { createGlobalStyle } from 'styled-components';
 const colorMapping = `
     --color-background: var(--dh-bg);
     --color-neutral: var(--dh-surface);
-    --color-neutral-light: var(--dh-sand);
     --color-text: var(--dh-ink);
     --color-text-invert: var(--dh-on-dark);
     --color-accent: var(--dh-accent);
@@ -25,8 +24,6 @@ const colorMapping = `
     --color-border-solid: var(--dh-line-2);
     --color-warning: var(--dh-yellow);
     --color-warning-light: var(--dh-sand);
-    --color-star: var(--dh-yellow);
-    --gradient-brand: var(--dh-accent); /* h1 sin degradado (spec 02) */
 `
 
 export const GlobalStyles = createGlobalStyle`
@@ -79,26 +76,18 @@ export const GlobalStyles = createGlobalStyle`
 
     /* ---- layout ---- */
     --screen-desktop: min(1152px, calc(100% - 2 * var(--dh-page-x)));
-    --screen-tablet: 738px;
-    --screen-phone: 395px;
 
     /* ---- escala tipográfica heredada (componentes existentes) ---- */
-    --font-size-hero: 44px;
     --font-size-title: 28px;
     --font-size-title_sm: 20px;
-    --font-size-section-title: 24px;
     --font-size-text: 16px;
-    --font-size-text-sm: 14px;
     --font-size-price: 18px;
     --font-size-price_xl: 24px;
     --button-height: 40px;
     --button-radius: 25px;
     --radius: 16px;
-    --radius-sm: 10px;
-    --radius-xl: 32px;
     --shadow: 0px 4px 20px rgba(0, 0, 0, 0.01);
     --shadow-dark: 0px 4px 25px rgba(0, 0, 0, 0.04);
-    --shadow-hover: 0px 16px 36px rgba(0, 0, 0, 0.12);
     --color-error: #ca4a4a;
     ${colorMapping}
   }
@@ -120,9 +109,7 @@ export const GlobalStyles = createGlobalStyle`
 
   @media screen and (max-width: 1024px){
     :root {
-      --font-size-hero: 34px;
       --font-size-title: 24px;
-      --font-size-section-title: 21px;
       --font-size-price: 16px;
       --font-size-text: 15px;
       --font-size-price_xl: 20px;
@@ -132,12 +119,6 @@ export const GlobalStyles = createGlobalStyle`
   @media screen and (max-width: 1024px){
     :root {
       --dh-page-x: 32px;        /* tablet 641–1024 (spec R2.5) */
-    }
-  }
-  @media screen and (max-width: 768px){
-    :root {
-      --font-size-hero: 28px;
-      --font-size-section-title: 19px;
     }
   }
   @media screen and (max-width: 640px){

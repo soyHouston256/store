@@ -151,7 +151,11 @@ Without Docker at all: run a local `mongod`, then `cd api && npm run dev`
 
    Abuse control: `COMPLAINTS_RATE_LIMIT` (default 5) requests per client IP
    per 60 minutes, kept in memory (fine for the single api replica; it resets
-   on restart). The api runs with `app.set('trust proxy', 1)` so the IP it
+   on restart). Only submissions that pass validation count against the
+   quota — a 400 never consumes it, so a consumer fixing form errors is not
+   locked out. Each stored complaint keeps the submitting `ip` (never exposed
+   by the API; delete it from Mongo if you adopt a retention policy). The api
+   runs with `app.set('trust proxy', 1)` so the IP it
    limits is the one Caddy forwards in `X-Forwarded-For`, not Caddy's own —
    if you ever put a second proxy in front of Caddy, raise that hop count.
 
@@ -205,16 +209,24 @@ clean state). Prod domains shown; substitute localhost ports for dev.
    `Cache-Control: … immutable`.
 7. **Publish**: toggle the taza + mousepad published → they appear on
    `https://store.<domain>` with the SVG mockup + logo overlay.
-8. **Storefront browse**: taza product page shows colors only (no sizes, no
+8. **Storefront browse**: product pages live at `/producto/<slug>`
+   (`/product/<id>` redirects there; an unknown slug shows "No encontramos
+   ese producto"). A taza page shows colors only (no cut, no sizes, no
    logo-position, no flip button) and is addable to cart with just a color;
-   polo still demands size + logo position (error styling names the missing
-   field).
+   a polo shows the cut selector (Hombre / Mujer, only when the product has
+   both cuts), size pills (S–XXL hombre, XS–XL mujer; M preselected, a size the new cut lacks falls back to M),
+   logo position and the flip button, and its selection is mirrored in the
+   URL (`?corte=&color=&talla=&logo=`). Home filters (`/?cat=polo&corte=mujer`)
+   keep the chosen cut across visits. `/favoritos` lists hearted products
+   with the global header/footer.
 9. **Like/unlike**: heart a product → count +1 (persists on reload); unheart
    → −1; a product at 0 never goes negative.
 10. **Order**: cart with one polo (size+position) and one taza (color only) →
-    confirm → WhatsApp message lists `M / #hex / pecho` for the polo, only
-    the color for the taza, never "undefined"; order code is the server's
-    8-char id; total matches server recomputation.
+    confirm → order message lists `Corte: Hombre · Talla M · Negro · Pecho`
+    for the polo, only the color name for the taza, never "undefined"; order
+    code is the server's 8-char id; total matches server recomputation. The
+    WhatsApp hand-off only appears when `VITE_WHATSAPP_NUMBER` /
+    `site.contact.whatsapp` is set; otherwise the flow ends on `/done`.
 11. **CORS**: from a browser console on some other origin,
     `fetch('https://api.<domain>/api/products')` is blocked (no ACAO header);
     from the storefront origin it succeeds.
@@ -222,4 +234,12 @@ clean state). Prod domains shown; substitute localhost ports for dev.
     list/detail 404 it, but the cart item still renders (fallback art) and is
     removable.
 13. **Stale cart**: with a pre-cutover localStorage (redux-persist version <2)
-    → app loads without crash, cart is empty (migration purge).
+    → app loads without crash, cart is empty (migration purge). With a v2
+    cart (polos without `cut`) → items are kept and show `Corte: Hombre`.
+14. **Libro de Reclamaciones**: `store.<domain>/libro-de-reclamaciones` →
+    submit with an invalid field → inline error, no 429 even after several
+    tries (400s do not consume the rate limit); valid submission → screen
+    shows `LR-YYYY-000001` (+ "te enviamos una copia" only with SMTP set).
+    `admin.<domain>/complaints` lists it as *Nuevo*; open it → "Marcar
+    atendido" flips the status. `GET api.<domain>/api/admin/complaints`
+    without a token → 401.
