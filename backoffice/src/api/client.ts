@@ -1,6 +1,14 @@
 import { clearToken, getToken } from '../auth/token';
 import { redirectToLogin } from '../auth/redirect';
-import type { FieldError, OrderDTO, OrderStatus, ProductDTO, ProductWriteDTO } from './types';
+import type {
+  ComplaintDTO,
+  ComplaintStatus,
+  FieldError,
+  OrderDTO,
+  OrderStatus,
+  ProductDTO,
+  ProductWriteDTO,
+} from './types';
 
 export const API_URL: string = import.meta.env.VITE_API_URL ?? '';
 
@@ -131,6 +139,36 @@ export function getOrder(id: string) {
 
 export function updateOrderStatus(id: string, status: OrderStatus) {
   return request<OrderDTO>(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH',
+    body: { status },
+  });
+}
+
+// ---- complaints (Libro de Reclamaciones) ----
+
+export interface ListComplaintsParams {
+  status?: ComplaintStatus;
+  /** 1–200, API default 50 */
+  limit?: number;
+  /** `createdAt` ISO of the last row seen → strictly older rows */
+  cursor?: string;
+}
+
+export function listComplaints(params: ListComplaintsParams = {}) {
+  const query = new URLSearchParams();
+  if (params.status) query.set('status', params.status);
+  if (params.limit !== undefined) query.set('limit', String(params.limit));
+  if (params.cursor) query.set('cursor', params.cursor);
+  const qs = query.toString();
+  return request<ComplaintDTO[]>(`/api/admin/complaints${qs ? `?${qs}` : ''}`);
+}
+
+export function getComplaint(id: string) {
+  return request<ComplaintDTO>(`/api/admin/complaints/${encodeURIComponent(id)}`);
+}
+
+export function setComplaintStatus(id: string, status: ComplaintStatus) {
+  return request<ComplaintDTO>(`/api/admin/complaints/${encodeURIComponent(id)}/status`, {
     method: 'PATCH',
     body: { status },
   });

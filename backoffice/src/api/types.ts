@@ -102,3 +102,56 @@ export interface OrderDTO {
   /** ISO date */
   createdAt: string;
 }
+
+// ---- complaints (Libro de Reclamaciones, spec R2b / C4) ----
+
+export type ComplaintStatus = 'nuevo' | 'atendido';
+export type ComplaintDocType = 'DNI' | 'CE' | 'PASAPORTE';
+export type ComplaintItemKind = 'producto' | 'servicio';
+export type ComplaintType = 'reclamo' | 'queja';
+
+export const COMPLAINT_STATUSES: ComplaintStatus[] = ['nuevo', 'atendido'];
+export const COMPLAINT_STATUS_LABELS: Record<ComplaintStatus, string> = {
+  nuevo: 'Nuevo',
+  atendido: 'Atendido',
+};
+export const COMPLAINT_TYPE_LABELS: Record<ComplaintType, string> = {
+  reclamo: 'Reclamo',
+  queja: 'Queja',
+};
+export const COMPLAINT_KIND_LABELS: Record<ComplaintItemKind, string> = {
+  producto: 'Producto',
+  servicio: 'Servicio',
+};
+export const COMPLAINT_DOC_TYPE_LABELS: Record<ComplaintDocType, string> = {
+  DNI: 'DNI',
+  CE: 'Carné de extranjería',
+  PASAPORTE: 'Pasaporte',
+};
+
+export interface ComplaintDTO {
+  id: string;
+  /** Correlativo `LR-2026-000001` */
+  code: string;
+  consumer: {
+    name: string;
+    docType: ComplaintDocType;
+    docNumber: string;
+    email: string;
+    phone: string;
+    address: string;
+    isMinor: boolean;
+  };
+  /** present when the consumer is a minor */
+  guardianName?: string;
+  item: { kind: ComplaintItemKind; description: string; amount?: number };
+  claim: { type: ComplaintType; detail: string; request: string };
+  /** 8-char order code, when the consumer linked one */
+  orderId?: string;
+  status: ComplaintStatus;
+  emailSent: boolean;
+  /** ISO date */
+  createdAt: string;
+  /** ISO date */
+  updatedAt: string;
+}

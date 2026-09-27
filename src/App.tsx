@@ -15,6 +15,7 @@ import { useReadLocalStorage } from 'usehooks-ts'
 import Layout from './components/layout/Layout'
 import Favorites from './views/Favorites'
 import StaticPage from './views/static/StaticPage'
+import LibroReclamaciones from './views/LibroReclamaciones'
 import { STATIC_PAGES } from './content/pages'
 
 
@@ -47,6 +48,8 @@ function App() {
             <Route path="/pedido/:id" element={<Tracking />}>
             </Route>
             <Route path="/favoritos" element={<Favorites />} />
+            {/* Libro de Reclamaciones virtual (fase 2b, spec R2b.4) */}
+            <Route path="/libro-de-reclamaciones" element={<LibroReclamaciones />} />
             {Object.entries(STATIC_PAGES).map(([path, page]) => (
                 <Route key={path} path={`/${path}`} element={<StaticPage {...page} />} />
             ))}

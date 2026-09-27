@@ -593,6 +593,29 @@ select:focus {
   background: var(--status-cancelado-bg);
 }
 
+/* complaints (Libro de Reclamaciones) */
+.status-nuevo {
+  color: var(--status-pendiente);
+  background: var(--status-pendiente-bg);
+}
+
+.status-atendido {
+  color: var(--status-finalizado);
+  background: var(--status-finalizado-bg);
+}
+
+.prewrap {
+  white-space: pre-wrap;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 .order-section {
   margin-bottom: 1.25rem;
 }

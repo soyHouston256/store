@@ -41,6 +41,17 @@ services:
       UPLOAD_DIR: ${UPLOAD_DIR:-/data/uploads}
       CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS in .env (see .env.example)}
       SEED_FILE: /seed/products.json
+      # Libro de Reclamaciones mail (optional; empty = stored without email,
+      # see README.docker.md "Libro de Reclamaciones (SMTP opcional)")
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      COMPLAINTS_EMAIL: ${COMPLAINTS_EMAIL:-}
+      COMPLAINTS_CODE_PREFIX: ${COMPLAINTS_CODE_PREFIX:-LR}
+      COMPLAINTS_RATE_LIMIT: ${COMPLAINTS_RATE_LIMIT:-5}
     volumes:
       - uploads_data:/data/uploads
       - ./products.json:/seed/products.json:ro

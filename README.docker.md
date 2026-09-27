@@ -122,6 +122,48 @@ Without Docker at all: run a local `mongod`, then `cd api && npm run dev`
 6. Visit `https://admin.<domain>` (login with `ADMIN_USER` + the plaintext
    password you hashed) and `https://store.<domain>`.
 
+7. **Libro de Reclamaciones (SMTP opcional)** — `store.<domain>/libro-de-reclamaciones`
+   works out of the box: every hoja is stored in Mongo (`complaints`
+   collection) with a per-year correlativo `LR-YYYY-000001` (prefix
+   `COMPLAINTS_CODE_PREFIX`) and listed in the backoffice under
+   *Reclamaciones*. Email is optional: the api creates an SMTP transport only
+   when **both** `SMTP_HOST` and `COMPLAINTS_EMAIL` are set. Without them the
+   complaint is still saved, `POST /api/complaints` answers
+   `emailSent:false`, the storefront shows the code on screen (and omits
+   "te enviamos una copia") and the api logs
+   `complaints: SMTP not configured` at boot and once per complaint.
+
+   To enable mail, fill in `.env` (all runtime vars — no image rebuild, just
+   `docker compose up -d api`):
+
+   ```bash
+   SMTP_HOST=smtp.example.com
+   SMTP_PORT=587            # 465 with SMTP_SECURE=true
+   SMTP_SECURE=false
+   SMTP_USER=libro@example.com   # optional: auth only when USER+PASS are set
+   SMTP_PASS='app-password'
+   SMTP_FROM="Libro de Reclamaciones <libro@example.com>"   # defaults to SMTP_USER
+   COMPLAINTS_EMAIL=reclamos@example.com   # receives every hoja; consumer gets a cc
+   ```
+
+   An SMTP failure never fails the request (201 with `emailSent:false`,
+   error in `docker compose logs api`).
+
+   Abuse control: `COMPLAINTS_RATE_LIMIT` (default 5) requests per client IP
+   per 60 minutes, kept in memory (fine for the single api replica; it resets
+   on restart). The api runs with `app.set('trust proxy', 1)` so the IP it
+   limits is the one Caddy forwards in `X-Forwarded-For`, not Caddy's own —
+   if you ever put a second proxy in front of Caddy, raise that hop count.
+
+   Smoke test:
+
+   ```bash
+   curl -s -X POST https://api.<domain>/api/complaints -H 'content-type: application/json' \
+     -d '{"consumer":{"name":"Ada Lovelace","docType":"DNI","docNumber":"12345678","email":"ada@example.com","phone":"999888777","address":"Av. Siempre Viva 742, Lima"},"item":{"kind":"producto","description":"Polo Docker talla M"},"claim":{"type":"reclamo","detail":"El polo llegó con el estampado descentrado y una mancha.","request":"Cambio por uno nuevo."},"acceptsTerms":true}'
+   # → 201 {"id":"…","code":"LR-2026-000001","createdAt":"…","emailSent":false}
+   # the 6th call within the hour from the same IP → 429 {"error":{"code":"RATE_LIMITED",…}}
+   ```
+
 Operational notes:
 
 - `uploads_data` and `mongo_data` volumes are the system state — back them up.

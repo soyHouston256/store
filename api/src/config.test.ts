@@ -32,6 +32,48 @@ describe('loadConfig (NFR-2 fail-fast)', () => {
     expect(config.corsOrigins).toEqual([]);
   });
 
+  it('treats every SMTP/COMPLAINTS variable as optional with documented defaults (R2b.2)', () => {
+    const config = loadConfig(FULL_ENV);
+    expect(config.smtp).toEqual({
+      host: undefined,
+      port: 587,
+      secure: false,
+      user: undefined,
+      pass: undefined,
+      from: undefined,
+    });
+    expect(config.complaints).toEqual({ email: undefined, codePrefix: 'LR', rateLimit: 5 });
+  });
+
+  it('reads the SMTP/COMPLAINTS variables when present (SMTP_FROM falls back to SMTP_USER)', () => {
+    const config = loadConfig({
+      ...FULL_ENV,
+      SMTP_HOST: 'smtp.example.com',
+      SMTP_PORT: '465',
+      SMTP_SECURE: 'true',
+      SMTP_USER: 'libro@example.com',
+      SMTP_PASS: 'p4ss',
+      COMPLAINTS_EMAIL: 'reclamos@example.com',
+      COMPLAINTS_CODE_PREFIX: 'HR',
+      COMPLAINTS_RATE_LIMIT: '10',
+    });
+    expect(config.smtp).toEqual({
+      host: 'smtp.example.com',
+      port: 465,
+      secure: true,
+      user: 'libro@example.com',
+      pass: 'p4ss',
+      from: 'libro@example.com',
+    });
+    expect(config.complaints).toEqual({ email: 'reclamos@example.com', codePrefix: 'HR', rateLimit: 10 });
+  });
+
+  it('rejects a non-numeric COMPLAINTS_RATE_LIMIT', () => {
+    expect(() => loadConfig({ ...FULL_ENV, COMPLAINTS_RATE_LIMIT: 'many' })).toThrowError(
+      /COMPLAINTS_RATE_LIMIT/,
+    );
+  });
+
   it('parses CORS_ORIGINS into an exact-match allowlist', () => {
     const config = loadConfig({
       ...FULL_ENV,

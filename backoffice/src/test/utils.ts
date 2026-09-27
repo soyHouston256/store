@@ -1,4 +1,4 @@
-import type { OrderDTO } from '../api/types';
+import type { ComplaintDTO, OrderDTO } from '../api/types';
 
 const b64url = (obj: unknown) =>
   btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -47,4 +47,32 @@ export function errorEnvelope(
   details?: { field: string; message: string }[],
 ) {
   return { error: { code, message, ...(details ? { details } : {}) } };
+}
+
+export function makeComplaint(overrides: Partial<ComplaintDTO> = {}): ComplaintDTO {
+  return {
+    id: '64b64b64b64b64b64b64b001',
+    code: 'LR-2026-000001',
+    consumer: {
+      name: 'Ada Lovelace',
+      docType: 'DNI',
+      docNumber: '12345678',
+      email: 'ada@example.com',
+      phone: '999888777',
+      address: 'Av. Siempre Viva 742, Lima',
+      isMinor: false,
+    },
+    item: { kind: 'producto', description: 'Polo Docker talla M', amount: 80 },
+    claim: {
+      type: 'reclamo',
+      detail: 'El polo llegó con el estampado descentrado y una mancha en la manga.',
+      request: 'Cambio por uno nuevo sin defectos.',
+    },
+    orderId: 'A1B2C3D4',
+    status: 'nuevo',
+    emailSent: false,
+    createdAt: '2026-03-15T12:00:00.000Z',
+    updatedAt: '2026-03-15T12:00:00.000Z',
+    ...overrides,
+  };
 }

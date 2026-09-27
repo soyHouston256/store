@@ -5,6 +5,7 @@ export type ErrorCode =
   | 'UNAUTHORIZED'
   | 'NOT_FOUND'
   | 'CONFLICT'
+  | 'RATE_LIMITED'
   | 'FILE_TOO_LARGE'
   | 'UNSUPPORTED_MEDIA'
   | 'INTERNAL';
@@ -16,6 +17,7 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   CONFLICT: 409,
   FILE_TOO_LARGE: 413,
   UNSUPPORTED_MEDIA: 415,
+  RATE_LIMITED: 429,
   INTERNAL: 500,
 };
 

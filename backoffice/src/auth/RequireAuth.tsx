@@ -26,6 +26,7 @@ export default function RequireAuth() {
               Productos
             </NavLink>
             <NavLink to="/orders">Pedidos</NavLink>
+            <NavLink to="/complaints">Reclamaciones</NavLink>
           </nav>
         </div>
         <button type="button" className="btn btn-ghost" onClick={logout}>
