@@ -2,19 +2,23 @@ import { ComponentType } from 'react'
 import TShirt from '@/components/TShirt'
 import Mug from '@/components/Mug'
 import Mousepad from '@/components/Mousepad'
-import type { CartLogoPosition, ProductKind, ProductType } from '@/types/ProductType'
+import type { CartLogoPosition, Cut, ProductKind, ProductType } from '@/types/ProductType'
 
 export interface VisualProps {
     image: string;
     color?: string;
     logoPosition?: CartLogoPosition;
     isFlipped?: boolean;
+    /** Corte del polo (spec R4.6): `TShirt` elige el arte de `TSHIRT_ART[cut]`. */
+    cut?: Cut;
 }
 
-export type RequiredField = 'size' | 'logoPosition'
+export type RequiredField = 'cut' | 'size' | 'logoPosition'
 
 export interface TypeConfig {
     hasColors: boolean;
+    /** Cortes hombre/mujer (spec 04). Las tallas salen de `sizesFor(cut)`, no de `product.sizes`. */
+    hasCuts: boolean;
     hasSizes: boolean;
     hasLogoPosition: boolean;
     canFlip: boolean;
@@ -25,14 +29,16 @@ export interface TypeConfig {
 export const typeConfig: Record<ProductKind, TypeConfig> = {
     polo: {
         hasColors: true,
+        hasCuts: true,
         hasSizes: true,
         hasLogoPosition: true,
         canFlip: true,
-        required: ['size', 'logoPosition'],
+        required: ['cut', 'size', 'logoPosition'],
         Visual: TShirt
     },
     taza: {
         hasColors: true,
+        hasCuts: false,
         hasSizes: false,
         hasLogoPosition: false,
         canFlip: false,
@@ -41,6 +47,7 @@ export const typeConfig: Record<ProductKind, TypeConfig> = {
     },
     mousepad: {
         hasColors: true,
+        hasCuts: false,
         hasSizes: false,
         hasLogoPosition: false,
         canFlip: false,

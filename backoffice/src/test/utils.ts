@@ -27,6 +27,7 @@ export function makeOrder(overrides: Partial<OrderDTO> = {}): OrderDTO {
         type: 'polo',
         price: 45,
         quantity: 2,
+        cut: 'hombre',
         size: 'M',
         color: '#1d4ed8',
         logoPosition: 'chest',

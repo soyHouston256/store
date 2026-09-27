@@ -1,4 +1,5 @@
 import { RootState } from "@/store"
+import { cartItemKey } from "@/store/slices/products/cart"
 import { motion } from "framer-motion"
 import { useSelector, shallowEqual } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -140,7 +141,7 @@ function Cart({ innerRef, className }: { innerRef: any, className: any }): JSX.E
                     <div>
                         <h1>Carrito</h1>
                         <ul>
-                            {productsCart.map((product) => <ProductCart compact={true} product={product} key={product._id} />)}
+                            {productsCart.map((product) => <ProductCart compact={true} product={product} key={cartItemKey(product)} />)}
                         </ul>
                         <div className="go_to_cart">
                             <Button onClick={goToOrder}>

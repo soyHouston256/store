@@ -1,5 +1,6 @@
 import { Schema, model, type HydratedDocument, type InferSchemaType } from 'mongoose';
 import { ORDER_STATUSES, type OrderStatus } from '../orders/statusFlow.js';
+import { CUTS } from './Product.js';
 
 /**
  * Orders are business records: no TTL, only a `{createdAt: -1}` index for
@@ -15,6 +16,7 @@ const OrderItemSchema = new Schema(
     type: { type: String, required: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true, min: 1 },
+    cut: { type: String, enum: CUTS }, // polos only (R4.3)
     size: { type: String },
     color: { type: String },
     logoPosition: { type: String },
@@ -60,6 +62,8 @@ export interface OrderDTO {
     type: string;
     price: number;
     quantity: number;
+    /** 'hombre' | 'mujer' — present for polo items */
+    cut?: string;
     size?: string;
     color?: string;
     logoPosition?: string;
@@ -88,6 +92,7 @@ export interface OrderTrackingDTO {
     name: string;
     type: string;
     quantity: number;
+    cut?: string;
     size?: string;
     color?: string;
     logoPosition?: string;
@@ -117,6 +122,7 @@ export function toOrderTrackingDTO(
         name: item.name,
         type: item.type,
         quantity: item.quantity,
+        ...(item.cut != null ? { cut: item.cut } : {}),
         ...(item.size != null ? { size: item.size } : {}),
         ...(item.color != null ? { color: item.color } : {}),
         ...(item.logoPosition != null ? { logoPosition: item.logoPosition } : {}),
@@ -137,6 +143,7 @@ export function toOrderDTO(doc: OrderDocument): OrderDTO {
       type: item.type,
       price: item.price,
       quantity: item.quantity,
+      ...(item.cut != null ? { cut: item.cut } : {}),
       ...(item.size != null ? { size: item.size } : {}),
       ...(item.color != null ? { color: item.color } : {}),
       ...(item.logoPosition != null ? { logoPosition: item.logoPosition } : {}),

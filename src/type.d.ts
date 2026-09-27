@@ -19,7 +19,9 @@ type CatalogStatus = 'loading' | 'ready' | 'error'
 /**
  * Filtros del catálogo. La URL es la fuente de verdad (design C2):
  * `useCatalogUrlSync` los deriva de `?q=&cat=&orden=&stack=&color=&talla=&corte=`.
- * `cut` solo se transporta en fase 3; el filtrado por corte llega en T4.15.
+ * `cut` siempre está resuelto (URL ?? localStorage['dh-corte'] ?? 'hombre', spec R4.6):
+ * no filtra polos (los que no tienen el corte muestran "Solo corte hombre"), pero
+ * decide la silueta, la meta y las tallas del dropdown Talla.
  */
 type CatalogFilters = {
     term: string
@@ -28,7 +30,7 @@ type CatalogFilters = {
     stack?: string
     color?: string
     size?: string
-    cut?: Cut
+    cut: Cut
 }
 
 type ProductsState = {

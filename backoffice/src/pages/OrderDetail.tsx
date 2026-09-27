@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApiError, getOrder, updateOrderStatus } from '../api/client';
 import type { OrderDTO, OrderStatus } from '../api/types';
-import { LOGO_POSITION_OPTIONS } from '../api/types';
+import { CUT_LABELS, LOGO_POSITION_OPTIONS } from '../api/types';
 import {
   FORWARD_ACTION_LABELS,
   ORDER_FLOW,
@@ -185,6 +185,7 @@ export default function OrderDetail() {
                 <td>S/ {item.price}</td>
                 <td>
                   <span className="tags">
+                    {item.cut && <span className="tag">Corte {CUT_LABELS[item.cut] ?? item.cut}</span>}
                     {item.size && <span className="tag">Talla {item.size}</span>}
                     {item.color && (
                       <span className="tag">

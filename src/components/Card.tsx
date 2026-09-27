@@ -2,7 +2,7 @@ import styled from "styled-components"
 import LikeProduct from "@/components/LikeProduct"
 import ProductVisual from "@/components/ProductVisual"
 import { useNavigate } from "react-router-dom"
-import { ProductCartActionType, ProductType } from "@/types/ProductType"
+import { Cut, ProductCartActionType, ProductType } from "@/types/ProductType"
 import { Dispatch, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/store"
@@ -10,15 +10,18 @@ import { selectBestSellerIds } from "@/store/slices/products"
 import { addToCart } from "@/store/slices/products/cart"
 import { configFor } from "@/data/typeConfig"
 import { logoPositionsFor } from "@/data/logoPositions"
-import { displayColor, sizeRange } from "@/data/catalogFilters"
+import { displayColor } from "@/data/catalogFilters"
+import { CUT_META, hasCut, onlyCutLabel, resolveCut } from "@/data/cuts"
+import { defaultSizeFor } from "@/data/sizes"
 import { isConfigured, site } from "@/config/site"
-import { ID } from "@/utils/helpers"
 
-// Tarjeta de producto (spec 02 §3 / R3.6, canvas Home.dc.html): imagen 300 en
-// --dh-sand, badge "Más vendido" (top 3 likes, C13) o "Nuevo" (< 30 días),
-// favorito 44 (LikeProduct preservado), puntos de color 14 (máx. 6, +N), nombre
-// → ficha (/product/:id hasta fase 5), meta por tipo, precio Bricolage 20/700 y
-// `+` 44 que agrega con talla/color/posición por defecto SIN navegar.
+// Tarjeta de producto (spec 02 §3 / R3.6 / R4.6, canvas Home.dc.html): imagen 300
+// en --dh-sand con la silueta del corte activo, badge "Agotado" (prioritario) /
+// "Más vendido" (top 3 likes, C13) / "Nuevo" (< 30 días), favorito 44
+// (LikeProduct preservado), puntos de color 14 (máx. 6, +N), nombre → ficha
+// (/product/:id hasta fase 5), meta por tipo (polos: `CUT_META` del corte activo o
+// "Solo corte hombre"), precio Bricolage 20/700 y `+` 44 que agrega con
+// corte/talla/color/posición por defecto SIN navegar (deshabilitado si `soldOut`).
 const NEW_DAYS = 30
 const MAX_DOTS = 6
 const ADDED_FEEDBACK_MS = 1500
@@ -177,9 +180,16 @@ const AddButton = styled.button<{ $added: boolean }>`
 		height: 18px;
 		stroke: #FFFFFF;
 	}
-	&:hover {
+	&:hover:not(:disabled) {
 		background: ${({ $added }) => $added ? 'var(--dh-green)' : 'var(--dh-accent-hover)'};
 		transform: scale(1.06);
+	}
+	&:disabled {
+		background: var(--dh-line-2);
+		cursor: not-allowed;
+		svg {
+			stroke: var(--dh-muted);
+		}
 	}
 	&:focus-visible {
 		outline: 2px solid var(--dh-ink);
@@ -198,12 +208,15 @@ const isNew = (createdAt?: string): boolean => {
 	return Date.now() - time < NEW_DAYS * 24 * 60 * 60 * 1000
 }
 
-/** Meta 13px por tipo (spec R3.6): polo → rango de tallas; mousepad/taza → medida si está configurada. */
-export const productMeta = (product: ProductType): string => {
+/**
+ * Meta 13px por tipo (spec R3.6 / R4.6): polo → `Hombre · corte recto · S–XXL` del
+ * corte activo, o "Solo corte hombre" si el polo no existe en ese corte;
+ * mousepad/taza → medida si está configurada.
+ */
+export const productMeta = (product: ProductType, cut: Cut): string => {
 	const kind = product.type ?? 'polo'
 	if (kind === 'polo') {
-		const range = sizeRange(product.sizes)
-		return range ? `Polo · ${range}` : 'Polo'
+		return hasCut(product, cut) ? CUT_META[cut] : onlyCutLabel(product)
 	}
 	if (kind === 'mousepad') {
 		return isConfigured('product.mousepadSize') ? `Mousepad · ${site.product.mousepadSize}` : 'Mousepad'
@@ -216,6 +229,7 @@ function Card({ product }: { product: ProductType }): JSX.Element {
 	const dispatch: Dispatch<any> = useDispatch()
 	const bestSellerIds = useSelector(selectBestSellerIds)
 	const filterColor = useSelector((state: RootState) => state.products.filters.color)
+	const activeCut = useSelector((state: RootState) => state.products.filters.cut)
 	const [added, setAdded] = useState(false)
 
 	useEffect(() => {
@@ -229,23 +243,28 @@ function Card({ product }: { product: ProductType }): JSX.Element {
 	}
 
 	const isBestSeller = product.id !== undefined && bestSellerIds.includes(product.id)
-	const badge = isBestSeller ? 'Más vendido' : isNew(product.createdAt) ? 'Nuevo' : null
+	const soldOut = Boolean(product.soldOut)
+	// "Agotado" tiene prioridad sobre "Más vendido" y "Nuevo" (spec R4.6).
+	const badge = soldOut ? 'Agotado' : isBestSeller ? 'Más vendido' : isNew(product.createdAt) ? 'Nuevo' : null
 	const colors = product.colors ?? []
 	const color = displayColor(product, filterColor)
 	const name = product.name ?? 'producto'
 
-	// Agregar rápido (spec R3.6): talla M si existe (si no la primera), color mostrado
+	// Agregar rápido (spec R3.6 / R4.6): corte activo si el polo lo tiene (si no su
+	// único corte), talla M de la tabla del corte (si no la primera), color mostrado
 	// (colors[0] o el filtrado), logo "chest" si aplica. Sonido/Lottie los dispara
-	// NavbarItems al cambiar el carrito (spec R0.2). No navega.
+	// NavbarItems al cambiar el carrito (spec R0.2). No navega. La línea del carrito
+	// se deduplica por id+corte+color+talla+posición (sin `_id` aleatorio).
 	const quickAdd = () => {
+		if (soldOut) return
 		const config = configFor(product)
-		const sizes = product.sizes ?? []
-		const size = config.hasSizes ? (sizes.includes('M') ? 'M' : sizes[0]) : undefined
+		const cut = config.hasCuts ? resolveCut(product, activeCut) : undefined
+		const size = config.hasSizes ? defaultSizeFor(cut ?? 'hombre') : undefined
 		const positions = config.hasLogoPosition ? logoPositionsFor(product) : []
 		const logoPosition = positions.length ? (positions.includes('chest') ? 'chest' : positions[0]) : undefined
 		dispatch(addToCart({
 			type: ProductCartActionType.ADD,
-			product: { ...product, quantity: 1, size, color, logoPosition, _id: ID() }
+			product: { ...product, quantity: 1, cut, size, color, logoPosition }
 		}))
 		setAdded(true)
 	}
@@ -255,7 +274,7 @@ function Card({ product }: { product: ProductType }): JSX.Element {
 			<CardImage type="button" onClick={goToProduct} aria-label={`Ver detalle de ${name}`}>
 				{badge && <Badge>{badge}</Badge>}
 				<div className="card_visual">
-					<ProductVisual product={product} color={color} />
+					<ProductVisual product={product} color={color} cut={activeCut} />
 				</div>
 			</CardImage>
 			<LikeProduct product={product} />
@@ -267,13 +286,16 @@ function Card({ product }: { product: ProductType }): JSX.Element {
 					{colors.length > MAX_DOTS && <span className="more">+{colors.length - MAX_DOTS}</span>}
 				</div>
 				<button type="button" className="name" onClick={goToProduct}>{product.name}</button>
-				<span className="meta">{productMeta(product)}</span>
+				<span className="meta">{productMeta(product, activeCut)}</span>
 				<div className="row">
 					<span className="price">S/ {product.price}</span>
 					<AddButton
 						type="button"
 						$added={added}
-						aria-label={added ? `${name} agregado al carrito` : `Agregar ${name} al carrito`}
+						disabled={soldOut}
+						aria-disabled={soldOut || undefined}
+						aria-label={soldOut ? `${name} agotado` : added ? `${name} agregado al carrito` : `Agregar ${name} al carrito`}
+						title={soldOut ? 'Agotado' : undefined}
 						onClick={quickAdd}
 					>
 						{added

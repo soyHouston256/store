@@ -1,6 +1,7 @@
 import { RootState } from '@/store'
 import { setFilters } from '@/store/slices/products'
 import { CatalogParam, DEFAULT_SORT, parseCatalogParams } from '@/data/catalogFilters'
+import { readStoredCut, storeCut } from '@/data/cuts'
 import { CatalogFilters } from '@/type'
 import { Dispatch, useCallback, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,14 +14,19 @@ import { useSearchParams } from 'react-router-dom'
 // despacha `setFilters` y, si hubo que limpiar, reescribe la URL con `replace`
 // para no ensuciar el historial. Los cambios de filtro del usuario van por
 // `useCatalogParams().setParam` con `replace:false` → Atrás vuelve al filtro previo.
+//
+// Corte (spec R4.6, C3): la URL gana; si falta, se usa `localStorage['dh-corte']`
+// (y se escribe en la URL con `replace`); si tampoco hay, `hombre`. Cada corte
+// válido que llega por la URL se recuerda como última elección.
 export function useCatalogUrlSync(): void {
     const [searchParams, setSearchParams] = useSearchParams()
     const dispatch: Dispatch<any> = useDispatch()
     const search = searchParams.toString()
 
     useEffect(() => {
-        const { filters, normalized, changed } = parseCatalogParams(searchParams)
+        const { filters, normalized, changed } = parseCatalogParams(searchParams, { storedCut: readStoredCut() })
         dispatch(setFilters({ filters }))
+        if (searchParams.get('corte') === filters.cut) storeCut(filters.cut)
         if (changed) setSearchParams(normalized, { replace: true })
     }, [search])
 }

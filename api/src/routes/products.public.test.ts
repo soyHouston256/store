@@ -182,3 +182,80 @@ describe('POST /api/products/:id/like (R1.3)', () => {
     }
   });
 });
+
+describe('phase 4 — GET /api/products/:idOrSlug and DTO fields (R4.1, R4.2)', () => {
+  async function seedWithSlugs() {
+    await Product.create([
+      {
+        _id: '0utzWxB9wGfCW1G7P9JI',
+        name: 'Polo Docker',
+        price: 60,
+        type: 'polo',
+        slug: 'polo-docker',
+        cuts: ['hombre', 'mujer'],
+        soldOut: false,
+        published: true,
+      },
+      { _id: 'taza-1', name: 'Taza React', price: 35, type: 'taza', slug: 'taza-react', soldOut: true, published: true },
+      { _id: 'draft-1', name: 'Draft', price: 9, type: 'mousepad', slug: 'draft-pad', published: false },
+    ]);
+  }
+
+  it('by slug returns exactly the same DTO as by id (spec scenario)', async () => {
+    await seedWithSlugs();
+    const bySlug = await request(app).get('/api/products/polo-docker');
+    const byId = await request(app).get('/api/products/0utzWxB9wGfCW1G7P9JI');
+    expect(bySlug.status).toBe(200);
+    expect(byId.status).toBe(200);
+    expect(bySlug.body).toEqual(byId.body);
+    expect(bySlug.body).toMatchObject({
+      id: '0utzWxB9wGfCW1G7P9JI',
+      slug: 'polo-docker',
+      cuts: ['hombre', 'mujer'],
+      soldOut: false,
+    });
+  });
+
+  it('slug lookup is case-insensitive on the way in (stored lowercase)', async () => {
+    await seedWithSlugs();
+    const res = await request(app).get('/api/products/Polo-Docker');
+    expect(res.status).toBe(200);
+    expect(res.body.slug).toBe('polo-docker');
+  });
+
+  it('unpublished slug and unknown slug are both 404', async () => {
+    await seedWithSlugs();
+    for (const key of ['draft-pad', 'no-such-slug']) {
+      const res = await request(app).get(`/api/products/${key}`);
+      expect(res.status).toBe(404);
+      expect(res.body.error.code).toBe('NOT_FOUND');
+    }
+  });
+
+  it('the public list keeps sold-out products and exposes slug/cuts/soldOut on every item', async () => {
+    await seedWithSlugs();
+    const res = await request(app).get('/api/products');
+    expect(res.status).toBe(200);
+    expect(res.body.map((p: { slug: string }) => p.slug)).toEqual(['polo-docker', 'taza-react']);
+    const taza = res.body.find((p: { id: string }) => p.id === 'taza-1');
+    expect(taza).toMatchObject({ soldOut: true, cuts: [] });
+    for (const item of res.body as Array<Record<string, unknown>>) {
+      expect(typeof item.slug).toBe('string');
+      expect(Array.isArray(item.cuts)).toBe(true);
+      expect(typeof item.soldOut).toBe('boolean');
+    }
+  });
+
+  it('a legacy row without slug/cuts/soldOut is served with id-as-slug, cuts by type and soldOut false', async () => {
+    await Product.collection.insertOne({
+      _id: 'legacy-3' as unknown as never,
+      name: 'Legacy Polo',
+      price: 20,
+      type: 'polo',
+      published: true,
+    });
+    const res = await request(app).get('/api/products/legacy-3');
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ id: 'legacy-3', slug: 'legacy-3', cuts: ['hombre'], soldOut: false });
+  });
+});

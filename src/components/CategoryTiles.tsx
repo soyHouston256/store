@@ -10,7 +10,7 @@ import { ProductKind } from '@/types/ProductType'
 // Tiles de categoría (spec 02 §2 / R3.4, canvas Home.dc.html): grid 4 → 2 (≤1024)
 // → 1 (≤640); alto 132, radio 20. Conteo real por tipo desde state.products
 // (sin conteo mientras carga). Click → `?cat=` + scroll a #catalogo (ScrollManager
-// + useCatalogUrlSync). "Tu diseño" → #personaliza. "Hombre y mujer ·" llega en T4.15.
+// + useCatalogUrlSync). "Tu diseño" → #personaliza. Polos: "Hombre y mujer · N diseños →" (spec R4.6).
 const TilesGrid = styled(Container)`
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -88,6 +88,7 @@ const TILES: TileDef[] = [
 ]
 
 const countLabel = (count: number) => `${count} ${count === 1 ? 'diseño' : 'diseños'} →`
+const subFor = (kind: ProductKind, count: number) => kind === 'polo' ? `Hombre y mujer · ${countLabel(count)}` : countLabel(count)
 
 function CategoryTiles(): JSX.Element {
     const { loading, error } = useCatalogStatus()
@@ -103,7 +104,7 @@ function CategoryTiles(): JSX.Element {
                     <span className="sub">
                         {tile.key === 'custom'
                             ? `Desde S/ ${site.customization.fromPrice} →`
-                            : hasData ? countLabel(countFor(tile.key)) : ''}
+                            : hasData ? subFor(tile.key, countFor(tile.key)) : ''}
                     </span>
                 </Tile>
             ))}

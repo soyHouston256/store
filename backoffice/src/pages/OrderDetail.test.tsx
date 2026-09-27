@@ -41,6 +41,7 @@ describe('OrderDetail', () => {
     expect(screen.getByText('12345678')).toBeInTheDocument();
     expect(screen.getByText('987654321')).toBeInTheDocument();
     expect(screen.getByText('Polo azul')).toBeInTheDocument();
+    expect(screen.getByText('Corte Hombre')).toBeInTheDocument();
     expect(screen.getByText('Talla M')).toBeInTheDocument();
     expect(screen.getByText('Pecho')).toBeInTheDocument();
     expect(screen.getByText('Total: S/ 115')).toBeInTheDocument();

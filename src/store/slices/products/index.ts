@@ -1,6 +1,7 @@
 import { CatalogFilters, ProductsAction, ProductsState } from '@/type';
 import { ProductType } from '@/types/ProductType';
 import { DEFAULT_FILTERS, productMatchesColor, stackOf } from '@/data/catalogFilters';
+import { sizesFor } from '@/data/sizes';
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Catálogo (spec R3.1 / R3.5, design §6): la URL es la fuente de verdad de los
@@ -23,16 +24,19 @@ const comparators: Record<CatalogFilters['sort'], (a: ProductType, b: ProductTyp
 }
 
 export const applyFilters = (state: ProductsState) => {
-    const { term, category, sort, stack, color, size } = state.filters
+    const { term, category, sort, stack, color, size, cut } = state.filters
     const needle = term.trim().toLowerCase()
+    // El corte NO filtra: los polos sin el corte activo se muestran con la
+    // etiqueta "Solo corte hombre" (spec R4.6 / explore Q1).
+    const cutSizes = sizesFor(cut)
     const filtered = state.products.filter((p) => {
         const kind = p.type ?? 'polo'
         if (needle && !(p.name ?? '').toLowerCase().includes(needle)) return false
         if (category && kind !== category) return false
         if (stack && stackOf(p) !== stack) return false
         if (color && !productMatchesColor(p, color)) return false
-        // La talla es por tabla, no por producto: solo restringe polos (design §6.2).
-        if (size && kind === 'polo' && !(p.sizes ?? []).some((s) => s.toUpperCase() === size)) return false
+        // La talla es por tabla del corte, no por producto: solo restringe polos (design §6.2).
+        if (size && kind === 'polo' && !cutSizes.includes(size)) return false
         return true
     })
     state.productsFiltered = filtered.sort(comparators[sort] ?? comparators.vendidos)

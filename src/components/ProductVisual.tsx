@@ -1,4 +1,4 @@
-import type { CartLogoPosition, ProductType } from '@/types/ProductType'
+import type { CartLogoPosition, Cut, ProductType } from '@/types/ProductType'
 import { configFor } from '@/data/typeConfig'
 import { getProductLogo } from '@/data/productLogos'
 
@@ -12,10 +12,12 @@ interface ProductVisualProps {
     color?: string;
     logoPosition?: CartLogoPosition;
     isFlipped?: boolean;
+    /** Corte del polo (spec R4.6). Ignorado por tazas/mousepads. */
+    cut?: Cut;
 }
 
-function ProductVisual({ product, color, logoPosition, isFlipped }: ProductVisualProps): JSX.Element {
-    const { Visual } = configFor(product)
+function ProductVisual({ product, color, logoPosition, isFlipped, cut }: ProductVisualProps): JSX.Element {
+    const { Visual, hasCuts } = configFor(product)
 
     return (
         <Visual
@@ -23,6 +25,7 @@ function ProductVisual({ product, color, logoPosition, isFlipped }: ProductVisua
             color={color}
             logoPosition={logoPosition}
             isFlipped={isFlipped}
+            cut={hasCuts ? cut : undefined}
         />
     )
 }

@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
-import { Product } from '../models/Product.js';
+import { CUTS, Product, cutsFor } from '../models/Product.js';
 import { Order, toOrderDTO, toOrderTrackingDTO } from '../models/Order.js';
 import { HttpError, asyncHandler } from '../middleware/errorHandler.js';
 import { validate } from '../middleware/validate.js';
@@ -23,6 +23,7 @@ const OrderCreateSchema = z.object({
       z.object({
         productId: z.string().min(1),
         quantity: z.number().int().min(1),
+        cut: z.enum(CUTS).optional(),
         size: z.string().min(1).optional(),
         color: z.string().min(1).optional(),
         logoPosition: z.string().min(1).optional(),
@@ -54,6 +55,24 @@ ordersPublicRouter.post(
           { field: `items.${index}.productId`, message: `Product "${item.productId}" is not available` },
         ]);
       }
+      if (product.soldOut) {
+        throw new HttpError('VALIDATION', 'Order references a sold-out product', [
+          { field: `items.${index}.productId`, message: 'Product is sold out' },
+        ]);
+      }
+      // Cut (R4.3): only polos have cuts. A polo item must name one of the
+      // product's cuts (defaulting to its first cut); for other types the
+      // client's `cut` is dropped from the snapshot.
+      let cut: string | undefined;
+      if (product.type === 'polo') {
+        const allowed = cutsFor(product.type, product.cuts);
+        if (item.cut !== undefined && !allowed.includes(item.cut)) {
+          throw new HttpError('VALIDATION', 'Order references an unavailable cut', [
+            { field: `items.${index}.cut`, message: `Cut "${item.cut}" is not available for this product` },
+          ]);
+        }
+        cut = item.cut ?? allowed[0];
+      }
       total += product.price * item.quantity;
       items.push({
         productId: product._id,
@@ -61,6 +80,7 @@ ordersPublicRouter.post(
         type: product.type,
         price: product.price,
         quantity: item.quantity,
+        ...(cut !== undefined ? { cut } : {}),
         ...(item.size !== undefined ? { size: item.size } : {}),
         ...(item.color !== undefined ? { color: item.color } : {}),
         ...(item.logoPosition !== undefined ? { logoPosition: item.logoPosition } : {}),

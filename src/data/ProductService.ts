@@ -1,4 +1,5 @@
-import type { LogoPosition, ProductKind, ProductType } from "@/types/ProductType";
+import type { Cut, LogoPosition, ProductKind, ProductType } from "@/types/ProductType";
+import { isCut } from "@/data/cuts";
 import { assetUrl, request } from "./http";
 
 interface ProductDTO {
@@ -14,6 +15,10 @@ interface ProductDTO {
     published?: boolean;
     image?: string;
     logo?: string;
+    createdAt?: string;
+    slug?: string;
+    cuts?: Cut[];
+    soldOut?: boolean;
 }
 
 /** Read-time tolerance mapping: legacy/partial docs never reach components raw. */
@@ -26,6 +31,11 @@ const toProduct = (dto: ProductDTO): ProductType => ({
     logoPositions: dto.logoPositions ?? [],
     type: dto.type ?? 'polo',
     logo: assetUrl(dto.logo),
+    // Fase 4 (spec R4.1): el DTO siempre trae `slug`, `cuts` y `soldOut`; se
+    // tolera su ausencia (docs pre-migración) con defaults seguros.
+    slug: dto.slug ?? dto.id ?? dto._id,
+    cuts: (dto.cuts ?? []).filter(isCut),
+    soldOut: dto.soldOut ?? false,
 })
 
 export const getProducts = async (): Promise<ProductType[]> => {
@@ -33,8 +43,9 @@ export const getProducts = async (): Promise<ProductType[]> => {
     return products.map(toProduct)
 }
 
-export const getProduct = async (id: string): Promise<ProductType> => {
-    const product = await request<ProductDTO>(`/api/products/${encodeURIComponent(id)}`)
+/** `GET /api/products/:idOrSlug` (spec R4.2): acepta id o slug. */
+export const getProduct = async (idOrSlug: string): Promise<ProductType> => {
+    const product = await request<ProductDTO>(`/api/products/${encodeURIComponent(idOrSlug)}`)
     return toProduct(product)
 }
 

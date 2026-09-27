@@ -1,16 +1,20 @@
 import { RootState } from "@/store"
 import { CATEGORY_OPTIONS, colorOptions, sizeOptions, stackOptions } from "@/data/catalogFilters"
+import { storeCut } from "@/data/cuts"
 import { useCatalogParams } from "@/hooks/useCatalogUrlSync"
 import FilterDropdown from "@/components/FilterDropdown"
+import CutSegmented from "@/components/CutSegmented"
+import type { Cut } from "@/types/ProductType"
 import { useMemo } from "react"
 import { useSelector } from "react-redux"
 import styled from "styled-components"
 import Container from "@/components/layout/Container"
 
 // Fila de filtros del catálogo (spec 02 §3 / R3.5): chips Todos/Polos/
-// Mousepads/Tazas · separador · desplegables Stack/Color/Talla. Todos escriben
-// la URL con `setParam` (nunca `dispatch`). En ≤640 la fila hace scroll
-// horizontal. El segmented Hombre/Mujer se añade en T4.15 junto al separador.
+// Mousepads/Tazas · separador · segmented Hombre/Mujer (solo con Todos o Polos,
+// spec R4.6) · desplegables Stack/Color/Talla (Talla lista `sizesFor(cut)` y
+// solo aparece cuando hay polos en juego). Todos escriben la URL con `setParam`
+// (nunca `dispatch`). En ≤640 la fila hace scroll horizontal.
 const FiltersWrapper = styled(Container)`
 	display: flex;
 	align-items: center;
@@ -62,10 +66,16 @@ function CategoryFilters(): JSX.Element {
 	const { filters, setParam } = useCatalogParams()
 	const products = useSelector((state: RootState) => state.products.products)
 	const activeCategory = filters.category ?? 'all'
+	const showsPolos = activeCategory === 'all' || activeCategory === 'polo'
 
 	const stacks = useMemo(() => stackOptions(products), [products])
 	const colors = useMemo(() => colorOptions(products), [products])
-	const sizes = useMemo(() => sizeOptions(products), [products])
+	const sizes = useMemo(() => sizeOptions(filters.cut), [filters.cut])
+
+	const changeCut = (cut: Cut) => {
+		storeCut(cut)
+		setParam('corte', cut)
+	}
 
 	return (
 		<FiltersWrapper role="group" aria-label="Filtrar el catálogo">
@@ -81,9 +91,10 @@ function CategoryFilters(): JSX.Element {
 				</Chip>
 			))}
 			<span className="separator" aria-hidden="true" />
+			{showsPolos && <CutSegmented value={filters.cut} onChange={changeCut} />}
 			<FilterDropdown label="Stack" value={filters.stack} options={stacks} onChange={(value) => setParam('stack', value)} />
 			<FilterDropdown label="Color" value={filters.color} options={colors} onChange={(value) => setParam('color', value)} />
-			<FilterDropdown label="Talla" value={filters.size} options={sizes} onChange={(value) => setParam('talla', value)} allLabel="Todas" />
+			{showsPolos && <FilterDropdown label="Talla" value={filters.size} options={sizes} onChange={(value) => setParam('talla', value)} allLabel="Todas" />}
 		</FiltersWrapper>
 	)
 }

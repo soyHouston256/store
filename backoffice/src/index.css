@@ -321,6 +321,40 @@ select:focus {
   margin: 0 0 1rem;
 }
 
+/* phase 4: slug field + sold-out badge */
+.slug-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slug-row .slug-prefix {
+  color: var(--color-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.slug-row input {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.badge-soldout {
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 40%, transparent);
+}
+
 /* tag input */
 .tags {
   display: flex;

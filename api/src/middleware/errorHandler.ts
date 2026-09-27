@@ -4,6 +4,7 @@ export type ErrorCode =
   | 'VALIDATION'
   | 'UNAUTHORIZED'
   | 'NOT_FOUND'
+  | 'CONFLICT'
   | 'FILE_TOO_LARGE'
   | 'UNSUPPORTED_MEDIA'
   | 'INTERNAL';
@@ -12,6 +13,7 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   VALIDATION: 400,
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
+  CONFLICT: 409,
   FILE_TOO_LARGE: 413,
   UNSUPPORTED_MEDIA: 415,
   INTERNAL: 500,

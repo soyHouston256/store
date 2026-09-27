@@ -18,16 +18,27 @@ import storage from 'redux-persist/lib/storage'
 
 // v2 (API cutover): purge carts persisted before the Firestore -> API switch —
 // their items lack `type` and carry stale Firestore-era snapshots.
+// v3 (fase 4, spec R4.6): los polos guardados sin `cut` reciben `cut: 'hombre'`
+// (corte único hasta entonces). Nada se purga.
 const migrations: MigrationManifest = {
     2: (state: any) => ({
         ...state,
         cart: { productsCart: [] },
     }),
+    3: (state: any) => ({
+        ...state,
+        cart: {
+            ...(state?.cart ?? {}),
+            productsCart: (state?.cart?.productsCart ?? []).map((item: any) =>
+                (item?.type ?? 'polo') === 'polo' && !item?.cut ? { ...item, cut: 'hombre' } : item
+            ),
+        },
+    }),
 }
 
 const persistConfig = {
     key: 'root',
-    version: 2,
+    version: 3,
     migrate: createMigrate(migrations),
     blacklist: ['orders', 'products'],
     storage,

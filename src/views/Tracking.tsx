@@ -8,6 +8,7 @@ import ProductVisual from "@/components/ProductVisual"
 import Container from "@/components/layout/Container"
 import StatusIllustration from "@/components/tracking/StatusIllustration"
 import type { CartLogoPosition, ProductKind } from "@/types/ProductType"
+import { CUT_SHORT_LABELS } from "@/data/cuts"
 
 const STATUS_FLOW = [
     { key: 'pendiente', label: 'Pendiente' },
@@ -662,12 +663,14 @@ function Tracking(): JSX.Element {
                                             }}
                                             color={item.color}
                                             logoPosition={item.logoPosition as CartLogoPosition | undefined}
+                                            cut={item.cut}
                                         />
                                     </div>
                                     <div className="item_detail">
                                         <b>{item.name}</b>
                                         <div className="item_chips">
                                             <span>{typeLabel(item.type)}</span>
+                                            {item.cut && <span>Corte {CUT_SHORT_LABELS[item.cut]}</span>}
                                             {item.size && <span>Talla {item.size}</span>}
                                             {item.color &&
                                                 <span className="color_chip" title={item.color}>

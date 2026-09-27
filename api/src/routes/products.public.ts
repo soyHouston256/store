@@ -15,11 +15,16 @@ productsPublicRouter.get(
   }),
 );
 
-// GET /api/products/:id — 404 for unknown AND unpublished (R1.2)
+// GET /api/products/:idOrSlug — resolves a Firestore-era/UUID id OR a slug;
+// 404 for unknown AND unpublished (R1.2, R4.2)
 productsPublicRouter.get(
-  '/:id',
+  '/:idOrSlug',
   asyncHandler(async (req, res) => {
-    const product = await Product.findOne({ _id: req.params.id, published: true });
+    const key = req.params.idOrSlug ?? '';
+    const product = await Product.findOne({
+      published: true,
+      $or: [{ _id: key }, { slug: key.toLowerCase() }],
+    });
     if (!product) throw new HttpError('NOT_FOUND', 'Product not found');
     res.json(toProductDTO(product));
   }),

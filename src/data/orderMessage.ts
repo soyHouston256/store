@@ -1,5 +1,6 @@
 import { nearestColorName } from '@/data/colorNames'
 import { LOGO_POSITION_OPTIONS, normalizeLogoPosition } from '@/data/logoPositions'
+import { CUT_SHORT_LABELS } from '@/data/cuts'
 import { OrderType } from '@/types/OrderType'
 import { ProductCartType, ProductKind } from '@/types/ProductType'
 
@@ -23,9 +24,11 @@ const typeSuffix = (product: ProductCartType): string => {
 }
 
 // Second line of a bullet: only the attributes the item actually has,
-// joined by " · ". Empty string when there are none.
-const itemAttributes = (product: ProductCartType): string => {
+// joined by " · ". Empty string when there are none. Polos lead with the cut
+// (spec R4.6: "Corte: Mujer").
+export const itemAttributes = (product: ProductCartType): string => {
     const attrs: string[] = []
+    if (product.cut && (product.type ?? 'polo') === 'polo') attrs.push(`Corte: ${CUT_SHORT_LABELS[product.cut]}`)
     if (product.size) attrs.push(`Talla ${product.size}`)
     if (product.color) attrs.push(nearestColorName(product.color) ?? product.color)
     const position = normalizeLogoPosition(product.logoPosition)

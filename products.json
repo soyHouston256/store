@@ -61,8 +61,7 @@
       "S",
       "M",
       "L"
-    ],
-    "liks": 0
+    ]
   },
   {
     "id": "A4WTeBfc8H57XJvtro0o",
@@ -75,7 +74,7 @@
     "likes": 0,
     "name": "Polo AWS",
     "image": "https://firebasestorage.googleapis.com/v0/b/devstore-c8adb.appspot.com/o/aws_tshirt.png?alt=media&token=6a915a16-6544-40c9-9dd3-0eb1740bdcb7",
-    "price": "60",
+    "price": 60,
     "colors": [
       "#FFFFFF",
       "#000000",

@@ -41,6 +41,7 @@ describe('POST /api/orders (R8.1)', () => {
         type: 'polo',
         price: 25,
         quantity: 2,
+        cut: 'hombre', // R4.3: polo without an explicit cut defaults to its first cut
         size: 'M',
         color: '#fff',
         logoPosition: 'pecho',
@@ -161,6 +162,7 @@ describe('GET /api/orders/:id/tracking (order-tracking)', () => {
           name: 'Polo One',
           type: 'polo',
           quantity: 2,
+          cut: 'hombre',
           size: 'M',
           color: '#fff',
           logoPosition: 'pecho',
@@ -296,5 +298,98 @@ describe('GET /api/orders/:id/tracking (order-tracking)', () => {
       expect(res.body.items).toHaveLength(2);
       expect(res.body.total).toBe(62.5);
     }
+  });
+});
+
+describe('phase 4 — cut and soldOut on order items (R4.3)', () => {
+  async function seedCuts() {
+    await Product.create([
+      { _id: 'polo-h', name: 'Polo Hombre', price: 60, type: 'polo', cuts: ['hombre'], published: true },
+      { _id: 'polo-hm', name: 'Polo Ambos', price: 60, type: 'polo', cuts: ['hombre', 'mujer'], published: true },
+      { _id: 'polo-m', name: 'Polo Mujer', price: 60, type: 'polo', cuts: ['mujer'], published: true },
+      { _id: 'polo-legacy', name: 'Polo Legacy', price: 60, type: 'polo', published: true }, // no cuts stored
+      { _id: 'taza-c', name: 'Taza', price: 35, type: 'taza', published: true },
+      { _id: 'polo-out', name: 'Polo Agotado', price: 60, type: 'polo', soldOut: true, published: true },
+    ]);
+  }
+
+  it('stores the requested cut and exposes it in the order DTO and tracking DTO', async () => {
+    await seedCuts();
+    const res = await request(app)
+      .post('/api/orders')
+      .send({ user: USER, items: [{ productId: 'polo-hm', quantity: 1, cut: 'mujer', size: 'S' }] });
+    expect(res.status).toBe(201);
+    expect(res.body.items[0]).toMatchObject({ productId: 'polo-hm', cut: 'mujer', size: 'S' });
+    expect((await Order.findById(res.body.id))?.items[0]?.cut).toBe('mujer');
+
+    const tracking = await request(app).get(`/api/orders/${res.body.id}/tracking`);
+    expect(tracking.status).toBe(200);
+    expect(tracking.body.items[0]).toMatchObject({ name: 'Polo Ambos', cut: 'mujer', size: 'S' });
+  });
+
+  it('polo without cut defaults to the product\'s first cut (hombre for legacy rows)', async () => {
+    await seedCuts();
+    const res = await request(app)
+      .post('/api/orders')
+      .send({
+        user: USER,
+        items: [
+          { productId: 'polo-m', quantity: 1 },
+          { productId: 'polo-legacy', quantity: 1 },
+        ],
+      });
+    expect(res.status).toBe(201);
+    expect(res.body.items[0].cut).toBe('mujer');
+    expect(res.body.items[1].cut).toBe('hombre');
+  });
+
+  it('polo with cuts [hombre] and cut mujer → 400 field items.0.cut (spec scenario)', async () => {
+    await seedCuts();
+    const res = await request(app)
+      .post('/api/orders')
+      .send({ user: USER, items: [{ productId: 'polo-h', quantity: 1, cut: 'mujer' }] });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION');
+    expect(res.body.error.details).toEqual([
+      { field: 'items.0.cut', message: expect.stringContaining('mujer') },
+    ]);
+    expect(await Order.countDocuments()).toBe(0);
+  });
+
+  it('cut outside the enum → 400 items.0.cut from zod', async () => {
+    await seedCuts();
+    const res = await request(app)
+      .post('/api/orders')
+      .send({ user: USER, items: [{ productId: 'polo-h', quantity: 1, cut: 'unisex' }] });
+    expect(res.status).toBe(400);
+    expect(res.body.error.details.map((d: { field: string }) => d.field)).toContain('items.0.cut');
+  });
+
+  it('sold-out product → 400 items.i.productId "Product is sold out" (spec scenario)', async () => {
+    await seedCuts();
+    const res = await request(app)
+      .post('/api/orders')
+      .send({
+        user: USER,
+        items: [
+          { productId: 'polo-h', quantity: 1 },
+          { productId: 'polo-out', quantity: 1 },
+        ],
+      });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION');
+    expect(res.body.error.details).toEqual([{ field: 'items.1.productId', message: 'Product is sold out' }]);
+    expect(await Order.countDocuments()).toBe(0);
+  });
+
+  it('non-polo items never carry a cut, even if the client sends one', async () => {
+    await seedCuts();
+    const res = await request(app)
+      .post('/api/orders')
+      .send({ user: USER, items: [{ productId: 'taza-c', quantity: 1, cut: 'mujer' }] });
+    expect(res.status).toBe(201);
+    expect(res.body.items[0]).not.toHaveProperty('cut');
+    const tracking = await request(app).get(`/api/orders/${res.body.id}/tracking`);
+    expect(tracking.body.items[0]).not.toHaveProperty('cut');
   });
 });

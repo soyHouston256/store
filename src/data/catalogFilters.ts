@@ -3,6 +3,11 @@ import type { ProductKind, ProductType } from '@/types/ProductType'
 import type { Cut } from '@/config/site'
 import { getProductLogoKey } from '@/data/productLogos'
 import { nearestColorName } from '@/data/colorNames'
+import { slugify } from '@/data/slug'
+import { DEFAULT_CUT, isCut } from '@/data/cuts'
+import { sizesFor } from '@/data/sizes'
+
+export { slugify }
 
 // Vocabulario del catálogo (spec R3.5 / design §6.2): parámetros de URL, sus
 // valores válidos y las claves derivadas de la data (stack, color, talla).
@@ -28,9 +33,7 @@ export const SORT_LABELS: Record<CatalogSort, string> = {
     precio: 'Precio: menor a mayor'
 }
 
-const CUTS: Cut[] = ['hombre', 'mujer']
-
-export const DEFAULT_FILTERS: CatalogFilters = { term: '', sort: DEFAULT_SORT }
+export const DEFAULT_FILTERS: CatalogFilters = { term: '', sort: DEFAULT_SORT, cut: DEFAULT_CUT }
 
 /** Máximo de caracteres aceptados en `q`. */
 const MAX_TERM = 100
@@ -59,14 +62,6 @@ const STACK_LABELS: Record<string, string> = {
     'ubuntu': 'Ubuntu',
     'vue': 'Vue'
 }
-
-export const slugify = (value: string): string =>
-    value
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
 
 /** Slug de stack del producto (`docker`, `node-js`); undefined si no tiene logo local. */
 export const stackOf = (product: ProductType): string | undefined => {
@@ -165,14 +160,9 @@ export const colorOptions = (products: ProductType[]): FilterOption[] => {
         .sort((a, b) => a.label.localeCompare(b.label))
 }
 
-export const sizeOptions = (products: ProductType[]): FilterOption[] => {
-    const seen = new Set<string>()
-    for (const product of products) {
-        if ((product.type ?? 'polo') !== 'polo') continue
-        for (const size of product.sizes ?? []) seen.add(size)
-    }
-    return sortSizes([...seen]).map((value) => ({ value, label: value }))
-}
+/** Tallas del corte activo (spec R4.6): la tabla es global por corte, no por producto. */
+export const sizeOptions = (cut: Cut): FilterOption[] =>
+    sizesFor(cut).map((value) => ({ value, label: value }))
 
 // ---------------------------------------------------------------------------
 // URL → filtros
@@ -188,11 +178,19 @@ export interface ParsedCatalogParams {
 
 const isKind = (value: string): value is ProductKind => (PRODUCT_KINDS as string[]).includes(value)
 const isSort = (value: string): value is CatalogSort => (CATALOG_SORTS as string[]).includes(value)
-const isCut = (value: string): value is Cut => (CUTS as string[]).includes(value)
 const isSlug = (value: string): boolean => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
 const isSize = (value: string): boolean => /^[A-Za-z0-9]{1,5}$/.test(value)
 
-export function parseCatalogParams(params: URLSearchParams): ParsedCatalogParams {
+export interface ParseCatalogOptions {
+    /**
+     * Última elección de corte (`localStorage['dh-corte']`). Si la URL no trae
+     * `corte` válido y hay una elección guardada, se usa y se escribe en la URL
+     * (design §6.2). Sin ninguna → `hombre`, sin tocar la URL.
+     */
+    storedCut?: Cut
+}
+
+export function parseCatalogParams(params: URLSearchParams, options: ParseCatalogOptions = {}): ParsedCatalogParams {
     const filters: CatalogFilters = { ...DEFAULT_FILTERS }
     const normalized = new URLSearchParams()
 
@@ -210,6 +208,9 @@ export function parseCatalogParams(params: URLSearchParams): ParsedCatalogParams
     if (corte && isCut(corte)) {
         filters.cut = corte
         normalized.set('corte', corte)
+    } else if (options.storedCut) {
+        filters.cut = options.storedCut
+        normalized.set('corte', options.storedCut)
     }
     const orden = params.get('orden')
     if (orden && isSort(orden)) {
@@ -226,8 +227,9 @@ export function parseCatalogParams(params: URLSearchParams): ParsedCatalogParams
         filters.color = color
         normalized.set('color', color)
     }
+    // La talla debe existir en la tabla del corte activo (design §6.2).
     const talla = params.get('talla')
-    if (talla && isSize(talla)) {
+    if (talla && isSize(talla) && sizesFor(filters.cut).includes(talla.toUpperCase())) {
         filters.size = talla.toUpperCase()
         normalized.set('talla', filters.size)
     }

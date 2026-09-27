@@ -267,3 +267,190 @@ describe('PATCH /api/admin/products/:id/publish (R3.4)', () => {
     expect(missing.status).toBe(404);
   });
 });
+
+describe('phase 4 — slug / cuts / soldOut (R4.1)', () => {
+  it('POST generates the slug from the name and defaults cuts/soldOut (spec scenario)', async () => {
+    const res = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo Node.js', price: 60, type: 'polo' });
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({ slug: 'polo-node-js', cuts: ['hombre'], soldOut: false });
+  });
+
+  it('POST suffixes a generated slug that collides (-2, -3)', async () => {
+    for (const expected of ['polo-react', 'polo-react-2', 'polo-react-3']) {
+      const res = await request(app)
+        .post('/api/admin/products')
+        .set(auth())
+        .send({ name: 'Polo React', price: 60, type: 'polo' });
+      expect(res.status).toBe(201);
+      expect(res.body.slug).toBe(expected);
+    }
+  });
+
+  it('POST with an explicit slug that is taken → 409 CONFLICT naming slug', async () => {
+    await Product.create({ _id: 'react', name: 'React', price: 60, type: 'polo', slug: 'polo-react' });
+    const res = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Otro', price: 60, type: 'polo', slug: 'polo-react' });
+    expect(res.status).toBe(409);
+    expect(res.body.error).toEqual({
+      code: 'CONFLICT',
+      message: 'Slug already in use',
+      details: [{ field: 'slug', message: 'Slug already in use' }],
+    });
+    expect(await Product.countDocuments()).toBe(1);
+  });
+
+  it('PUT with another product\'s slug → 409 CONFLICT; own slug is fine (spec scenario)', async () => {
+    await Product.create([
+      { _id: 'react', name: 'React', price: 60, type: 'polo', slug: 'polo-react' },
+      { _id: 'vue', name: 'Vue', price: 60, type: 'polo', slug: 'polo-vue' },
+    ]);
+    const clash = await request(app)
+      .put('/api/admin/products/vue')
+      .set(auth())
+      .send({ name: 'Vue', price: 60, type: 'polo', slug: 'polo-react' });
+    expect(clash.status).toBe(409);
+    expect(clash.body.error.code).toBe('CONFLICT');
+    expect((await Product.findById('vue'))?.slug).toBe('polo-vue');
+
+    const same = await request(app)
+      .put('/api/admin/products/vue')
+      .set(auth())
+      .send({ name: 'Vue 3', price: 65, type: 'polo', slug: 'polo-vue' });
+    expect(same.status).toBe(200);
+    expect(same.body).toMatchObject({ name: 'Vue 3', slug: 'polo-vue' });
+  });
+
+  it('PUT without slug keeps the stored slug; with slug renames it', async () => {
+    await Product.create({ _id: 'react', name: 'React', price: 60, type: 'polo', slug: 'polo-react', cuts: ['hombre', 'mujer'] });
+    const kept = await request(app)
+      .put('/api/admin/products/react')
+      .set(auth())
+      .send({ name: 'React 19', price: 60, type: 'polo' });
+    expect(kept.status).toBe(200);
+    expect(kept.body.slug).toBe('polo-react');
+
+    const renamed = await request(app)
+      .put('/api/admin/products/react')
+      .set(auth())
+      .send({ name: 'React 19', price: 60, type: 'polo', slug: 'polo-react-19' });
+    expect(renamed.status).toBe(200);
+    expect(renamed.body.slug).toBe('polo-react-19');
+    expect((await Product.findById('react'))?.slug).toBe('polo-react-19');
+  });
+
+  it('the unique index backs the pre-check (raw duplicate insert → E11000)', async () => {
+    await Product.init(); // make sure autoIndex has built slug_1
+    await Product.create({ _id: 'a', name: 'A', price: 1, type: 'polo', slug: 'dup' });
+    await expect(Product.create({ _id: 'b', name: 'B', price: 1, type: 'polo', slug: 'dup' })).rejects.toMatchObject({ code: 11000 });
+  });
+
+  it('rejects malformed slugs with 400 naming slug', async () => {
+    for (const slug of ['Polo React', 'polo_react', '-polo', 'polo--react', 'ñandu', 'a'.repeat(81)]) {
+      const res = await request(app)
+        .post('/api/admin/products')
+        .set(auth())
+        .send({ name: 'X', price: 1, type: 'polo', slug });
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe('VALIDATION');
+      expect(res.body.error.details.map((d: { field: string }) => d.field)).toContain('slug');
+    }
+  });
+
+  it('cuts: taza with cuts [mujer] persists [] (spec scenario); polo keeps its selection', async () => {
+    const taza = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Taza React', price: 35, type: 'taza', cuts: ['mujer'] });
+    expect(taza.status).toBe(201);
+    expect(taza.body.cuts).toEqual([]);
+    expect((await Product.findById(taza.body.id))?.cuts).toEqual([]);
+
+    const polo = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo Mujer', price: 60, type: 'polo', cuts: ['mujer'] });
+    expect(polo.status).toBe(201);
+    expect(polo.body.cuts).toEqual(['mujer']);
+
+    const both = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo Ambos', price: 60, type: 'polo', cuts: ['mujer', 'hombre'] });
+    expect(both.body.cuts).toEqual(['mujer', 'hombre']);
+  });
+
+  it('cuts: polo with explicit [] → 400 cuts; unknown or duplicated values → 400 cuts', async () => {
+    const empty = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo', price: 60, type: 'polo', cuts: [] });
+    expect(empty.status).toBe(400);
+    expect(empty.body.error.details.map((d: { field: string }) => d.field)).toContain('cuts');
+
+    const unknown = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo', price: 60, type: 'polo', cuts: ['unisex'] });
+    expect(unknown.status).toBe(400);
+    expect(unknown.body.error.details.map((d: { field: string }) => d.field)).toContain('cuts.0');
+
+    const dup = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo', price: 60, type: 'polo', cuts: ['hombre', 'hombre'] });
+    expect(dup.status).toBe(400);
+    expect(dup.body.error.details.map((d: { field: string }) => d.field)).toContain('cuts');
+  });
+
+  it('soldOut: accepted on POST/PUT, defaults to false when omitted, non-boolean → 400', async () => {
+    const created = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo Agotado', price: 60, type: 'polo', soldOut: true });
+    expect(created.status).toBe(201);
+    expect(created.body.soldOut).toBe(true);
+
+    const cleared = await request(app)
+      .put(`/api/admin/products/${created.body.id}`)
+      .set(auth())
+      .send({ name: 'Polo Agotado', price: 60, type: 'polo' });
+    expect(cleared.status).toBe(200);
+    expect(cleared.body.soldOut).toBe(false);
+
+    const bad = await request(app)
+      .post('/api/admin/products')
+      .set(auth())
+      .send({ name: 'Polo', price: 60, type: 'polo', soldOut: 'yes' });
+    expect(bad.status).toBe(400);
+    expect(bad.body.error.details.map((d: { field: string }) => d.field)).toContain('soldOut');
+  });
+
+  it('PUT changing type polo → taza clears cuts; taza → polo defaults cuts to [hombre]', async () => {
+    await seed();
+    const toTaza = await request(app)
+      .put('/api/admin/products/p-live')
+      .set(auth())
+      .send({ name: 'Live Mug', price: 25, type: 'taza', cuts: ['hombre'] });
+    expect(toTaza.status).toBe(200);
+    expect(toTaza.body.cuts).toEqual([]);
+
+    const toPolo = await request(app)
+      .put('/api/admin/products/p-draft')
+      .set(auth())
+      .send({ name: 'Draft Polo', price: 9, type: 'polo' });
+    expect(toPolo.status).toBe(200);
+    expect(toPolo.body.cuts).toEqual(['hombre']);
+  });
+
+  it('admin GET serves slug/cuts/soldOut; a legacy row without slug falls back to its id', async () => {
+    await seed();
+    const res = await request(app).get('/api/admin/products/p-live').set(auth());
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ slug: 'p-live', cuts: ['hombre'], soldOut: false });
+  });
+});

@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux"
 import styled from "styled-components"
 import { RootState } from "@/store"
+import { cartItemKey } from "@/store/slices/products/cart"
 import ProductCart from "./ProductCart"
 
 const CartListWrapper = styled.div`
@@ -53,7 +54,7 @@ function CartList(): JSX.Element {
         <CartListWrapper>
             {productsCart.length > 0 && <h1>Carrito</h1> }
             <ul>
-                {productsCart.map((product) => <ProductCart compact={false} product={product} key={product._id} />)}
+                {productsCart.map((product) => <ProductCart compact={false} product={product} key={cartItemKey(product)} />)}
             </ul>
             {!productsCart.length &&
                 <CartEmpty>

@@ -7,7 +7,9 @@
  * duplicates products nor overwrites admin edits (name, price, publish
  * state, uploaded logo, likes — nothing is clobbered). Only ids missing
  * from the database are inserted, with seed defaults `type: 'polo'` for
- * legacy rows and `published: true`.
+ * legacy rows and `published: true`. Phase 4 (R4.4): new rows also get
+ * `slug` (unique against the DB), `cuts` and `soldOut: false`, and the CLI
+ * runs `migrateDevhaus()` afterwards so pre-existing rows are backfilled.
  *
  * Note: this deliberately uses $setOnInsert where design §3 sketched
  * $set — $set would clobber admin edits on every re-run, violating NFR-5.
@@ -21,13 +23,17 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import mongoose from 'mongoose';
 import { z } from 'zod';
-import { LOGO_POSITIONS, PRODUCT_TYPES, Product, logoPositionsFor } from '../models/Product.js';
+import { CUTS, LOGO_POSITIONS, PRODUCT_TYPES, Product, cutsFor, logoPositionsFor } from '../models/Product.js';
+import { SLUG_MAX_LENGTH, SLUG_PATTERN, ensureUniqueSlug, slugify } from '../models/slug.js';
+import { migrateDevhaus, type MigrateResult } from './migrate-devhaus.js';
 
 const SeedProductSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  // coerce: the legacy Firestore export holds one price as a string ("60")
+  // coerce: kept for robustness against legacy exports with string prices
   price: z.coerce.number().nonnegative(),
+  slug: z.string().max(SLUG_MAX_LENGTH).regex(SLUG_PATTERN).optional(),
+  cuts: z.array(z.enum(CUTS)).max(CUTS.length).optional(),
   image: z.string().optional(),
   colors: z.array(z.string()).optional(),
   sizes: z.array(z.string()).optional(),
@@ -43,37 +49,58 @@ export interface SeedResult {
   skippedExisting: number;
 }
 
+export interface SeedAndMigrateResult extends SeedResult {
+  migration: MigrateResult;
+}
+
 /**
  * Upsert seed items. $setOnInsert-only: existing docs are never modified.
+ * Slugs are resolved against the slugs already stored (plus the batch
+ * itself) so the insert never trips the unique index.
  */
 export async function seedProducts(items: SeedProduct[]): Promise<SeedResult> {
   const parsed = items.map((item) => SeedProductSchema.parse(item));
+  const existing = (await Product.distinct('slug')) as unknown[];
+  const taken = new Set(existing.filter((slug): slug is string => typeof slug === 'string'));
   const result = await Product.bulkWrite(
-    parsed.map((p) => ({
-      updateOne: {
-        filter: { _id: p.id },
-        update: {
-          $setOnInsert: {
-            name: p.name,
-            price: p.price,
-            ...(p.image !== undefined ? { image: p.image } : {}),
-            colors: p.colors ?? [],
-            sizes: p.sizes ?? [],
-            logoPositions: logoPositionsFor(p.type ?? 'polo', p.logoPositions),
-            likes: p.likes ?? 0,
-            type: p.type ?? 'polo',
-            published: true,
+    parsed.map((p) => {
+      const type = p.type ?? 'polo';
+      return {
+        updateOne: {
+          filter: { _id: p.id },
+          update: {
+            $setOnInsert: {
+              name: p.name,
+              price: p.price,
+              ...(p.image !== undefined ? { image: p.image } : {}),
+              colors: p.colors ?? [],
+              sizes: p.sizes ?? [],
+              logoPositions: logoPositionsFor(type, p.logoPositions),
+              likes: p.likes ?? 0,
+              type,
+              published: true,
+              slug: ensureUniqueSlug(p.slug ?? slugify(p.name), taken),
+              cuts: cutsFor(type, p.cuts),
+              soldOut: false,
+            },
           },
+          upsert: true,
         },
-        upsert: true,
-      },
-    })),
+      };
+    }),
     { ordered: false },
   );
   return {
     inserted: result.upsertedCount,
     skippedExisting: parsed.length - result.upsertedCount,
   };
+}
+
+/** Seed, then backfill phase-4 fields on rows that predate them (R4.4). */
+export async function seedAndMigrate(items: SeedProduct[]): Promise<SeedAndMigrateResult> {
+  const seed = await seedProducts(items);
+  const migration = await migrateDevhaus();
+  return { ...seed, migration };
 }
 
 /** Default seed source: repo-root products.json (../../.. from src|dist /scripts). */
@@ -92,9 +119,12 @@ async function main(): Promise<void> {
 
   await mongoose.connect(mongoUri);
   try {
-    const { inserted, skippedExisting } = await seedProducts(items);
+    const { inserted, skippedExisting, migration } = await seedAndMigrate(items);
     console.log(
       `Seeded from ${file}: ${inserted} inserted, ${skippedExisting} already present (left untouched).`,
+    );
+    console.log(
+      `migrate-devhaus: cuts set on ${migration.cutsSet}, soldOut set on ${migration.soldOutSet}, slug set on ${migration.slugsSet} product(s).`,
     );
   } finally {
     await mongoose.disconnect();

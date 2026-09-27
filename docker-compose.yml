@@ -13,6 +13,8 @@
 # One-shot idempotent seed (products.json is bind-mounted read-only and its
 # path passed via SEED_FILE):
 #   docker compose run --rm api node dist/scripts/seed-products.js
+# Phase-4 data migration (idempotent; `--down` rolls back), see README.docker.md:
+#   docker compose run --rm api node dist/scripts/migrate-devhaus.js
 #
 # Dev: overlay docker-compose.dev.yml (see that file's header).
 

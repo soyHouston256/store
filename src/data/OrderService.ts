@@ -1,10 +1,12 @@
 import { OrderType } from "@/types/OrderType";
-import { ProductCartType } from "@/types/ProductType";
+import { Cut, ProductCartType } from "@/types/ProductType";
 import { request } from "./http";
 
 interface OrderItemDTO {
     productId: string;
     quantity: number;
+    /** Corte del polo (spec R4.3). El servidor lo valida contra `product.cuts` y lo descarta para no-polo. */
+    cut?: Cut;
     size?: string;
     color?: string;
     logoPosition?: string;
@@ -19,6 +21,8 @@ export interface TrackingItemDTO {
     name: string;
     type: string;
     quantity: number;
+    /** Corte del polo (spec R4.3); ausente en pedidos anteriores a la fase 4 y en no-polo. */
+    cut?: Cut;
     size?: string;
     color?: string;
     logoPosition?: string;
@@ -41,6 +45,7 @@ const toOrderItem = (item: ProductCartType): OrderItemDTO => {
         productId: item.id ?? '',
         quantity: item.quantity ?? 1,
     }
+    if (item.cut) dto.cut = item.cut
     if (item.size) dto.size = item.size
     if (item.color) dto.color = item.color
     if (item.logoPosition) dto.logoPosition = item.logoPosition

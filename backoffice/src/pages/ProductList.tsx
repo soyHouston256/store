@@ -61,6 +61,7 @@ export default function ProductList() {
               <tr>
                 <th>Logo</th>
                 <th>Nombre</th>
+                <th>Slug</th>
                 <th>Tipo</th>
                 <th>Precio</th>
                 <th>Likes</th>
@@ -78,7 +79,16 @@ export default function ProductList() {
                       <span className="thumb-empty">—</span>
                     )}
                   </td>
-                  <td>{product.name}</td>
+                  <td>
+                    {product.name}
+                    {product.soldOut && (
+                      <>
+                        {' '}
+                        <span className="badge badge-soldout">Agotado</span>
+                      </>
+                    )}
+                  </td>
+                  <td className="mono muted">{product.slug}</td>
                   <td>{product.type}</td>
                   <td>S/ {product.price}</td>
                   <td>{product.likes}</td>

@@ -87,7 +87,39 @@ Without Docker at all: run a local `mongod`, then `cd api && npm run dev`
    # → "23 inserted, 0 already present" on first run; "0 inserted, 23 already present" after
    ```
 
-5. Visit `https://admin.<domain>` (login with `ADMIN_USER` + the plaintext
+5. **Migración devhaus (fase 4)** — backfills the phase-4 product fields on
+   rows that predate them (`cuts`, `slug`, `soldOut`) and builds the unique
+   `slug_1` index. Idempotent and additive: the first run reports how many
+   rows it touched, every later run reports `0, 0, 0`. The seed already
+   writes the three fields for new rows *and* runs this migration at the
+   end, so on an empty database the order seed → migrate is indifferent;
+   on an existing (pre-fase-4) database run it once after deploying the
+   new api image:
+
+   ```bash
+   # prod image (compiled dist):
+   docker compose run --rm api node dist/scripts/migrate-devhaus.js
+   # → "cuts set on 23, soldOut set on 23, slug set on 23 product(s); index slug_1 ensured."
+   # second run → "cuts set on 0, soldOut set on 0, slug set on 0 product(s); …"
+
+   # dev overlay (tsx image, runs from src):
+   docker compose -f docker-compose.yml -f docker-compose.dev.yml \
+     run --rm api npx tsx src/scripts/migrate-devhaus.ts
+   # (equivalent: `cd api && MONGO_URI=… npm run migrate:devhaus`)
+   ```
+
+   Rollback (`--down`) `$unset`s the three fields on every product and drops
+   `slug_1`; the api keeps serving (slug falls back to the id, cuts to the
+   type default) but `/producto/:slug` links stop resolving by slug:
+
+   ```bash
+   docker compose run --rm api node dist/scripts/migrate-devhaus.js --down
+   ```
+
+   Verify: `curl -s https://api.<domain>/api/products | jq '.[0] | {slug, cuts, soldOut}'`
+   and `curl -s https://api.<domain>/api/products/<slug>` returns the product.
+
+6. Visit `https://admin.<domain>` (login with `ADMIN_USER` + the plaintext
    password you hashed) and `https://store.<domain>`.
 
 Operational notes:
@@ -111,7 +143,9 @@ clean state). Prod domains shown; substitute localhost ports for dev.
 1. **Clean bring-up**: `docker compose build && docker compose up -d` — all 5
    services healthy (`docker compose ps`), only caddy publishes ports.
 2. **Seed**: run the seed command → 23 inserted. Run it again → 0 inserted,
-   23 already present (no dupes, no clobber).
+   23 already present (no dupes, no clobber). The seed's trailing
+   `migrate-devhaus` line reads `0, 0, 0` both times (new rows already
+   carry `slug`/`cuts`/`soldOut`).
 3. **Login**: `https://admin.<domain>` — wrong password → single generic
    error (does not say which field failed), username stays filled. Correct
    login → product table listing all 23 (published) products.

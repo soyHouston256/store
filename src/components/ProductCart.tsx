@@ -4,6 +4,7 @@ import { Dispatch, useCallback } from "react"
 import { useDispatch } from "react-redux"
 import styled from "styled-components"
 import ProductVisual from "./ProductVisual"
+import { CUT_SHORT_LABELS } from "@/data/cuts"
 
 const ProductCartWrapper = styled.li`
     display: flex;
@@ -181,13 +182,15 @@ function ProductCart({ product, compact = false }: { product: ProductCartType, c
 
     return (
         <ProductCartWrapper className={compact ? 'compact' : ''} >
-            <ProductVisual product={product} color={product.color} />
+            <ProductVisual product={product} color={product.color} cut={product.cut} />
             <div className="product_cart_content">
                 <div className="product_cart_detail">
                     <b>S/ {product.price}</b>
                     <p>{product.name}</p>
                     <ProductCartDetailExtra className={compact ? 'compact' : ''}>
                         <span title="Tipo" className="type">{product.type ?? 'polo'}</span>
+                        {product.cut && (product.type ?? 'polo') === 'polo' &&
+                            <span title="Corte" className="type">Corte {CUT_SHORT_LABELS[product.cut]}</span>}
                         {product.size && <span title="Talla" className="size">{product.size}</span>}
                         {product.color && <span title="Color" className="color" style={{ backgroundColor: product.color }}></span>}
                     </ProductCartDetailExtra>
