@@ -1,5 +1,6 @@
 import angular from "@/assets/logos/angular.svg";
 import aws from "@/assets/logos/aws.svg";
+import code from "@/assets/logos/code.svg";
 import css from "@/assets/logos/css.svg";
 import docker from "@/assets/logos/docker.svg";
 import firebase from "@/assets/logos/firebase.svg";
@@ -20,7 +21,9 @@ import vue from "@/assets/logos/vue.svg";
 const logos: Record<string, string> = {
     "angular": angular,
     "aws": aws,
+    "code": code,
     "css": css,
+    "dev retro": code,
     "docker": docker,
     "firebase": firebase,
     "github": github,

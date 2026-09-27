@@ -1,0 +1,41 @@
+name: Deploy Storefront
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'nginx.conf'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - 'vite.config.ts'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-storefront.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: store-production-storefront
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy storefront only
+    runs-on: [self-hosted, deploy, docker, store]
+    timeout-minutes: 20
+    steps:
+      - name: Deploy storefront
+        run: |
+          set -euo pipefail
+          cd /opt/n8n/store
+          git fetch --prune origin master
+          git reset --hard origin/master
+          docker compose up -d --build storefront
+          docker compose ps storefront
+          curl -fsS https://devstore.maxflow.ink/ >/dev/null

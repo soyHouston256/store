@@ -10,7 +10,20 @@ import type {
   ProductWriteDTO,
 } from './types';
 
-export const API_URL: string = import.meta.env.VITE_API_URL ?? '';
+const configuredApiUrl = import.meta.env.VITE_API_URL ?? '';
+
+function defaultApiUrl(): string {
+  if (typeof window === 'undefined') return '';
+
+  const { hostname, protocol } = window.location;
+  if (hostname === 'admin.devhaus.pe') return 'https://api.devhaus.pe';
+  if (hostname === 'admin.devstore.maxflow.ink') return 'https://api.devstore.maxflow.ink';
+  if (hostname.startsWith('admin.')) return `${protocol}//api.${hostname.slice('admin.'.length)}`;
+
+  return '';
+}
+
+export const API_URL: string = configuredApiUrl || defaultApiUrl();
 
 export class ApiError extends Error {
   readonly status: number;
