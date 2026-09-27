@@ -2,8 +2,9 @@ import '@/assets/reset.css'
 import '@/App.css'
 import { GlobalStyles } from '@/Theme'
 import Home from '@/views/Home'
-import Product from '@/views/Product'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import ProductPage from '@/views/ProductPage'
+import LegacyProductRedirect from '@/views/LegacyProductRedirect'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import Cart from '@/views/Cart'
 import useProductsList from './hooks/useProductsList'
 import { RootState } from './store'
@@ -19,8 +20,6 @@ import { STATIC_PAGES } from './content/pages'
 
 function App() {
     const orderId = useReadLocalStorage<string>('order')
-    const location = useLocation();
-    const background = location.state && location.state.background;
 
     // Carga el catálogo una vez y publica loading/error/data en el slice `products` (spec R3.1).
     useProductsList()
@@ -33,10 +32,12 @@ function App() {
         <div className="App">
         <GlobalStyles />
         <Layout>
-        <Routes location={background || location}>
-            <Route path="/" element={<Home />}>
-                <Route path="/product/:id" element={<Product />} />
-            </Route>
+        <Routes>
+            <Route path="/" element={<Home />} />
+            {/* Ficha de producto (fase 5, spec R5.1): página completa por slug; la ruta
+                legada del modal redirige con replace a /producto/:slug. */}
+            <Route path="/producto/:slug" element={<ProductPage />} />
+            <Route path="/product/:id" element={<LegacyProductRedirect />} />
             <Route path="/cart" element={productsCart.length ? <Cart /> : <Navigate to='/' />}>
             </Route>
             <Route path="/done" element={orderId ? <Done /> : <Navigate to='/' />} >
@@ -50,11 +51,6 @@ function App() {
                 <Route key={path} path={`/${path}`} element={<StaticPage {...page} />} />
             ))}
         </Routes>
-        {background && (
-            <Routes>
-                <Route path="/product/:id" element={<Product />} />
-            </Routes>
-        )}
         </Layout>
     </div>
     )

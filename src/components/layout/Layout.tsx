@@ -16,12 +16,10 @@ const Shell = styled.div`
     }
 `
 
-const isOverlayRoute = (pathname: string) => pathname.startsWith('/product/')
-
-// Con el footer global las rutas cambian sin recargar: al navegar se vuelve
-// al tope (excepto al abrir/cerrar la ficha, que es un overlay `position:fixed`
-// sobre el catálogo) y los enlaces con `#hash` (/#catalogo, /#personaliza,
-// /#buscar) desplazan hasta el ancla.
+// Con el footer global las rutas cambian sin recargar: al cambiar de pathname se
+// vuelve al tope (la ficha `/producto/:slug` es una página completa desde la
+// fase 5; sus cambios de query con `replace` no mueven el scroll) y los enlaces
+// con `#hash` (/#catalogo, /#personaliza, /#buscar) desplazan hasta el ancla.
 function ScrollManager(): null {
     const location = useLocation()
     const previous = useRef(location.pathname)
@@ -32,7 +30,7 @@ function ScrollManager(): null {
             if (target) {
                 window.requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }))
             }
-        } else if (pathname !== previous.current && !isOverlayRoute(pathname) && !isOverlayRoute(previous.current)) {
+        } else if (pathname !== previous.current) {
             window.scrollTo({ top: 0 })
         }
         previous.current = pathname

@@ -4,12 +4,12 @@ import Products from '@/components/Products'
 import Customize from '@/components/Customize'
 import TrustBar from '@/components/TrustBar'
 import Faq from '@/components/Faq'
-import { Outlet } from "react-router-dom";
 import styled from 'styled-components'
 
 // Home (spec 02): Hero → Tiles → Catálogo (buscador + filtros dentro) →
 // Personalización → Barra de confianza → FAQ. Las reseñas (spec 02 §6) no se
-// renderizan: solo con reseñas reales (`reviews.source`), hoy TODO.
+// renderizan: solo con reseñas reales (`reviews.source`), hoy TODO. La ficha ya
+// no es un modal anidado (fase 5, spec R5.1): sin <Outlet/>.
 const Page = styled.div`
     padding-bottom: var(--dh-section-y);
     @media screen and (max-width: 640px){
@@ -26,7 +26,6 @@ function Home(): JSX.Element {
             <Customize />
             <TrustBar />
             <Faq />
-            <Outlet />
         </Page>
     )
 }

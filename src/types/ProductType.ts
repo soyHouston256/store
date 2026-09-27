@@ -28,6 +28,15 @@ export interface ProductType {
     cuts?: Cut[];
     /** Agotado (spec R4.1): badge "Agotado", `+` deshabilitado, el servidor rechaza el pedido. */
     soldOut?: boolean;
+    /** Fotos reales (spec R5.2, futuro): "Foto con modelo" / "Detalle". Hoy el API no las envía → galería solo con mockups. */
+    images?: ProductImage[];
+}
+
+export interface ProductImage {
+    url: string;
+    view?: 'modelo' | 'detalle';
+    cut?: Cut;
+    color?: string;
 }
 
 export interface ProductCartType extends ProductType{

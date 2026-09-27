@@ -1,4 +1,4 @@
-import type { Cut, LogoPosition, ProductKind, ProductType } from "@/types/ProductType";
+import type { Cut, LogoPosition, ProductImage, ProductKind, ProductType } from "@/types/ProductType";
 import { isCut } from "@/data/cuts";
 import { assetUrl, request } from "./http";
 
@@ -19,6 +19,7 @@ interface ProductDTO {
     slug?: string;
     cuts?: Cut[];
     soldOut?: boolean;
+    images?: ProductImage[];
 }
 
 /** Read-time tolerance mapping: legacy/partial docs never reach components raw. */

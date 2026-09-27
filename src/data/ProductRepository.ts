@@ -6,8 +6,8 @@ export class ProductRepository implements ProductApi<ProductType> {
     async like(id: string, delta: 1 | -1): Promise<{ id: string; likes: number }> {
         return likeProduct(id, delta)
     }
-    async find(id: string): Promise<ProductType> {
-        return getProduct(id)
+    async find(idOrSlug: string): Promise<ProductType> {
+        return getProduct(idOrSlug)
     }
     async all(): Promise<ProductType[]> {
         return getProducts()

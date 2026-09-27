@@ -28,7 +28,7 @@ const whatsappHelpHref = buildWhatsappUrl('👋 Hola, tengo una duda sobre la ti
 // FAQ (spec 05 · textos con placeholders → fragmentos condicionales)
 // ---------------------------------------------------------------------------
 
-function shippingAnswer(): string {
+export function shippingAnswer(): string {
     const parts = ['Enviamos a todo el Perú.']
     if (isConfigured('shipping.limaDays')) parts.push(`Lima: ${shipping.limaDays} días hábiles.`)
     if (isConfigured('shipping.provinceDays')) parts.push(`Provincias: ${shipping.provinceDays} días hábiles.`)
@@ -36,7 +36,7 @@ function shippingAnswer(): string {
     return parts.join(' ')
 }
 
-function returnsAnswer(): string {
+export function returnsAnswer(): string {
     const head = isConfigured('returns.days')
         ? `Sí, dentro de ${returns.days} días si está sin uso y con etiqueta.`
         : 'Sí, si está sin uso y con etiqueta.'
