@@ -1,23 +1,24 @@
-import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { CUTS } from './Product.js';
 import { SIZES_BY_CUT, sizesFor } from './sizes.js';
 
-interface TallasJson {
-  hombre: { tallas: Array<{ talla: string }> };
-  mujer: { tallas: Array<{ talla: string }> };
-}
-
-const TALLAS_JSON = fileURLToPath(
-  new URL('../../../docs/devhaus-handoff/specs/data/tallas.json', import.meta.url),
-);
+/**
+ * Expected table vendored from the designer handoff
+ * (`docs/devhaus-handoff/specs/data/tallas.json`, gitignored — not available
+ * in CI). Each `tallas[].talla` in order; measurements (`anchoPechoCm`,
+ * `largoCm`) are `null` in the handoff and intentionally not modelled here.
+ * If the handoff changes, update this table and `SIZES_BY_CUT` together.
+ */
+const EXPECTED_TALLAS = {
+  hombre: ['S', 'M', 'L', 'XL', 'XXL'],
+  mujer: ['XS', 'S', 'M', 'L', 'XL'],
+} as const;
 
 describe('SIZES_BY_CUT (R4.1 / spec 04)', () => {
-  it('matches docs/devhaus-handoff/specs/data/tallas.json exactly', async () => {
-    const json = JSON.parse(await readFile(TALLAS_JSON, 'utf8')) as TallasJson;
-    expect(SIZES_BY_CUT.hombre).toEqual(json.hombre.tallas.map((t) => t.talla));
-    expect(SIZES_BY_CUT.mujer).toEqual(json.mujer.tallas.map((t) => t.talla));
+  it('matches the handoff tallas.json size table exactly (vendored inline)', () => {
+    expect(SIZES_BY_CUT.hombre).toEqual([...EXPECTED_TALLAS.hombre]);
+    expect(SIZES_BY_CUT.mujer).toEqual([...EXPECTED_TALLAS.mujer]);
+    expect(Object.keys(SIZES_BY_CUT).sort()).toEqual(Object.keys(EXPECTED_TALLAS).sort());
   });
 
   it('covers every cut and sizesFor returns a fresh copy', () => {
